@@ -1,16 +1,16 @@
+// src/scenes/global/Topbar.js
 import React from "react";
-import { Box, IconButton, useTheme } from "@mui/material";
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useContext } from "react";
-import { Link } from "react-router-dom"; // Import de Link
+import { Link } from "react-router-dom";
 import { ColorModeContext, tokens } from "../../theme";
-import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import SearchIcon from "@mui/icons-material/Search";
-import BarChartIcon from "@mui/icons-material/BarChart"; // Import de l'icône BarChart
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 
 const Topbar = () => {
   const theme = useTheme();
@@ -18,18 +18,11 @@ const Topbar = () => {
   const colorMode = useContext(ColorModeContext);
 
   return (
-    <Box display="flex" justifyContent="space-between" p={5}>
-      {/* SEARCH BAR */}
-      <Box
-        display="flex"
-        backgroundColor={colors.primary[400]}
-        borderRadius="3px"
-      >
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Recherche" />
-        <IconButton type="button" sx={{ p: 1 }}>
-          <SearchIcon />
-        </IconButton>
-      </Box>
+    <Box display="flex" justifyContent="space-between" alignItems="center" p={2} className="topbar">
+      {/* TITLE */}
+      <Typography variant="h4" color={colors.grey[100]}>
+        HR Dashboard
+      </Typography>
 
       {/* ICONS */}
       <Box display="flex">
@@ -46,11 +39,14 @@ const Topbar = () => {
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton>
-        <IconButton>
-          <PersonOutlinedIcon />
+        <IconButton component={Link} to="/effectifdashboard">
+          <PeopleAltIcon />
         </IconButton>
-        <IconButton component={Link} to="/trainingprogress"> {/* Lien vers la nouvelle page */}
-          <BarChartIcon />
+        <IconButton component={Link} to="/traininglist">
+          <ListAltIcon />
+        </IconButton>
+        <IconButton component={Link} to="/trainingdashboard">
+          <HomeOutlinedIcon />
         </IconButton>
       </Box>
     </Box>

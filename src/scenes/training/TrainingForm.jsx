@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, Card, CardContent, Grid, MenuItem } from '@mui/material';
 import Header from '../../components/Header';
-import { contractOptions } from '../../data/mockData';
+
 
 const initialTrainingData = {
   title: '',

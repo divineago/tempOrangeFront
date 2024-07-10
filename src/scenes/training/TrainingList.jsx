@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, MenuItem } from '@mui/material';
+import { Box, Button, TextField, MenuItem, Snackbar, Alert } from '@mui/material';
 import Header from '../../components/Header';
 import { directions, trainingData as initialTrainingData } from '../../data/mockData';
 import { DataGrid } from '@mui/x-data-grid';
+import * as XLSX from 'xlsx';
 
 const TrainingList = () => {
   const [trainingData, setTrainingData] = useState(initialTrainingData);
@@ -17,6 +18,9 @@ const TrainingList = () => {
     direction: '',
   });
   const [editMode, setEditMode] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -28,14 +32,18 @@ const TrainingList = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
+    if (new Date(formData.endDate) < new Date(formData.startDate)) {
+      setSnackbarMessage('End date cannot be before start date');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+      return;
+    }
     if (editMode) {
-      // Update existing training
       const updatedList = trainingData.map((training) =>
         training.id === formData.id ? { ...formData, duration: calculateDuration(formData.startDate, formData.endDate) } : training
       );
       setTrainingData(updatedList);
     } else {
-      // Add new training
       const newTraining = { ...formData, id: trainingData.length + 1, duration: calculateDuration(formData.startDate, formData.endDate) };
       setTrainingData([...trainingData, newTraining]);
     }
@@ -50,6 +58,9 @@ const TrainingList = () => {
       direction: '',
     });
     setEditMode(false);
+    setSnackbarMessage(editMode ? 'Training updated successfully' : 'Training added successfully');
+    setSnackbarSeverity('success');
+    setOpenSnackbar(true);
   };
 
   const handleEdit = (training) => {
@@ -58,8 +69,13 @@ const TrainingList = () => {
   };
 
   const handleDelete = (id) => {
-    const updatedList = trainingData.filter((training) => training.id !== id);
-    setTrainingData(updatedList);
+    if (window.confirm('Are you sure you want to delete this training?')) {
+      const updatedList = trainingData.filter((training) => training.id !== id);
+      setTrainingData(updatedList);
+      setSnackbarMessage('Training deleted successfully');
+      setSnackbarSeverity('success');
+      setOpenSnackbar(true);
+    }
   };
 
   const handleTypeChange = (event) => {
@@ -77,6 +93,38 @@ const TrainingList = () => {
       return difference;
     }
     return '';
+  };
+
+  const handleExportExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(trainingData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'TrainingList');
+    XLSX.writeFile(wb, 'TrainingList.xlsx');
+  };
+
+  const handleImportExcel = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const json = XLSX.utils.sheet_to_json(worksheet);
+          setTrainingData(json);
+          setSnackbarMessage('Data imported successfully');
+          setSnackbarSeverity('success');
+          setOpenSnackbar(true);
+        } catch (error) {
+          setSnackbarMessage('Error importing data');
+          setSnackbarSeverity('error');
+          setOpenSnackbar(true);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
   };
 
   const columns = [
@@ -105,6 +153,10 @@ const TrainingList = () => {
     },
   ];
 
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
   return (
     <Box m="20px">
       <Header title="TRAINING LIST" subtitle="Liste des formations" />
@@ -121,39 +173,12 @@ const TrainingList = () => {
             variant="outlined"
             required
           >
-            <MenuItem value="En ligne">En ligne</MenuItem>
-            <MenuItem value="En présentiel">En présentiel</MenuItem>
+            <MenuItem value="Online">Online</MenuItem>
+            <MenuItem value="Offline">Offline</MenuItem>
           </TextField>
-          <TextField
-            label="Start Date"
-            name="startDate"
-            type="date"
-            value={formData.startDate}
-            onChange={handleInputChange}
-            InputLabelProps={{ shrink: true }}
-            variant="outlined"
-            required
-          />
-          <TextField
-            label="End Date"
-            name="endDate"
-            type="date"
-            value={formData.endDate}
-            onChange={handleInputChange}
-            InputLabelProps={{ shrink: true }}
-            variant="outlined"
-            required
-          />
-          <TextField
-            label="Evaluation Date"
-            name="evaluationDate"
-            type="date"
-            value={formData.evaluationDate}
-            onChange={handleInputChange}
-            InputLabelProps={{ shrink: true }}
-            variant="outlined"
-            required
-          />
+          <TextField label="Start Date" name="startDate" type="date" value={formData.startDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
+          <TextField label="End Date" name="endDate" type="date" value={formData.endDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
+          <TextField label="Evaluation Date" name="evaluationDate" type="date" value={formData.evaluationDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
           <TextField
             select
             label="Direction"
@@ -163,21 +188,39 @@ const TrainingList = () => {
             variant="outlined"
             required
           >
-            {directions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+            {directions.map((direction) => (
+              <MenuItem key={direction.value} value={direction.value}>
+                {direction.label}
               </MenuItem>
             ))}
           </TextField>
           <Button type="submit" variant="contained" color="primary">
-            {editMode ? 'Update Training' : 'Add Training'}
+            {editMode ? 'Update' : 'Add'}
           </Button>
         </Box>
       </form>
 
-      <div style={{ height: 400, width: '100%', marginTop: '20px' }}>
-        <DataGrid rows={trainingData.map(row => ({ ...row, duration: calculateDuration(row.startDate, row.endDate) }))} columns={columns} pageSize={5} />
-      </div>
+      <Box mb="20px">
+        <Button variant="contained" color="primary" onClick={handleExportExcel}>
+          Export to Excel
+        </Button>
+        <input type="file" accept=".xlsx, .xls" onChange={handleImportExcel} style={{ display: 'none' }} id="upload-excel-training" />
+        <label htmlFor="upload-excel-training">
+          <Button variant="contained" color="secondary" component="span">
+            Import from Excel
+          </Button>
+        </label>
+      </Box>
+
+      <Box height="400px">
+        <DataGrid rows={trainingData} columns={columns} pageSize={5} />
+      </Box>
+
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -98,7 +98,6 @@ export const trainingData = [
   },
 ];
 
-
 export const initialTrainingData = [
   {
     id: 1,
@@ -127,7 +126,6 @@ export const initialTrainingData = [
   // Add more training data as needed
 ];
 
-
 export const effectifList = [
   {
     id: 1,
@@ -152,6 +150,7 @@ export const effectifList = [
     contrat: 'CDD',
   },
 ];
+
 export const genderOptions = [
   { value: 'Masculin', label: 'Masculin' },
   { value: 'Feminin', label: 'Féminin' },
@@ -161,6 +160,7 @@ export const contractOptions = [
   { value: 'CDI', label: 'CDI' },
   { value: 'CDD', label: 'CDD' },
 ];
+
 export const trainingProgressData = [
   {
     agent: 'John Doe',
@@ -187,3 +187,40 @@ export const trainingProgressData = [
     satisfaction: 4,
   },
 ];
+
+export const sampleDirectionStats = {
+  DG: {
+    pieData: [
+      { id: 0, value: 10, label: 'Femmes' },
+      { id: 1, value: 15, label: 'Hommes' },
+    ],
+    lineData: {
+      uData: [3000, 2500, 2000, 2780, 1890, 2390, 3490],
+      pData: [2400, 1398, 9800, 3908, 4800, 3800, 4300],
+    },
+    barData: [5, 6, 7],
+  },
+  DAF: {
+    pieData: [
+      { id: 0, value: 20, label: 'Femmes' },
+      { id: 1, value: 30, label: 'Hommes' },
+    ],
+    lineData: {
+      uData: [2000, 3000, 4000, 5000, 6000, 7000, 8000],
+      pData: [3400, 2398, 5800, 4908, 5800, 4800, 5300],
+    },
+    barData: [8, 9, 10],
+  },
+  DST: {
+    pieData: [
+      { id: 0, value: 25, label: 'Femmes' },
+      { id: 1, value: 35, label: 'Hommes' },
+    ],
+    lineData: {
+      uData: [1000, 1500, 2000, 2500, 3000, 3500, 4000],
+      pData: [2400, 1400, 980, 3900, 480, 3800, 4300],
+    },
+    barData: [1, 2, 3],
+  },
+  // Add more directions as needed
+};

@@ -1,3 +1,5 @@
+/* src/index.css */
+
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
 
 html,
@@ -31,5 +33,45 @@ body,
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #5555;
+  background: #555;
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #333;
+  overflow: auto;
+  z-index: 1000;
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 250px;
+  right: 0;
+  height: 60px;
+  background-color: #444;
+  z-index: 1001;
+}
+
+.content {
+  margin-top: 60px;
+  margin-left: 250px;
+  padding: 20px;
+  width: calc(100% - 250px);
+  overflow-y: auto;
+}
+
+.footer {
+  padding: 10px;
+  text-align: center;
+  font-size: 0.8em;
+  background-color: darkorange;
+  position: fixed;
+  bottom: 0;
+  left: 250px;
+  right: 0;
 }

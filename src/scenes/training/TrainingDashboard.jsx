@@ -1,89 +1,174 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import { BarChart, PieChart, BarSeries, PieSeries, ChartContainer, ChartTooltip, ChartLegend, CartesianGrid, XAxis, YAxis } from '@mui/x-charts';
+import React, { useState } from 'react';
+import { Box, TextField, MenuItem, Typography, Card, CardContent, Grid } from '@mui/material';
+import { PieChart } from '@mui/x-charts/PieChart';
+import { BarChart } from '@mui/x-charts/BarChart';
 import Header from '../../components/Header';
-import { trainingData } from '../../data/mockData';
+import { directions, employeurs } from '../../data/mockData';
+
+const sampleTrainingCategories = [
+  { value: 'leadership', label: 'Formation Leadership' },
+  { value: 'projectManagement', label: 'Gestion de Projet' },
+  { value: 'webDevelopment', label: 'Développement Web' },
+  { value: 'digitalMarketing', label: 'Marketing Digital' },
+];
 
 const TrainingDashboard = () => {
-  const [trainings, setTrainings] = useState([]);
+  const [filters, setFilters] = useState({
+    employeur: '',
+    direction: '',
+    trainingCategory: '',
+  });
 
-  useEffect(() => {
-    setTrainings(trainingData);
-  }, []);
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-  const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'name', headerName: 'Name', width: 150 },
-    { field: 'type', headerName: 'Type', width: 150 },
-    { field: 'duration', headerName: 'Duration (hours)', width: 150 },
-    { field: 'date', headerName: 'Date', width: 150 },
-  ];
+  // Dummy data for training statistics
+  const trainingStats = {
+    leadership: { onlineTraining: 15, offlineTraining: 10, participants: 80, participationRate: '60%' },
+    projectManagement: { onlineTraining: 20, offlineTraining: 15, participants: 100, participationRate: '70%' },
+    webDevelopment: { onlineTraining: 25, offlineTraining: 20, participants: 120, participationRate: '75%' },
+    digitalMarketing: { onlineTraining: 30, offlineTraining: 25, participants: 150, participationRate: '80%' },
+  };
 
-  const rows = trainings.map((training, index) => ({
-    id: index + 1,
-    name: training.name,
-    type: training.type,
-    duration: training.duration,
-    date: training.date,
-  }));
-
-  const trainingTypeData = trainings.reduce((acc, training) => {
-    const found = acc.find((item) => item.name === training.type);
-    if (found) {
-      found.value += 1;
-    } else {
-      acc.push({ name: training.type, value: 1 });
-    }
-    return acc;
-  }, []);
-
-  const durationData = trainings.reduce((acc, training) => {
-    const found = acc.find((item) => item.name === training.type);
-    if (found) {
-      found.value += training.duration;
-    } else {
-      acc.push({ name: training.type, value: training.duration });
-    }
-    return acc;
-  }, []);
+  const currentStats = trainingStats[filters.trainingCategory] || {};
 
   return (
     <Box m="20px">
-      <Header title="TRAINING DASHBOARD" subtitle="Interactive Training Statistics" />
+      <Header title="DASHBOARD DE FORMATION" subtitle="Vue d'ensemble des formations" />
 
-      <Box mt="20px">
-        <Typography variant="h6">Training List</Typography>
-        <div style={{ height: 400, width: '100%', marginTop: '20px' }}>
-          <DataGrid rows={rows} columns={columns} pageSize={5} />
-        </div>
+      <Box display="flex" justifyContent="space-between" mb="20px">
+        <TextField
+          select
+          label="Employeur"
+          name="employeur"
+          value={filters.employeur}
+          onChange={handleFilterChange}
+          variant="outlined"
+          sx={{ width: '30%', color: 'orange' }}
+        >
+          {employeurs.map((employeur) => (
+            <MenuItem key={employeur.value} value={employeur.value}>
+              {employeur.label}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          select
+          label="Direction"
+          name="direction"
+          value={filters.direction}
+          onChange={handleFilterChange}
+          variant="outlined"
+          sx={{ width: '30%', color: 'black' }}
+        >
+          {directions.map((direction) => (
+            <MenuItem key={direction.value} value={direction.value}>
+              {direction.label}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          select
+          label="Categorie de Formation"
+          name="trainingCategory"
+          value={filters.trainingCategory}
+          onChange={handleFilterChange}
+          variant="outlined"
+          sx={{ width: '30%', color: 'black' }}
+        >
+          {sampleTrainingCategories.map((category) => (
+            <MenuItem key={category.value} value={category.value}>
+              {category.label}
+            </MenuItem>
+          ))}
+        </TextField>
       </Box>
 
-      <Box mt="40px">
-        <Typography variant="h6">Training Type Distribution</Typography>
-        <ChartContainer width={400} height={400}>
-          <PieChart data={trainingTypeData}>
-            <PieSeries dataKey="value" nameKey="name">
-              <ChartTooltip />
-              <ChartLegend />
-            </PieSeries>
-          </PieChart>
-        </ChartContainer>
-      </Box>
+      {filters.trainingCategory && (
+        <>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" sx={{ color: 'orange' }}>
+                    Formations Online
+                  </Typography>
+                  <Typography variant="h2">{currentStats.onlineTraining}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" sx={{ color: 'orange' }}>
+                    Formations Offline
+                  </Typography>
+                  <Typography variant="h2">{currentStats.offlineTraining}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" sx={{ color: 'orange' }}>
+                    Participants
+                  </Typography>
+                  <Typography variant="h2">{currentStats.participants}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" sx={{ color: 'orange' }}>
+                    Taux de participation
+                  </Typography>
+                  <Typography variant="h2">{currentStats.participationRate}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
 
-      <Box mt="40px">
-        <Typography variant="h6">Total Duration by Training Type</Typography>
-        <ChartContainer width={600} height={300}>
-          <BarChart data={durationData}>
-            <CartesianGrid />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <ChartTooltip />
-            <ChartLegend />
-            <BarSeries dataKey="value" nameKey="name" fill="#8884d8" />
-          </BarChart>
-        </ChartContainer>
-      </Box>
+          <Box mt="20px">
+            <Typography variant="h5" mb="10px">
+              Statistiques des Formations
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <PieChart
+                  series={[
+                    {
+                      data: [
+                        { id: 0, value: 30, label: 'Formation Leadership' },
+                        { id: 1, value: 25, label: 'Gestion de Projet' },
+                        { id: 2, value: 20, label: 'Développement Web' },
+                        { id: 3, value: 25, label: 'Marketing Digital' },
+                      ],
+                    },
+                  ]}
+                  width={600}
+                  height={400}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <BarChart
+                  xAxis={[{ scaleType: 'band', data: ['Formation A', 'Formation B', 'Formation C'] }]}
+                  series={[{ data: [4, 3, 5] }, { data: [1, 6, 3] }, { data: [2, 5, 6] }]}
+                  width={600}
+                  height={400}
+                />
+              </Grid>
+            </Grid>
+          </Box>
+        </>
+      )}
     </Box>
   );
 };

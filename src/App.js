@@ -8,10 +8,11 @@ import Topbar from './scenes/global/Topbar';
 import Dashboard from './scenes/dashboard';
 import TrainingForm from './scenes/training/TrainingForm';
 import TrainingProgress from './scenes/training/TrainingProgress';
-import MainTraining from './scenes/training/mainTraining';
 import EffectifList from './scenes/effectif/EffectifList';
 import TrainingList from './scenes/training/TrainingList';
-
+import TrainingDashboard from './scenes/training/TrainingDashboard';
+import EffectifDashboard from './scenes/effectif/EffectifDashboard';
+import './index.css'; // Assurez-vous d'importer le fichier de styles
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -24,15 +25,17 @@ function App() {
           <Sidebar />
           <main className="content">
             <Topbar />
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/trainingform" element={<TrainingForm />} />
-              <Route path="/mainTraining" element={<MainTraining />} />
-              <Route path="/trainingprogress" element={<TrainingProgress />} />
-              <Route path="/effectiflist" element={<EffectifList />} />
-              <Route path="traininglist" element={<TrainingList/>}/>
-              
-            </Routes>
+            <div className="main-content">
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/trainingform" element={<TrainingForm />} />
+                <Route path="/trainingprogress" element={<TrainingProgress />} />
+                <Route path="/effectiflist" element={<EffectifList />} />
+                <Route path="/traininglist" element={<TrainingList />} />
+                <Route path="/effectifdashboard" element={<EffectifDashboard />} />
+                <Route path="/trainingdashboard" element={<TrainingDashboard />} />
+              </Routes>
+            </div>
           </main>
         </div>
       </ThemeProvider>
