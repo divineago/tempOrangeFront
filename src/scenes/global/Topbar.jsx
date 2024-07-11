@@ -1,4 +1,5 @@
 // src/scenes/global/Topbar.js
+
 import React from "react";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useContext } from "react";
@@ -6,11 +7,11 @@ import { Link } from "react-router-dom";
 import { ColorModeContext, tokens } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import NotificationIcon from "../../scenes/Form/NotificationIcon";
 
 const Topbar = () => {
   const theme = useTheme();
@@ -33,16 +34,14 @@ const Topbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <IconButton>
-          <NotificationsOutlinedIcon />
-        </IconButton>
+        <NotificationIcon component={Link} to="/notificationicon" />
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton>
         <IconButton component={Link} to="/effectifdashboard">
           <PeopleAltIcon />
         </IconButton>
-        <IconButton component={Link} to="/traininglist">
+        <IconButton component={Link} to="/calendar">
           <ListAltIcon />
         </IconButton>
         <IconButton component={Link} to="/trainingdashboard">

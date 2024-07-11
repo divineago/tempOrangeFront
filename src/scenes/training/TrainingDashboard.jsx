@@ -49,7 +49,7 @@ const TrainingDashboard = () => {
           value={filters.employeur}
           onChange={handleFilterChange}
           variant="outlined"
-          sx={{ width: '30%', color: 'orange' }}
+          sx={{ width: '30%', color: '#FF7900' }}
         >
           {employeurs.map((employeur) => (
             <MenuItem key={employeur.value} value={employeur.value}>
@@ -97,7 +97,7 @@ const TrainingDashboard = () => {
             <Grid item xs={12} md={3}>
               <Card>
                 <CardContent>
-                  <Typography variant="h5" sx={{ color: 'orange' }}>
+                  <Typography variant="h5" sx={{ color: '#FF7900' }}>
                     Formations Online
                   </Typography>
                   <Typography variant="h2">{currentStats.onlineTraining}</Typography>
@@ -107,7 +107,7 @@ const TrainingDashboard = () => {
             <Grid item xs={12} md={3}>
               <Card>
                 <CardContent>
-                  <Typography variant="h5" sx={{ color: 'orange' }}>
+                  <Typography variant="h5" sx={{ color: '#FF7900' }}>
                     Formations Offline
                   </Typography>
                   <Typography variant="h2">{currentStats.offlineTraining}</Typography>
@@ -117,7 +117,7 @@ const TrainingDashboard = () => {
             <Grid item xs={12} md={3}>
               <Card>
                 <CardContent>
-                  <Typography variant="h5" sx={{ color: 'orange' }}>
+                  <Typography variant="h5" sx={{ color: '#FF7900' }}>
                     Participants
                   </Typography>
                   <Typography variant="h2">{currentStats.participants}</Typography>
@@ -127,7 +127,7 @@ const TrainingDashboard = () => {
             <Grid item xs={12} md={3}>
               <Card>
                 <CardContent>
-                  <Typography variant="h5" sx={{ color: 'orange' }}>
+                  <Typography variant="h5" sx={{ color: '#FF7900' }}>
                     Taux de participation
                   </Typography>
                   <Typography variant="h2">{currentStats.participationRate}</Typography>

@@ -2,6 +2,7 @@
 
 export const employeurs = [
   { value: "Orange", label: "ORANGE" },
+  { value: "OM", label: "ORANGE MONEY" },
   { value: "Itm", label: "ITM" },
   { value: "Bnw", label: "BENSIZWE" },
 ];

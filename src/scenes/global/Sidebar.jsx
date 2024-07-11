@@ -17,6 +17,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
   return (
     <MenuItem
       active={selected === title}
+      className="menu-item-hover"
       style={{ color: colors.grey[100] }}
       onClick={() => setSelected(title)}
       icon={icon}
@@ -33,13 +34,17 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
 
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
     <Box className="sidebar">
       <ProSidebar collapsed={isCollapsed}>
         <Menu iconShape="square">
           {/* LOGO AND MENU ICON */}
           <MenuItem
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={toggleSidebar}
             icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
             style={{
               margin: "10px 0 20px 0",
@@ -56,7 +61,7 @@ const Sidebar = () => {
                 <Typography variant="h3" color={colors.grey[100]}>
                   HR Dashboard
                 </Typography>
-                <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                <IconButton onClick={toggleSidebar}>
                   <MenuOutlinedIcon />
                 </IconButton>
               </Box>
@@ -70,7 +75,7 @@ const Sidebar = () => {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src={`../../assets/Orange.png`}
+                  src={`${process.env.PUBLIC_URL}/assets/Ordc.png`}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>
@@ -83,10 +88,7 @@ const Sidebar = () => {
                 >
                   Ressources Humaines
                 </Typography>
-                <Typography
-                  variant="h5"
-                  color={colors.greenAccent[500]}
-                >
+                <Typography variant="h5" color={colors.greenAccent[500]}>
                   Administrateur
                 </Typography>
               </Box>

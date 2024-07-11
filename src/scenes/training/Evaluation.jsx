@@ -1,51 +1,50 @@
 // src/scenes/training/Evaluation.js
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Button, TextField, Typography, Rating } from '@mui/material';
-import Header from '../../components/Header';
-import { trainingData } from '../../data/mockData'; // Import mock training data
+import { TextField, Button, Box, Typography, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 
-const Evaluation = () => {
-  const { id } = useParams();
-  const training = trainingData.find((t) => t.id === id);
-  const [satisfaction, setSatisfaction] = useState(0);
-  const [feedback, setFeedback] = useState('');
-
-  if (!training) {
-    return <Typography variant="h5">Formation non trouvée</Typography>;
-  }
+const EvaluationForm = () => {
+  const [satisfaction, setSatisfaction] = useState('');
+  const [comments, setComments] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Logic to handle evaluation submission
+    // Handle form submission logic here
+    console.log({ satisfaction, comments });
   };
 
   return (
-    <Box m="20px">
-      <Header title={`Évaluation de ${training.title}`} subtitle="Donnez votre avis sur la formation" />
+    <Box display="flex" flexDirection="column" alignItems="center" mt={4}>
+      <Typography variant="h4" gutterBottom>
+        Formulaire d'évaluation de la formation
+      </Typography>
       <form onSubmit={handleSubmit}>
-        <Box display="flex" flexDirection="column" gap="20px" maxWidth="400px" mx="auto">
-          <Typography variant="h6">Cote de satisfaction</Typography>
-          <Rating
-            name="satisfaction"
-            value={satisfaction}
-            onChange={(event, newValue) => setSatisfaction(newValue)}
-          />
+        <Box mb={2}>
+          <Typography variant="h6">Niveau de satisfaction</Typography>
+          <RadioGroup row value={satisfaction} onChange={(e) => setSatisfaction(e.target.value)}>
+            <FormControlLabel value="1" control={<Radio />} label="1" />
+            <FormControlLabel value="2" control={<Radio />} label="2" />
+            <FormControlLabel value="3" control={<Radio />} label="3" />
+            <FormControlLabel value="4" control={<Radio />} label="4" />
+            <FormControlLabel value="5" control={<Radio />} label="5" />
+          </RadioGroup>
+        </Box>
+        <Box mb={2}>
           <TextField
-            label="Feedback"
-            name="feedback"
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
+            label="Commentaires"
             variant="outlined"
+            value={comments}
+            onChange={(e) => setComments(e.target.value)}
+            fullWidth
             multiline
             rows={4}
-            fullWidth
           />
-          <Button type="submit" variant="contained" color="primary">Soumettre</Button>
         </Box>
+        <Button variant="contained" color="primary" type="submit">
+          Soumettre
+        </Button>
       </form>
     </Box>
   );
 };
 
-export default Evaluation;
+export default EvaluationForm;

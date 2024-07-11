@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, MenuItem, Snackbar, Alert } from '@mui/material';
+import { Box, Button, TextField, MenuItem, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import Header from '../../components/Header';
 import { directions, trainingData as initialTrainingData } from '../../data/mockData';
 import { DataGrid } from '@mui/x-data-grid';
@@ -21,6 +21,7 @@ const TrainingList = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -58,6 +59,7 @@ const TrainingList = () => {
       direction: '',
     });
     setEditMode(false);
+    setOpenDialog(false);
     setSnackbarMessage(editMode ? 'Training updated successfully' : 'Training added successfully');
     setSnackbarSeverity('success');
     setOpenSnackbar(true);
@@ -66,6 +68,7 @@ const TrainingList = () => {
   const handleEdit = (training) => {
     setFormData({ ...training });
     setEditMode(true);
+    setOpenDialog(true);
   };
 
   const handleDelete = (id) => {
@@ -157,50 +160,33 @@ const TrainingList = () => {
     setOpenSnackbar(false);
   };
 
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setEditMode(false);
+    setFormData({
+      id: '',
+      title: '',
+      type: '',
+      startDate: '',
+      endDate: '',
+      duration: '',
+      evaluationDate: '',
+      direction: '',
+    });
+  };
+
   return (
     <Box m="20px">
       <Header title="TRAINING LIST" subtitle="Liste des formations" />
 
-      <form onSubmit={handleFormSubmit}>
-        <Box display="flex" flexDirection="column" gap="10px" mb="20px">
-          <TextField label="Title" name="title" value={formData.title} onChange={handleInputChange} variant="outlined" required />
-          <TextField
-            select
-            label="Type"
-            name="type"
-            value={formData.type}
-            onChange={handleTypeChange}
-            variant="outlined"
-            required
-          >
-            <MenuItem value="Online">Online</MenuItem>
-            <MenuItem value="Offline">Offline</MenuItem>
-          </TextField>
-          <TextField label="Start Date" name="startDate" type="date" value={formData.startDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
-          <TextField label="End Date" name="endDate" type="date" value={formData.endDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
-          <TextField label="Evaluation Date" name="evaluationDate" type="date" value={formData.evaluationDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
-          <TextField
-            select
-            label="Direction"
-            name="direction"
-            value={formData.direction}
-            onChange={handleInputChange}
-            variant="outlined"
-            required
-          >
-            {directions.map((direction) => (
-              <MenuItem key={direction.value} value={direction.value}>
-                {direction.label}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Button type="submit" variant="contained" color="primary">
-            {editMode ? 'Update' : 'Add'}
-          </Button>
-        </Box>
-      </form>
-
       <Box mb="20px">
+        <Button variant="contained" color="primary" onClick={handleOpenDialog}>
+          Add Training
+        </Button>
         <Button variant="contained" color="primary" onClick={handleExportExcel}>
           Export to Excel
         </Button>
@@ -212,12 +198,59 @@ const TrainingList = () => {
         </label>
       </Box>
 
-      <Box height="400px">
+      <Box height="400px" mb="20px">
         <DataGrid rows={trainingData} columns={columns} pageSize={5} />
       </Box>
 
+      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="md">
+        <DialogTitle>{editMode ? 'Edit Training' : 'Add Training'}</DialogTitle>
+        <DialogContent>
+          <Box display="flex" flexDirection="column" gap="10px" mb="20px">
+            <TextField label="Title" name="title" value={formData.title} onChange={handleInputChange} variant="outlined" required />
+            <TextField
+              select
+              label="Type"
+              name="type"
+              value={formData.type}
+              onChange={handleTypeChange}
+              variant="outlined"
+              required
+            >
+              <MenuItem value="En ligne">En ligne</MenuItem>
+              <MenuItem value="En présentiel">En présentiel</MenuItem>
+            </TextField>
+            <TextField label="Start Date" name="startDate" type="date" value={formData.startDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
+            <TextField label="End Date" name="endDate" type="date" value={formData.endDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
+            <TextField label="Evaluation Date" name="evaluationDate" type="date" value={formData.evaluationDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
+            <TextField
+              select
+              label="Direction"
+              name="direction"
+              value={formData.direction}
+              onChange={handleInputChange}
+              variant="outlined"
+              required
+            >
+              {directions.map((dir) => (
+                <MenuItem key={dir.value} value={dir.value}>
+                  {dir.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleFormSubmit} color="primary">
+            {editMode ? 'Update' : 'Add'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
