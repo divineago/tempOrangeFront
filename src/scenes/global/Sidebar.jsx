@@ -136,6 +136,20 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+             <Item
+              title="test donnée api"
+              to="/mycomponent"
+              icon={<PeopleAltIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+             <Item
+              title="test donnée api"
+              to="/AddAgentForm"
+              icon={<PeopleAltIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
           </Box>
         </Menu>
       </ProSidebar>

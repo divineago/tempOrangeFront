@@ -12,6 +12,10 @@ import EffectifList from './scenes/effectif/EffectifList';
 import TrainingList from './scenes/training/TrainingList';
 import TrainingDashboard from './scenes/training/TrainingDashboard';
 import EffectifDashboard from './scenes/effectif/EffectifDashboard';
+import MyComponent from './components/MyComponent'; 
+import AddAgentForm from './components/AddAgentForm'; 
+
+
 import './index.css'; // Assurez-vous d'importer le fichier de styles
 
 function App() {
@@ -34,6 +38,9 @@ function App() {
                 <Route path="/traininglist" element={<TrainingList />} />
                 <Route path="/effectifdashboard" element={<EffectifDashboard />} />
                 <Route path="/trainingdashboard" element={<TrainingDashboard />} />
+                <Route path="/mycomponent" element={<MyComponent />} /> {/* Route pour MyComponent */}
+                <Route path="/AddAgentForm" element={<AddAgentForm />} /> 
+
               </Routes>
             </div>
           </main>
