@@ -86,3 +86,12 @@ body,
 .menu-item-hover:hover {
   background-color: #FF7900 !important;
 }
+/* Remove shadow behind icons */
+.menu-item-hover .menu-item-icon {
+  box-shadow: none !important;
+}
+
+/* Remove orange color on burger click */
+.sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-footer .pro-menu-item:focus {
+  background-color: none !important;
+}
