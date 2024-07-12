@@ -1,10 +1,8 @@
-// src/scenes/global/Sidebar.js
-import { useState } from "react";
+import React, { useState } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
-import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
@@ -12,15 +10,13 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   return (
     <MenuItem
       active={selected === title}
       className="menu-item-hover"
-      style={{ color: colors.grey[100] }}
       onClick={() => setSelected(title)}
       icon={icon}
+      style={{ color: "#fff", background: "#333" }} // Fixed style
     >
       <Typography>{title}</Typography>
       <Link to={to} />
@@ -29,8 +25,6 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 };
 
 const Sidebar = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
 
@@ -48,7 +42,7 @@ const Sidebar = () => {
             icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
             style={{
               margin: "10px 0 20px 0",
-              color: colors.primary[500],
+              color: "#007BFF", // Fixed color
             }}
           >
             {!isCollapsed && (
@@ -58,7 +52,7 @@ const Sidebar = () => {
                 alignItems="center"
                 ml="15px"
               >
-                <Typography variant="h3" color={colors.grey[100]}>
+                <Typography variant="h3" color="#fff">
                   HR Dashboard
                 </Typography>
                 <IconButton onClick={toggleSidebar}>
@@ -82,13 +76,13 @@ const Sidebar = () => {
               <Box textAlign="center">
                 <Typography
                   variant="h2"
-                  color={colors.grey[100]}
+                  color="#fff"
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
                   Ressources Humaines
                 </Typography>
-                <Typography variant="h5" color={colors.greenAccent[500]}>
+                <Typography variant="h5" color="#28A745">
                   Administrateur
                 </Typography>
               </Box>
@@ -98,7 +92,7 @@ const Sidebar = () => {
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <Typography
               variant="h6"
-              color={colors.grey[300]}
+              color="#6C757D"
               sx={{ m: "15px 0 5px 20px" }}
             >
               Formation
@@ -119,7 +113,7 @@ const Sidebar = () => {
             />
             <Typography
               variant="h6"
-              color={colors.grey[300]}
+              color="#6C757D"
               sx={{ m: "15px 0 5px 20px" }}
             >
               Effectif
@@ -135,6 +129,13 @@ const Sidebar = () => {
               title="Dashboard Effectif"
               to="/effectifdashboard"
               icon={<PeopleAltIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Evaluation"
+              to="/evaluation"
+              icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

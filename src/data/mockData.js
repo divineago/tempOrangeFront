@@ -126,6 +126,19 @@ export const initialTrainingData = [
   },
   // Add more training data as needed
 ];
+export const statusOptions = [
+  { value: 'local', label: 'Local' },
+  { value: 'expatrie', label: 'Expatrié' },
+  // Add more status options as needed
+];
+
+export const classificationOptions = [
+  { value: 'classifie', label: 'Classifié' },
+  { value: 'maitrise', label: 'Maitrise' },
+  { value: 'cadre_collaboration', label: 'Cadre de Collaboration' },
+  { value: 'cadre_direction', label: 'Cadre de Direction' },
+  // Add more classification options as needed
+];
 
 export const effectifList = [
   {
