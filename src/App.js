@@ -16,7 +16,7 @@ import NotificationPopup from './scenes/Form/NotificationPopup';
 import AdminView from './scenes/User/AdminView';
 import Login from './scenes/User/Login';
 import SignUpForm from './scenes/User/SignupForm';
-import EvaluationForm from './scenes/training/Evaluation';
+import Evaluation from './scenes/training/Evaluation';
 import TrainingCalendar from './scenes/training/TrainingCalendar';
 import RegistrationForm from './scenes/Form/RegistrationForm';
 import './index.css'; // Assurez-vous d'importer le fichier de styles
@@ -48,7 +48,7 @@ function App() {
                 <Route path="/register" element={isAuthenticated ? <RegistrationForm /> : <Navigate to="/login" />} />
                 <Route path="/notificationicon" element={isAuthenticated ? <NotificationIcon /> : <Navigate to="/login" />} />
                 <Route path="/notificationpopup" element={isAuthenticated ? <NotificationPopup /> : <Navigate to="/login" />} />
-                <Route path="/evaluation" element={isAuthenticated ? <EvaluationForm /> : <Navigate to="/login" />} />
+                <Route path="/evaluation" element={isAuthenticated ? <Evaluation /> : <Navigate to="/login" />} />
                 <Route path="/calendar" element={isAuthenticated ? <TrainingCalendar /> : <Navigate to="/login" />} />
                 <Route path="/admin" element={isAuthenticated ? <AdminView /> : <Navigate to="/login" />} />
               </Routes>

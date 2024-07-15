@@ -81,7 +81,12 @@ const Sidebar = ({ user }) => {
                   width="100px"
                   height="100px"
                   src={`${process.env.PUBLIC_URL}/assets/Ordc.png`}
-                  style={{ cursor: 'pointer', borderRadius: '50%' }}
+                  style={{ cursor: 'pointer', borderRadius: '50%', backgroundColor: '#ccc' }} // Added background color for debugging
+                  onError={(e) => {
+                    console.error("Image loading error:", e); // Log error to console
+                    e.target.onerror = null; // Prevent looping
+                    e.target.src = `${process.env.PUBLIC_URL}/assets/Ordc.png`; // Fallback image
+                  }}
                 />
               </Box>
               <Box textAlign="center">
@@ -106,7 +111,7 @@ const Sidebar = ({ user }) => {
               color="#6C757D"
               sx={{ m: '15px 0 5px 20px' }}
             >
-              Formation
+              {/* Empty Title */}
             </Typography>
             <Item
               title="Home"
@@ -115,6 +120,13 @@ const Sidebar = ({ user }) => {
               selected={selected}
               setSelected={setSelected}
             />
+            <Typography
+              variant="h6"
+              color="#6C757D"
+              sx={{ m: '15px 0 5px 20px' }}
+            >
+              Formation
+            </Typography>
             <Item
               title="Dashboard Formation"
               to="/trainingdashboard"
@@ -126,6 +138,13 @@ const Sidebar = ({ user }) => {
               title="Training List"
               to="/traininglist"
               icon={<ListAltIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Evaluation"
+              to="/evaluation"
+              icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -150,13 +169,7 @@ const Sidebar = ({ user }) => {
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
-              title="Evaluation"
-              to="/evaluation"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            
             {!isAuthenticated && (
               <MenuItem onClick={handleOpenLogin} icon={<PersonOutlinedIcon />}>
                 <Typography>Login</Typography>

@@ -1,9 +1,11 @@
+// src/scenes/training/TrainingList.jsx
 import React, { useState } from 'react';
-import { Box, Button, TextField, MenuItem, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Box, Button, Snackbar, Alert } from '@mui/material';
 import Header from '../../components/Header';
-import { directions, trainingData as initialTrainingData } from '../../data/mockData';
+import { trainingData as initialTrainingData } from '../../data/mockData';
 import { DataGrid } from '@mui/x-data-grid';
 import * as XLSX from 'xlsx';
+import TrainingForm from './TrainingForm';
 
 const TrainingList = () => {
   const [trainingData, setTrainingData] = useState(initialTrainingData);
@@ -146,10 +148,10 @@ const TrainingList = () => {
       renderCell: (params) => (
         <>
           <Button variant="outlined" color="primary" size="small" onClick={() => handleEdit(params.row)}>
-            Edit
+            Modifier
           </Button>
           <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)}>
-            Delete
+            Supprimer
           </Button>
         </>
       ),
@@ -166,89 +168,43 @@ const TrainingList = () => {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setEditMode(false);
-    setFormData({
-      id: '',
-      title: '',
-      type: '',
-      startDate: '',
-      endDate: '',
-      duration: '',
-      evaluationDate: '',
-      direction: '',
-    });
   };
 
   return (
     <Box m="20px">
-      <Header title="TRAINING LIST" subtitle="Liste des formations" />
-
-      <Box mb="20px">
-        <Button variant="contained" color="primary" onClick={handleOpenDialog}>
-          Add Training
+      <Header title="Training List" subtitle="Liste de toutes les formations" />
+      <Box m="10px 0">
+        <Button variant="contained" color="primary" onClick={handleOpenDialog} style={{ marginLeft: '5px' }}>
+          Ajouter formation
         </Button>
-        <Button variant="contained" color="primary" onClick={handleExportExcel}>
-          Export to Excel
+        <Button variant="contained" color="primary" onClick={handleExportExcel} style={{ marginLeft: '5px' }}>
+          Exporter vers Excel
         </Button>
-        <input type="file" accept=".xlsx, .xls" onChange={handleImportExcel} style={{ display: 'none' }} id="upload-excel-training" />
-        <label htmlFor="upload-excel-training">
-          <Button variant="contained" color="secondary" component="span">
-            Import from Excel
+        <input
+          accept=".xlsx, .xls"
+          style={{ display: 'none' }}
+          id="import-excel"
+          type="file"
+          onChange={handleImportExcel}
+        />
+        <label htmlFor="import-excel">
+          <Button variant="contained" component="span" style={{ marginLeft: '5px' }}>
+            Importer vers Excel
           </Button>
         </label>
       </Box>
-
-      <Box height="400px" mb="20px">
-        <DataGrid rows={trainingData} columns={columns} pageSize={5} />
+      <Box height="70vh">
+        <DataGrid rows={trainingData} columns={columns} pageSize={100} rowsPerPageOptions={[100]} />
       </Box>
-
-      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="md">
-        <DialogTitle>{editMode ? 'Edit Training' : 'Add Training'}</DialogTitle>
-        <DialogContent>
-          <Box display="flex" flexDirection="column" gap="10px" mb="20px">
-            <TextField label="Title" name="title" value={formData.title} onChange={handleInputChange} variant="outlined" required />
-            <TextField
-              select
-              label="Type"
-              name="type"
-              value={formData.type}
-              onChange={handleTypeChange}
-              variant="outlined"
-              required
-            >
-              <MenuItem value="En ligne">En ligne</MenuItem>
-              <MenuItem value="En présentiel">En présentiel</MenuItem>
-            </TextField>
-            <TextField label="Start Date" name="startDate" type="date" value={formData.startDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
-            <TextField label="End Date" name="endDate" type="date" value={formData.endDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
-            <TextField label="Evaluation Date" name="evaluationDate" type="date" value={formData.evaluationDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
-            <TextField
-              select
-              label="Direction"
-              name="direction"
-              value={formData.direction}
-              onChange={handleInputChange}
-              variant="outlined"
-              required
-            >
-              {directions.map((dir) => (
-                <MenuItem key={dir.value} value={dir.value}>
-                  {dir.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleFormSubmit} color="primary">
-            {editMode ? 'Update' : 'Add'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
+      <TrainingForm
+        formData={formData}
+        handleInputChange={handleInputChange}
+        handleTypeChange={handleTypeChange}
+        handleFormSubmit={handleFormSubmit}
+        openDialog={openDialog}
+        handleCloseDialog={handleCloseDialog}
+        editMode={editMode}
+      />
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
           {snackbarMessage}
