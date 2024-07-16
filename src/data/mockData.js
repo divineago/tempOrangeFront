@@ -2,6 +2,7 @@
 
 export const employeurs = [
   { value: "Orange", label: "ORANGE" },
+  { value: "OM", label: "ORANGE MONEY" },
   { value: "Itm", label: "ITM" },
   { value: "Bnw", label: "BENSIZWE" },
 ];
@@ -124,6 +125,19 @@ export const initialTrainingData = [
     days: 6,
   },
   // Add more training data as needed
+];
+export const statusOptions = [
+  { value: 'local', label: 'Local' },
+  { value: 'expatrie', label: 'Expatrié' },
+  // Add more status options as needed
+];
+
+export const classificationOptions = [
+  { value: 'classifie', label: 'Classifié' },
+  { value: 'maitrise', label: 'Maitrise' },
+  { value: 'cadre_collaboration', label: 'Cadre de Collaboration' },
+  { value: 'cadre_direction', label: 'Cadre de Direction' },
+  // Add more classification options as needed
 ];
 
 export const effectifList = [

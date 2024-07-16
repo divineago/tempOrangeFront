@@ -1,26 +1,37 @@
-import React, { useState } from 'react';
-import { Box, Button, TextField, MenuItem, Snackbar, Alert } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, TextField, MenuItem, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import Header from '../../components/Header';
-import { directions, trainingData as initialTrainingData } from '../../data/mockData';
 import { DataGrid } from '@mui/x-data-grid';
 import * as XLSX from 'xlsx';
+import { fetchDataFromAPI } from '../../api';
 
 const TrainingList = () => {
-  const [trainingData, setTrainingData] = useState(initialTrainingData);
+  const [trainingData, setTrainingData] = useState([]);
   const [formData, setFormData] = useState({
     id: '',
-    title: '',
-    type: '',
-    startDate: '',
-    endDate: '',
-    duration: '',
-    evaluationDate: '',
-    direction: '',
+    titre: '',
+    date_debut: '',
+    date_fin: '',
+    stream: '',
+    mode: '',
+    categorie: '',
+    description: '',
+    cible: '',
   });
   const [editMode, setEditMode] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [openDialog, setOpenDialog] = useState(false);
+
+  useEffect(() => {
+    fetchTrainingData(); 
+  }, []);
+
+  const fetchTrainingData = async () => {
+    const data = await fetchDataFromAPI('/formation/formation/'); 
+    setTrainingData(data.results); // Mettre à jour l'état avec les données reçues depuis l'API
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -32,7 +43,7 @@ const TrainingList = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    if (new Date(formData.endDate) < new Date(formData.startDate)) {
+    if (new Date(formData.date_fin) < new Date(formData.date_debut)) {
       setSnackbarMessage('End date cannot be before start date');
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
@@ -40,24 +51,26 @@ const TrainingList = () => {
     }
     if (editMode) {
       const updatedList = trainingData.map((training) =>
-        training.id === formData.id ? { ...formData, duration: calculateDuration(formData.startDate, formData.endDate) } : training
+        training.id === formData.id ? { ...formData, duration: calculateDuration(formData.date_debut, formData.date_fin) } : training
       );
       setTrainingData(updatedList);
     } else {
-      const newTraining = { ...formData, id: trainingData.length + 1, duration: calculateDuration(formData.startDate, formData.endDate) };
+      const newTraining = { ...formData, id: trainingData.length + 1, duration: calculateDuration(formData.date_debut, formData.date_fin) };
       setTrainingData([...trainingData, newTraining]);
     }
     setFormData({
       id: '',
-      title: '',
-      type: '',
-      startDate: '',
-      endDate: '',
-      duration: '',
-      evaluationDate: '',
-      direction: '',
+      titre: '',
+      date_debut: '',
+      date_fin: '',
+      stream: '',
+      mode: '',
+      categorie: '',
+      description: '',
+      cible: '',
     });
     setEditMode(false);
+    setOpenDialog(false);
     setSnackbarMessage(editMode ? 'Training updated successfully' : 'Training added successfully');
     setSnackbarSeverity('success');
     setOpenSnackbar(true);
@@ -66,6 +79,7 @@ const TrainingList = () => {
   const handleEdit = (training) => {
     setFormData({ ...training });
     setEditMode(true);
+    setOpenDialog(true);
   };
 
   const handleDelete = (id) => {
@@ -81,7 +95,7 @@ const TrainingList = () => {
   const handleTypeChange = (event) => {
     setFormData((prev) => ({
       ...prev,
-      type: event.target.value,
+      stream: event.target.value,
     }));
   };
 
@@ -129,13 +143,14 @@ const TrainingList = () => {
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'title', headerName: 'Title', width: 150 },
-    { field: 'type', headerName: 'Type', width: 150 },
-    { field: 'startDate', headerName: 'Start Date', width: 150 },
-    { field: 'endDate', headerName: 'End Date', width: 150 },
-    { field: 'duration', headerName: 'Duration (Days)', width: 130 },
-    { field: 'evaluationDate', headerName: 'Evaluation Date', width: 150 },
-    { field: 'direction', headerName: 'Direction', width: 150 },
+    { field: 'titre', headerName: 'Titre', width: 150 },
+    { field: 'date_debut', headerName: 'Date Début', width: 150 },
+    { field: 'date_fin', headerName: 'Date Fin', width: 150 },
+    { field: 'stream', headerName: 'Stream', width: 150 },
+    { field: 'mode', headerName: 'Mode', width: 150 },
+    { field: 'categorie', headerName: 'Categorie', width: 150 },
+    { field: 'description', headerName: 'Description', width: 200 },
+    { field: 'cible', headerName: 'Cible', width: 150 },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -157,50 +172,34 @@ const TrainingList = () => {
     setOpenSnackbar(false);
   };
 
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setEditMode(false);
+    setFormData({
+      id: '',
+      titre: '',
+      date_debut: '',
+      date_fin: '',
+      stream: '',
+      mode: '',
+      categorie: '',
+      description: '',
+      cible: '',
+    });
+  };
+
   return (
     <Box m="20px">
       <Header title="TRAINING LIST" subtitle="Liste des formations" />
 
-      <form onSubmit={handleFormSubmit}>
-        <Box display="flex" flexDirection="column" gap="10px" mb="20px">
-          <TextField label="Title" name="title" value={formData.title} onChange={handleInputChange} variant="outlined" required />
-          <TextField
-            select
-            label="Type"
-            name="type"
-            value={formData.type}
-            onChange={handleTypeChange}
-            variant="outlined"
-            required
-          >
-            <MenuItem value="Online">Online</MenuItem>
-            <MenuItem value="Offline">Offline</MenuItem>
-          </TextField>
-          <TextField label="Start Date" name="startDate" type="date" value={formData.startDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
-          <TextField label="End Date" name="endDate" type="date" value={formData.endDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
-          <TextField label="Evaluation Date" name="evaluationDate" type="date" value={formData.evaluationDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
-          <TextField
-            select
-            label="Direction"
-            name="direction"
-            value={formData.direction}
-            onChange={handleInputChange}
-            variant="outlined"
-            required
-          >
-            {directions.map((direction) => (
-              <MenuItem key={direction.value} value={direction.value}>
-                {direction.label}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Button type="submit" variant="contained" color="primary">
-            {editMode ? 'Update' : 'Add'}
-          </Button>
-        </Box>
-      </form>
-
       <Box mb="20px">
+        <Button variant="contained" color="primary" onClick={handleOpenDialog}>
+          Add Training
+        </Button>
         <Button variant="contained" color="primary" onClick={handleExportExcel}>
           Export to Excel
         </Button>
@@ -212,12 +211,61 @@ const TrainingList = () => {
         </label>
       </Box>
 
-      <Box height="400px">
+      <Box height="400px" mb="20px">
         <DataGrid rows={trainingData} columns={columns} pageSize={5} />
       </Box>
 
+      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="md">
+        <DialogTitle>{editMode ? 'Edit Training' : 'Add Training'}</DialogTitle>
+        <DialogContent>
+          <Box display="flex" flexDirection="column" gap="10px" mb="20px">
+            <TextField label="Titre" 
+            name="titre"
+            value={formData.titre}
+            onChange={handleInputChange} 
+            variant="outlined"
+             required 
+             />
+            <TextField
+              select
+              label="Stream"
+              name="stream"
+              value={formData.stream}
+              onChange={handleTypeChange}
+              variant="outlined"
+              required
+            >
+              
+            </TextField>
+            <TextField
+              select
+              label="Mode"
+              name="mode"
+              value={formData.mode}
+              onChange={handleTypeChange}
+              variant="outlined"
+              required
+            >
+              
+            </TextField>
+            <TextField label="Start Date" name="startDate" type="date" value={formData.startDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
+            <TextField label="End Date" name="endDate" type="date" value={formData.endDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
+            <TextField label="Evaluation Date" name="evaluationDate" type="date" value={formData.evaluationDate} onChange={handleInputChange} variant="outlined" required InputLabelProps={{ shrink: true }} />
+           
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleFormSubmit} color="primary">
+            {editMode ? 'Update' : 'Add'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
