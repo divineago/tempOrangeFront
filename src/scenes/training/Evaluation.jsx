@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Button, Menu, MenuItem, Typography, Paper } from '@mui/material';
+import { Container, Button, Menu, MenuItem, Typography, Paper, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import EvaluationEfficacite from './EvaluationEfficacite';
 import Evaluationchaud from './Evaluationchaud';
@@ -11,19 +11,30 @@ const Evaluation = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedForm, setSelectedForm] = useState(null);
   const [data, setData] = useState(evaluationData);
+  const [open, setOpen] = useState(false);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (type) => {
+  const handleCloseMenu = () => {
     setAnchorEl(null);
+  };
+
+  const handleOpenForm = (type) => {
     setSelectedForm(type);
+    setOpen(true);
+    handleCloseMenu();
+  };
+
+  const handleCloseForm = () => {
+    setOpen(false);
+    setSelectedForm(null);
   };
 
   const handleSave = (newEvaluation) => {
     setData((prevData) => [...prevData, { ...newEvaluation, id: prevData.length + 1 }]);
-    setSelectedForm(null);
+    handleCloseForm();
   };
 
   const columns = [
@@ -55,13 +66,25 @@ const Evaluation = () => {
         <Button variant="contained" color="primary" onClick={handleClick}>
           Sélectionner le type d'évaluation
         </Button>
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => handleClose(null)}>
-          <MenuItem onClick={() => handleClose('Efficacité')}>Évaluation d'Efficacité</MenuItem>
-          <MenuItem onClick={() => handleClose('à Chaud')}>Évaluation à Chaud</MenuItem>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
+          <MenuItem onClick={() => handleOpenForm('Efficacité')}>Évaluation d'Efficacité</MenuItem>
+          <MenuItem onClick={() => handleOpenForm('à Chaud')}>Évaluation à Chaud</MenuItem>
         </Menu>
       </Paper>
-      {selectedForm === 'Efficacité' && <EvaluationEfficacite onSave={handleSave} />}
-      {selectedForm === 'à Chaud' && <Evaluationchaud onSave={handleSave} />}
+
+      <Dialog open={open} onClose={handleCloseForm} fullWidth maxWidth="md">
+        <DialogTitle>{selectedForm === 'Efficacité' ? "Évaluation d'Efficacité" : "Évaluation à Chaud"}</DialogTitle>
+        <DialogContent>
+          {selectedForm === 'Efficacité' && <EvaluationEfficacite onSave={handleSave} />}
+          {selectedForm === 'à Chaud' && <Evaluationchaud onSave={handleSave} />}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseForm} color="secondary">
+            Annuler
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Paper elevation={3} sx={{ height: 400, marginTop: 2 }}>
         <DataGrid rows={data} columns={columns} pageSize={5} rowsPerPageOptions={[5]} />
       </Paper>
