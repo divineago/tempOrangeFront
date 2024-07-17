@@ -6,7 +6,7 @@ import { directions } from '../../data/mockData';
 const TrainingForm = ({ formData, handleInputChange, handleTypeChange, handleFormSubmit, openDialog, handleCloseDialog, editMode }) => {
   return (
     <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="md">
-      <DialogTitle>{editMode ? 'Edit Training' : 'Add Training'}</DialogTitle>
+      <DialogTitle>{editMode ? 'Modifier Formation' : 'Ajouter Formation'}</DialogTitle>
       <DialogContent>
         <Box display="flex" flexDirection="column" gap="10px" mb="20px">
           <TextField label="Title" name="title" value={formData.title} onChange={handleInputChange} variant="outlined" required />

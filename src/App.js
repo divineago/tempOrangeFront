@@ -10,7 +10,6 @@ import EffectifList from './scenes/effectif/EffectifList';
 import TrainingList from './scenes/training/TrainingList';
 import TrainingDashboard from './scenes/training/TrainingDashboard';
 import EffectifDashboard from './scenes/effectif/EffectifDashboard';
-import FormComponent from './scenes/Form/FormComponent';
 import NotificationIcon from './scenes/Form/NotificationIcon';
 import NotificationPopup from './scenes/Form/NotificationPopup';
 import AdminView from './scenes/User/AdminView';
@@ -18,7 +17,6 @@ import Login from './scenes/User/Login';
 import SignUpForm from './scenes/User/SignupForm';
 import Evaluation from './scenes/training/Evaluation';
 import TrainingCalendar from './scenes/training/TrainingCalendar';
-import RegistrationForm from './scenes/Form/RegistrationForm';
 import './index.css'; // Assurez-vous d'importer le fichier de styles
 
 function App() {
@@ -39,13 +37,11 @@ function App() {
                 <Route path="/signup" element={<SignUpForm />} />
                 <Route path="/" element={isAuthenticated ? <TrainingDashboard /> : <Navigate to="/login" />} />
                 <Route path="/trainingform" element={isAuthenticated ? <TrainingForm /> : <Navigate to="/login" />} />
-                <Route path="/trainingform" element={isAuthenticated ? <FormComponent /> : <Navigate to="/login" />} />
                 <Route path="/trainingprogress" element={isAuthenticated ? <TrainingProgress /> : <Navigate to="/login" />} />
                 <Route path="/effectiflist" element={isAuthenticated ? <EffectifList /> : <Navigate to="/login" />} />
                 <Route path="/traininglist" element={isAuthenticated ? <TrainingList /> : <Navigate to="/login" />} />
                 <Route path="/effectifdashboard" element={isAuthenticated ? <EffectifDashboard /> : <Navigate to="/login" />} />
-                <Route path="/trainingdashboard" element={isAuthenticated ? <TrainingDashboard /> : <Navigate to="/login" />} />
-                <Route path="/register" element={isAuthenticated ? <RegistrationForm /> : <Navigate to="/login" />} />
+                <Route path="/trainingdashboard" element={isAuthenticated ? <TrainingDashboard /> : <Navigate to="/login" />} />   
                 <Route path="/notificationicon" element={isAuthenticated ? <NotificationIcon /> : <Navigate to="/login" />} />
                 <Route path="/notificationpopup" element={isAuthenticated ? <NotificationPopup /> : <Navigate to="/login" />} />
                 <Route path="/evaluation" element={isAuthenticated ? <Evaluation /> : <Navigate to="/login" />} />
