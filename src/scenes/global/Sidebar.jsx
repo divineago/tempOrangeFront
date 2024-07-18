@@ -80,12 +80,12 @@ const Sidebar = ({ user }) => {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src={`${process.env.PUBLIC_URL}/assets/Ordc.png`}
+                  src={`${process.env.PUBLIC_URL}/assets/user.png`}
                   style={{ cursor: 'pointer', borderRadius: '50%', backgroundColor: '#ccc' }} // Added background color for debugging
                   onError={(e) => {
                     console.error("Image loading error:", e); // Log error to console
                     e.target.onerror = null; // Prevent looping
-                    e.target.src = `${process.env.PUBLIC_URL}/assets/Ordc.png`; // Fallback image
+                    e.target.src = `${process.env.PUBLIC_URL}/assets/user.png`; // Fallback image
                   }}
                 />
               </Box>

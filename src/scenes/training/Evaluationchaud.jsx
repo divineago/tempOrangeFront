@@ -47,6 +47,8 @@ const Evaluationchaud = ({ onSave }) => {
 
   return (
     <form onSubmit={handleSubmit}>
+    <b>(1)Pas bien, (2)Un peu Bien, (3)Bien, (4)Très bien, (5)Excellent</b> <br/>
+    <br/>
       <Typography variant="body1">1. Le contenu de la formation était-il clair et compréhensible ?</Typography>
       <RadioGroup name="question1" value={formData.question1} onChange={handleChange}>
         <FormControlLabel value="1" control={<Radio />} label="1" />
@@ -126,7 +128,7 @@ const Evaluationchaud = ({ onSave }) => {
         <FormControlLabel value="4" control={<Radio />} label="4" />
         <FormControlLabel value="5" control={<Radio />} label="5" />
       </RadioGroup>
-    
+       
       <Typography variant="body1">Commentaires</Typography>
       <TextField
         name="commentaires"
@@ -139,6 +141,7 @@ const Evaluationchaud = ({ onSave }) => {
       <Button type="submit" variant="contained" color="primary">
         Enregistrer
       </Button>
+      
     </form>
   );
 };

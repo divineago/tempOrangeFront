@@ -1,8 +1,7 @@
-// src/scenes/training/TrainingList.jsx
 import React, { useState } from 'react';
 import { Box, Button, Snackbar, Alert } from '@mui/material';
 import Header from '../../components/Header';
-import { trainingData as initialTrainingData } from '../../data/mockData';
+import { trainingData as initialTrainingData, trainingTypes } from '../../data/mockData';
 import { DataGrid } from '@mui/x-data-grid';
 import * as XLSX from 'xlsx';
 import TrainingForm from './TrainingForm';
@@ -204,6 +203,7 @@ const TrainingList = () => {
         openDialog={openDialog}
         handleCloseDialog={handleCloseDialog}
         editMode={editMode}
+        trainingTypes={trainingTypes}
       />
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>

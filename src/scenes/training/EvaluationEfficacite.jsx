@@ -31,6 +31,8 @@ const EvaluationEfficacite = ({ onSave }) => {
 
   return (
     <form onSubmit={handleSubmit}>
+      <b>(1)Pas bien, (2)Un peu Bien, (3)Bien, (4)Très bien, (5)Excellent</b> <br/>
+         <br/>
       <Typography variant="body1">1. La formation a-t-elle amélioré vos compétences professionnelles ?</Typography>
       <RadioGroup name="question1" value={formData.question1} onChange={handleChange}>
         <FormControlLabel value="1" control={<Radio />} label="1" />
