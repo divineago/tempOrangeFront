@@ -8,7 +8,7 @@ import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import Login from '../User/Login'; // Assurez-vous que le chemin vers le fichier Login est correct
+import Login from '../User/Login';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   return (
@@ -17,7 +17,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
       className="menu-item-hover"
       onClick={() => setSelected(title)}
       icon={icon}
-      style={{ color: '#fff', background: 'none' }} // Removed shadow
+      style={{ color: '#fff', background: 'none' }}
     >
       <Typography>{title}</Typography>
       <Link to={to} />
@@ -25,11 +25,11 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
   );
 };
 
-const Sidebar = ({ user }) => {
+const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState('Dashboard');
-  const [openLogin, setOpenLogin] = useState(false); // État pour gérer l'ouverture du formulaire de connexion
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // État pour gérer l'authentification
+  const [openLogin, setOpenLogin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -52,8 +52,8 @@ const Sidebar = ({ user }) => {
             icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
             style={{
               margin: '10px 0 20px 0',
-              color: '#007BFF', // Fixed color
-              background: 'none', // Remove background on click
+              color: '#007BFF',
+              background: 'none',
             }}
           >
             {!isCollapsed && (
@@ -73,35 +73,28 @@ const Sidebar = ({ user }) => {
             )}
           </MenuItem>
 
-          {!isCollapsed && user && (
-            <Box mb="25px">
+          {!isCollapsed && (
+            <Box mb="25px" textAlign="center">
               <Box display="flex" justifyContent="center" alignItems="center">
                 <img
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src={`${process.env.PUBLIC_URL}/assets/user.png`}
-                  style={{ cursor: 'pointer', borderRadius: '50%', backgroundColor: '#ccc' }} // Added background color for debugging
-                  onError={(e) => {
-                    console.error("Image loading error:", e); // Log error to console
-                    e.target.onerror = null; // Prevent looping
-                    e.target.src = `${process.env.PUBLIC_URL}/assets/user.png`; // Fallback image
-                  }}
+                  src={`../../assets/Ordc.png`}
+                  style={{ cursor: 'pointer', borderRadius: '50%' }}
                 />
               </Box>
-              <Box textAlign="center">
-                <Typography
-                  variant="h2"
-                  color="#fff"
-                  fontWeight="bold"
-                  sx={{ m: '10px 0 0 0' }}
-                >
-                  {user.name}
-                </Typography>
-                <Typography variant="h5" color="#28A745">
-                  {user.role}
-                </Typography>
-              </Box>
+              <Typography
+                variant="h2"
+                color="#fff"
+                fontWeight="bold"
+                sx={{ m: '10px 0 0 0' }}
+              >
+                {/* Add user's name here */}
+              </Typography>
+              <Typography variant="h5" color="#28A745">
+                {/* Add user's role or additional info here */}
+              </Typography>
             </Box>
           )}
 
@@ -111,7 +104,7 @@ const Sidebar = ({ user }) => {
               color="#6C757D"
               sx={{ m: '15px 0 5px 20px' }}
             >
-              {/* Empty Title */}
+              {/* Optional section title */}
             </Typography>
             <Item
               title="Home"
@@ -169,7 +162,13 @@ const Sidebar = ({ user }) => {
               selected={selected}
               setSelected={setSelected}
             />
-            
+            <Item
+              title="Planning"
+              to="/calendar"
+              icon={<ListAltIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
             {!isAuthenticated && (
               <MenuItem onClick={handleOpenLogin} icon={<PersonOutlinedIcon />}>
                 <Typography>Login</Typography>
@@ -179,7 +178,7 @@ const Sidebar = ({ user }) => {
         </Menu>
       </ProSidebar>
       <Box className="footer">&copy; {new Date().getFullYear()} ORDC</Box>
-      
+
       <Modal
         open={openLogin}
         onClose={handleCloseLogin}

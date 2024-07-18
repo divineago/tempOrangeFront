@@ -10,7 +10,6 @@ import EffectifList from './scenes/effectif/EffectifList';
 import TrainingList from './scenes/training/TrainingList';
 import TrainingDashboard from './scenes/training/TrainingDashboard';
 import EffectifDashboard from './scenes/effectif/EffectifDashboard';
-import NotificationIcon from './scenes/Form/NotificationIcon';
 import NotificationPopup from './scenes/Form/NotificationPopup';
 import AdminView from './scenes/User/AdminView';
 import Login from './scenes/User/Login';
@@ -35,14 +34,12 @@ function App() {
               <Routes>
                 <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
                 <Route path="/signup" element={<SignUpForm />} />
-                <Route path="/" element={isAuthenticated ? <TrainingDashboard /> : <Navigate to="/login" />} />
+                <Route path="/trainingdashboard" element={isAuthenticated ? <TrainingDashboard /> : <Navigate to="/login" />} />
                 <Route path="/trainingform" element={isAuthenticated ? <TrainingForm /> : <Navigate to="/login" />} />
                 <Route path="/trainingprogress" element={isAuthenticated ? <TrainingProgress /> : <Navigate to="/login" />} />
                 <Route path="/effectiflist" element={isAuthenticated ? <EffectifList /> : <Navigate to="/login" />} />
                 <Route path="/traininglist" element={isAuthenticated ? <TrainingList /> : <Navigate to="/login" />} />
                 <Route path="/effectifdashboard" element={isAuthenticated ? <EffectifDashboard /> : <Navigate to="/login" />} />
-                <Route path="/trainingdashboard" element={isAuthenticated ? <TrainingDashboard /> : <Navigate to="/login" />} />   
-                <Route path="/notificationicon" element={isAuthenticated ? <NotificationIcon /> : <Navigate to="/login" />} />
                 <Route path="/notificationpopup" element={isAuthenticated ? <NotificationPopup /> : <Navigate to="/login" />} />
                 <Route path="/evaluation" element={isAuthenticated ? <Evaluation /> : <Navigate to="/login" />} />
                 <Route path="/calendar" element={isAuthenticated ? <TrainingCalendar /> : <Navigate to="/login" />} />
