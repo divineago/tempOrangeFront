@@ -11,22 +11,26 @@ const MyComponent = () => {
     const fetchAgents = async () => {
       try {
         const response = await fetchDataFromAPI(`/effectif/agent/?page=${currentPage}`);
-        console.log('API response:', response);
-        if (response && response.results) {
-          setAgents(response.results);
-          setTotalPages(response.total_pages);
+        console.log('Réponse de API :', response);
+        
+        if (response.data && response.data.results) { // Vérifiez response.data.results
+          setAgents(response.data.results); // Définir le tableau d'agents
+          setTotalPages(response.data.total_pages); // Définir le nombre total de pages
         } else {
-          console.error('API response does not contain valid results:', response);
+          console.error('La réponse de API ne contient pas de résultats valides :', response);
         }
-        setLoading(false);
+        
+        setLoading(false); // Définir loading à false quel que soit le succès ou l'échec
       } catch (error) {
-        console.error('Error fetching agents:', error);
-        setLoading(false);
+        console.error('Erreur lors de la récupération des agents :', error);
+        setLoading(false); // Définir loading à false en cas d'erreur
       }
     };
-
-    fetchAgents();
+  
+    fetchAgents(); // Appeler fetchAgents au montage du composant ou lorsque currentPage change
   }, [currentPage]);
+  
+  
 
   const handleNextPage = () => {
     setCurrentPage(prevPage => prevPage + 1);

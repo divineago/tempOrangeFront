@@ -21,17 +21,17 @@ body,
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #FF7900;
+  background: #444;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #FF7900;
+  background: #444;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF7900;
+  background: #444;
 }
 
 .sidebar {
@@ -39,7 +39,7 @@ body,
   left: 0;
   top: 0;
   width: 250px;
-  height: 100%;
+  height: 150%;
   background-color: #FF7900;
   overflow: auto;
   z-index: 1000;
@@ -85,4 +85,13 @@ body,
 }
 .menu-item-hover:hover {
   background-color: #FF7900 !important;
+}
+/* Remove shadow behind icons */
+.menu-item-hover .menu-item-icon {
+  box-shadow: none !important;
+}
+
+/* Remove orange color on burger click */
+.sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-footer .pro-menu-item:focus {
+  background-color: none !important;
 }
