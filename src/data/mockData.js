@@ -267,3 +267,58 @@ export const initialEffectifData = [
   },
   // Ajoutez plus d'effectifs initiaux au besoin
 ];
+export const mockData = {
+  totalAgents: 676,
+  trainingParticipation: {
+    inPerson: 44,
+    eLearning: 220,
+    total: 676,
+  },
+  directions: [
+    { name: 'Direction Commercial et Marketing B2B', total: 33, notTrained: 10, trained: 23, inPerson: 5, eLearning: 18 },
+    { name: 'Direction de Ventes & Distribution grand public', total: 56, notTrained: 20, trained: 36, inPerson: 10, eLearning: 26 },
+    { name: 'Direction Générale', total: 12, notTrained: 3, trained: 9, inPerson: 2, eLearning: 7 },
+    { name: 'Direction Financière', total: 40, notTrained: 15, trained: 25, inPerson: 8, eLearning: 17 },
+    { name: 'Direction Stratégie et Transformation', total: 30, notTrained: 10, trained: 20, inPerson: 5, eLearning: 15 },
+    { name: 'Direction des Ressources Humaines', total: 25, notTrained: 8, trained: 17, inPerson: 4, eLearning: 13 },
+    { name: 'Direction Expérience Client', total: 50, notTrained: 18, trained: 32, inPerson: 12, eLearning: 20 },
+    { name: 'Direction Achats et Logistique', total: 35, notTrained: 12, trained: 23, inPerson: 7, eLearning: 16 },
+    { name: 'Direction Juridique & Affaires Réglementaires', total: 22, notTrained: 6, trained: 16, inPerson: 3, eLearning: 13 },
+    { name: 'Direction Marketing & Communication B2C', total: 45, notTrained: 16, trained: 29, inPerson: 9, eLearning: 20 },
+    { name: 'Orange Money', total: 20, notTrained: 5, trained: 15, inPerson: 4, eLearning: 11 },
+    { name: 'DRSI', total: 38, notTrained: 12, trained: 26, inPerson: 8, eLearning: 18 },
+    { name: 'GRAND KATANGA', total: 32, notTrained: 10, trained: 22, inPerson: 6, eLearning: 16 },
+    { name: 'GRAND KASAI', total: 28, notTrained: 9, trained: 19, inPerson: 5, eLearning: 14 },
+    { name: 'GRAND KIVU', total: 24, notTrained: 8, trained: 16, inPerson: 4, eLearning: 12 },
+    { name: 'GRAND NORD', total: 26, notTrained: 7, trained: 19, inPerson: 5, eLearning: 14 },
+    { name: 'KONGO CENTRAL', total: 18, notTrained: 5, trained: 13, inPerson: 3, eLearning: 10 },
+    { name: 'KINSHASA', total: 70, notTrained: 25, trained: 45, inPerson: 15, eLearning: 30 },
+  ],
+  donutDataEffectif: {
+    labels: ['BENSIZWE', 'ITM', 'ORDC'],
+    datasets: [
+      {
+        data: [272, 140, 264],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+      },
+    ],
+  },
+  donutDataFormation: {
+    labels: ['Total Formations Hors E-Learning', 'Total Formations E-Learning'],
+    datasets: [
+      {
+        data: [44, 220],
+        backgroundColor: ['#FF6384', '#FFCE56'],
+      },
+    ],
+  },
+  donutDataParticipation: {
+    labels: ['Aucune Participation', 'Au Moins Une Participation'],
+    datasets: [
+      {
+        data: [676, 0],
+        backgroundColor: ['#FF6384', '#FFCE56'],
+      },
+    ],
+  },
+};

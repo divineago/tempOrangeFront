@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { ColorModeContext, useMode } from './theme';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Sidebar from './scenes/global/Sidebar';
 import Topbar from './scenes/global/Topbar';
 import TrainingForm from './scenes/training/TrainingForm';
@@ -20,30 +20,29 @@ import './index.css'; // Assurez-vous d'importer le fichier de styles
 
 function App() {
   const [theme, colorMode] = useMode();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          {isAuthenticated && <Sidebar />}
+          <Sidebar />
           <main className="content">
-            {isAuthenticated && <Topbar />}
+            <Topbar />
             <div className="main-content">
               <Routes>
-                <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUpForm />} />
-                <Route path="/trainingdashboard" element={isAuthenticated ? <TrainingDashboard /> : <Navigate to="/login" />} />
-                <Route path="/trainingform" element={isAuthenticated ? <TrainingForm /> : <Navigate to="/login" />} />
-                <Route path="/trainingprogress" element={isAuthenticated ? <TrainingProgress /> : <Navigate to="/login" />} />
-                <Route path="/effectiflist" element={isAuthenticated ? <EffectifList /> : <Navigate to="/login" />} />
-                <Route path="/traininglist" element={isAuthenticated ? <TrainingList /> : <Navigate to="/login" />} />
-                <Route path="/effectifdashboard" element={isAuthenticated ? <EffectifDashboard /> : <Navigate to="/login" />} />
-                <Route path="/notificationpopup" element={isAuthenticated ? <NotificationPopup /> : <Navigate to="/login" />} />
-                <Route path="/evaluation" element={isAuthenticated ? <Evaluation /> : <Navigate to="/login" />} />
-                <Route path="/calendar" element={isAuthenticated ? <TrainingCalendar /> : <Navigate to="/login" />} />
-                <Route path="/admin" element={isAuthenticated ? <AdminView /> : <Navigate to="/login" />} />
+                <Route path="/trainingdashboard" element={<TrainingDashboard />} />
+                <Route path="/trainingform" element={<TrainingForm />} />
+                <Route path="/trainingprogress" element={<TrainingProgress />} />
+                <Route path="/effectiflist" element={<EffectifList />} />
+                <Route path="/traininglist" element={<TrainingList />} />
+                <Route path="/effectifdashboard" element={<EffectifDashboard />} />
+                <Route path="/notificationpopup" element={<NotificationPopup />} />
+                <Route path="/evaluation" element={<Evaluation />} />
+                <Route path="/calendar" element={<TrainingCalendar />} />
+                <Route path="/admin" element={<AdminView />} />
               </Routes>
             </div>
           </main>

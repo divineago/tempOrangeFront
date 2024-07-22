@@ -1,54 +1,12 @@
 import React, { useState } from 'react';
-import { Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { Pie } from 'react-chartjs-2';
+import { Grid, FormControl, InputLabel, Select, MenuItem, Typography, Box } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { mockData } from '../../data/mockData';
 
 const TrainingDashboard = () => {
-  const [filters, setFilters] = useState({ filterName: '' });
-
-  const data = {
-    totalAgents: 676,
-    trainingParticipation: {
-      inPerson: 44,
-      eLearning: 220,
-      total: 676,
-    },
-    directions: [
-      { name: 'Direction Commercial et Marketing B2B', total: 33, notTrained: 33, trained: 0, inPerson: 0, eLearning: 0 },
-      { name: 'Direction de Ventes & Distribution grand public', total: 56, notTrained: 0, trained: 56, inPerson: 0, eLearning: 0 },
-      // Add other directions...
-    ],
-  };
-
-  const pieDataEffectif = {
-    labels: ['BENSIZWE', 'ITM', 'ORDC'],
-    datasets: [
-      {
-        data: [272, 140, 264],
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-      },
-    ],
-  };
-
-  const pieDataFormation = {
-    labels: ['Total Formations Hors E-Learning', 'Total Formations E-Learning'],
-    datasets: [
-      {
-        data: [44, 220],
-        backgroundColor: ['#FF6384', '#FFCE56'],
-      },
-    ],
-  };
-
-  const pieDataParticipation = {
-    labels: ['Aucune Participation', 'Au Moins Une Participation'],
-    datasets: [
-      {
-        data: [676, 0],
-        backgroundColor: ['#FF6384', '#FFCE56'],
-      },
-    ],
-  };
+  const [filters, setFilters] = useState({ direction: '' });
 
   const handleChange = (event) => {
     setFilters({
@@ -57,86 +15,85 @@ const TrainingDashboard = () => {
     });
   };
 
+  // Ajout d'un id unique à chaque direction
+  const directionsWithId = mockData.directions.map((direction, index) => ({
+    id: index + 1, // Assurez-vous que cet id est unique pour chaque direction
+    ...direction
+  }));
+
+  const filteredDirections = filters.direction
+    ? directionsWithId.filter((direction) => direction.name === filters.direction)
+    : directionsWithId;
+
+  const columns = [
+    { field: 'name', headerName: 'Direction', width: 150 },
+    { field: 'total', headerName: 'Total', width: 100 },
+    { field: 'notTrained', headerName: 'Pas Formés', width: 150 },
+    { field: 'trained', headerName: 'Formés', width: 100 },
+    { field: 'inPerson', headerName: 'Hors E-Learning', width: 150 },
+    { field: 'eLearning', headerName: 'E-Learning', width: 150 },
+  ];
+
   return (
     <div>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <FormControl variant="outlined" style={{ minWidth: 200, marginRight: 20 }}>
-            <InputLabel>Filter Name</InputLabel>
+      <Typography variant="h4" gutterBottom>
+        Tableau de bord de la formation
+      </Typography>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} sm={6} md={4}>
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel>Direction</InputLabel>
             <Select
-              name="filterName"
-              value={filters.filterName}
+              name="direction"
+              value={filters.direction}
               onChange={handleChange}
-              label="Filter Name"
+              label="Direction"
             >
-              <MenuItem value=""><em>None</em></MenuItem>
-              <MenuItem value="value1">Value 1</MenuItem>
-              <MenuItem value="value2">Value 2</MenuItem>
+              <MenuItem value=""><em>Toutes les directions</em></MenuItem>
+              {mockData.directions.map((direction, index) => (
+                <MenuItem key={index} value={direction.name}>{direction.name}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
         <Grid item xs={12} md={4}>
-          <div className="total-agents">
-            <h2>TOTAL AGENTS</h2>
-            <p>{data.totalAgents}</p>
-          </div>
+          <Typography variant="h6">TOTAL AGENTS</Typography>
+          <Typography variant="body1">{mockData.totalAgents}</Typography>
         </Grid>
         <Grid item xs={12} md={4}>
-          <div className="training-participation">
-            <h2>FORMATION EN HORS E-LEARNING</h2>
-            <p>{data.trainingParticipation.inPerson}</p>
-            <h2>FORMATION E-LEARNING</h2>
-            <p>{data.trainingParticipation.eLearning}</p>
-          </div>
+          <Typography variant="h6">FORMATION EN HORS E-LEARNING</Typography>
+          <Typography variant="body1">{mockData.trainingParticipation.inPerson}</Typography>
+          <Typography variant="h6">FORMATION E-LEARNING</Typography>
+          <Typography variant="body1">{mockData.trainingParticipation.eLearning}</Typography>
         </Grid>
         <Grid item xs={12} md={4}>
-          <div className="overall-participation">
-            <h2>PARTICIPATION GLOBALE</h2>
-            <p>{data.trainingParticipation.total}</p>
-          </div>
-        </Grid>
-        <Grid item xs={12}>
-          <div className="directions-table">
-            <h2>DIRECTIONS</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Direction</th>
-                  <th>Total</th>
-                  <th>Pas Formés</th>
-                  <th>Formés</th>
-                  <th>Hors E-Learning</th>
-                  <th>E-Learning</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.directions.map((direction, index) => (
-                  <tr key={index}>
-                    <td>{direction.name}</td>
-                    <td>{direction.total}</td>
-                    <td>{direction.notTrained}</td>
-                    <td>{direction.trained}</td>
-                    <td>{direction.inPerson}</td>
-                    <td>{direction.eLearning}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <h3>Graphique sur l'effectif</h3>
-          <Pie data={pieDataEffectif} />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <h3>Graphique des formations en présentiel et par E-learning</h3>
-          <Pie data={pieDataFormation} />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <h3>Graphique sur la participation aux formations</h3>
-          <Pie data={pieDataParticipation} />
+          <Typography variant="h6">PARTICIPATION GLOBALE</Typography>
+          <Typography variant="body1">{mockData.trainingParticipation.total}</Typography>
         </Grid>
       </Grid>
+      <Typography variant="h6" style={{ marginTop: '20px' }}>DIRECTIONS</Typography>
+      <div style={{ height: 400, width: '100%' }}>
+        <DataGrid
+          rows={filteredDirections}
+          columns={columns}
+          pageSize={5}
+          rowsPerPageOptions={[5, 10, 20]}
+        />
+      </div>
+      <Box display="flex" justifyContent="space-between" mt={4}>
+        <Box width="30%">
+          <Typography variant="h6">Effectif par Employeur</Typography>
+          <Doughnut data={mockData.donutDataEffectif} options={{ maintainAspectRatio: false }} width={200} height={200} />
+        </Box>
+        <Box width="30%">
+          <Typography variant="h6">Formations par Type</Typography>
+          <Doughnut data={mockData.donutDataFormation} options={{ maintainAspectRatio: false }} width={200} height={200} />
+        </Box>
+        <Box width="30%">
+          <Typography variant="h6">Participation aux Formations</Typography>
+          <Doughnut data={mockData.donutDataParticipation} options={{ maintainAspectRatio: false }} width={200} height={200} />
+        </Box>
+      </Box>
     </div>
   );
 };

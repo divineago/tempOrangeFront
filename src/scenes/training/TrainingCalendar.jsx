@@ -2,77 +2,128 @@ import React, { useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Box, Button, Modal, TextField, Typography } from '@mui/material'; 
-
-// Configurer moment en français
-import 'moment/locale/fr';
-moment.locale('fr');
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 
 const localizer = momentLocalizer(moment);
 
-const messages = {
-  allDay: 'Toute la journée',
-  previous: 'Précédent',
-  next: 'Suivant',
-  today: "Aujourd'hui",
-  month: 'Mois',
-  week: 'Semaine',
-  day: 'Jour',
-  agenda: 'Agenda',
-  date: 'Date',
-  time: 'Heure',
-  event: 'Événement',
-  showMore: total => `+ ${total} plus`,
-};
+const events = [
+  // Exemple de données d'événements
+  {
+    title: 'Formation A',
+    start: new Date(2024, 6, 10),
+    end: new Date(2024, 6, 15),
+    evaluation: new Date(2024, 6, 17)
+  },
+  {
+    title: 'Formation B',
+    start: new Date(2024, 6, 20),
+    end: new Date(2024, 6, 25),
+    evaluation: new Date(2024, 6, 27)
+  },
+];
 
 const TrainingCalendar = () => {
-  const [events, setEvents] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [start, setStart] = useState('');
-  const [end, setEnd] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newEvent, setNewEvent] = useState({
+    title: '',
+    start: '',
+    end: '',
+    evaluation: ''
+  });
 
-  const handleSelect = ({ start, end }) => {
-    setStart(start);
-    setEnd(end);
-    setOpen(true);
+  const handleOpenDialog = () => setOpenDialog(true);
+  const handleCloseDialog = () => setOpenDialog(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewEvent({ ...newEvent, [name]: value });
   };
 
-  const handleSubmit = () => {
-    setEvents([...events, { title, start, end }]);
-    setOpen(false);
+  const handleAddEvent = () => {
+    events.push({
+      title: newEvent.title,
+      start: new Date(newEvent.start),
+      end: new Date(newEvent.end),
+      evaluation: new Date(newEvent.evaluation)
+    });
+    setOpenDialog(false);
+    setNewEvent({ title: '', start: '', end: '', evaluation: '' });
   };
 
   return (
-    <Box p={2}>
-      <Typography variant="h4" gutterBottom>
-        Calendrier des formations
-      </Typography>
-      <Calendar
-        localizer={localizer}
-        events={events}
-        selectable
-        onSelectSlot={handleSelect}
-        style={{ height: 500 }}
-        messages={messages} // Ajouter les messages en français
-      />
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <Box p={4} bgcolor="white" margin="auto" borderRadius={4}>
-          <Typography variant="h6" gutterBottom>
-            Ajouter une formation
-          </Typography>
+    <Box m="20px">
+      <Button variant="contained" color="primary" onClick={handleOpenDialog}>
+        Add Training
+      </Button>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Add Training</DialogTitle>
+        <DialogContent>
           <TextField
-            label="Titre"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            margin="dense"
+            label="Title"
+            name="title"
+            value={newEvent.title}
+            onChange={handleInputChange}
             fullWidth
-            required
           />
-          <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ mt: 2 }}>
-            Ajouter
+          <TextField
+            margin="dense"
+            label="Start Date"
+            name="start"
+            type="date"
+            value={newEvent.start}
+            onChange={handleInputChange}
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="End Date"
+            name="end"
+            type="date"
+            value={newEvent.end}
+            onChange={handleInputChange}
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Evaluation Date"
+            name="evaluation"
+            type="date"
+            value={newEvent.evaluation}
+            onChange={handleInputChange}
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
           </Button>
-        </Box>
-      </Modal>
+          <Button onClick={handleAddEvent} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Box mt="20px" height="600px">
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 600 }}
+          views={['month', 'week', 'day', 'agenda']}
+        />
+      </Box>
     </Box>
   );
 };
