@@ -23,25 +23,25 @@ const Topbar = () => {
         <IconButton component={Link} to="/">
           <HomeOutlinedIcon />
           <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
-            Home
+            {/*  Home  */}
           </Typography>
         </IconButton>
         <IconButton component={Link} to="/trainingdashboard">
           <ListAltIcon />
           <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
-            Training
+             {/*  Training */}
           </Typography>
         </IconButton>
         <IconButton component={Link} to="/effectifdashboard">
           <PeopleAltIcon />
           <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
-            Effectif
+        {/*  effectifdashboard*/}
           </Typography>
         </IconButton>
         <IconButton component={Link} to="/calendar">
           <CalendarTodayOutlinedIcon />
           <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
-            Planning
+           {/*  calendar*/}
           </Typography>
         </IconButton>
       </Box>
