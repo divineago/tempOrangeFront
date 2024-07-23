@@ -29,7 +29,6 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState('Dashboard');
   const [openLogin, setOpenLogin] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -185,11 +184,9 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            {!isAuthenticated && (
-              <MenuItem onClick={handleOpenLogin} icon={<PersonOutlinedIcon />}>
-                <Typography>Login</Typography>
-              </MenuItem>
-            )}
+            <MenuItem onClick={handleOpenLogin} icon={<PersonOutlinedIcon />}>
+              <Typography>Login</Typography>
+            </MenuItem>
           </Box>
         </Menu>
       </ProSidebar>
@@ -214,7 +211,7 @@ const Sidebar = () => {
             p: 4,
           }}
         >
-          <Login setIsAuthenticated={setIsAuthenticated} />
+          <Login />
         </Box>
       </Modal>
     </Box>

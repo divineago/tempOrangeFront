@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { ColorModeContext, useMode } from './theme';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Sidebar from './scenes/global/Sidebar';
 import Topbar from './scenes/global/Topbar';
 import TrainingForm from './scenes/training/TrainingForm';
@@ -20,7 +20,6 @@ import './index.css'; // Assurez-vous d'importer le fichier de styles
 
 function App() {
   const [theme, colorMode] = useMode();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -28,23 +27,23 @@ function App() {
         <CssBaseline />
         <div className="app">
           {<Sidebar />}
+          <Sidebar />
           <main className="content">
-            {<Topbar />}
+            <Topbar />
             <div className="main-content">
-              <Routes>                                    
-                <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-                <Route path="/trainingdashboard" element={ <TrainingDashboard /> } />
-                <Route path="/trainingform" element={ <TrainingForm /> } />
-                <Route path="/trainingprogress" element={ <TrainingProgress /> } />
-                <Route path="/effectiflist" element={ <EffectifList /> } />
-                <Route path="/traininglist" element={ <TrainingList /> } />
-                <Route path="/effectifdashboard" element={ <EffectifDashboard /> } />
-                <Route path="/notificationpopup" element={ <NotificationPopup /> } />
-                <Route path="/evaluation" element={ <Evaluation /> } />
-                <Route path="/calendar" element={ <TrainingCalendar /> } />
-                <Route path="/admin" element={ <AdminView /> } />
-                <Route path="/mycomponent" element={<MyComponent />} /> {/* Route pour MyComponent */}
-
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUpForm />} />
+                <Route path="/trainingdashboard" element={<TrainingDashboard />} />
+                <Route path="/trainingform" element={<TrainingForm />} />
+                <Route path="/trainingprogress" element={<TrainingProgress />} />
+                <Route path="/effectiflist" element={<EffectifList />} />
+                <Route path="/traininglist" element={<TrainingList />} />
+                <Route path="/effectifdashboard" element={<EffectifDashboard />} />
+                <Route path="/notificationpopup" element={<NotificationPopup />} />
+                <Route path="/evaluation" element={<Evaluation />} />
+                <Route path="/calendar" element={<TrainingCalendar />} />
+                <Route path="/admin" element={<AdminView />} />
               </Routes>
             </div>
           </main>
