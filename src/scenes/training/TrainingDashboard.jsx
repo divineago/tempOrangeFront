@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Grid, FormControl, InputLabel, Select, MenuItem, Typography, Box } from '@mui/material';
+import { Grid, FormControl, InputLabel, Select, MenuItem, Typography, Box, Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { Doughnut } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { mockData } from '../../data/mockData';
+import * as XLSX from 'xlsx';
+
 
 const TrainingDashboard = () => {
   const [filters, setFilters] = useState({ direction: '' });
@@ -15,9 +17,8 @@ const TrainingDashboard = () => {
     });
   };
 
-  // Ajout d'un id unique à chaque direction
   const directionsWithId = mockData.directions.map((direction, index) => ({
-    id: index + 1, // Assurez-vous que cet id est unique pour chaque direction
+    id: index + 1, // Ensure each id is unique
     ...direction
   }));
 
@@ -34,8 +35,17 @@ const TrainingDashboard = () => {
     { field: 'eLearning', headerName: 'E-Learning', width: 150 },
   ];
 
+  const downloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredDirections);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Directions');
+    XLSX.writeFile(workbook, 'training_dashboard.xlsx');
+  };
+
+
+
   return (
-    <div>
+    <div id="training-dashboard">
       <Typography variant="h4" gutterBottom>
         Tableau de bord de la formation
       </Typography>
@@ -71,6 +81,20 @@ const TrainingDashboard = () => {
           <Typography variant="body1">{mockData.trainingParticipation.total}</Typography>
         </Grid>
       </Grid>
+      <Box display="flex" justifyContent="space-between" mt={4} sx={{ '& > *': { flex: 1, margin: '0 10px' } }}>
+        <Box>
+          <Typography variant="h6">Effectif par Employeur</Typography>
+          <Pie data={mockData.donutDataEffectif} options={{ maintainAspectRatio: false }} />
+        </Box>
+        <Box>
+          <Typography variant="h6">Formations par Type</Typography>
+          <Pie data={mockData.donutDataFormation} options={{ maintainAspectRatio: false }} />
+        </Box>
+        <Box>
+          <Typography variant="h6">Participation aux Formations</Typography>
+          <Pie data={mockData.donutDataParticipation} options={{ maintainAspectRatio: false }} />
+        </Box>
+      </Box>
       <Typography variant="h6" style={{ marginTop: '20px' }}>DIRECTIONS</Typography>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
@@ -80,19 +104,10 @@ const TrainingDashboard = () => {
           rowsPerPageOptions={[5, 10, 20]}
         />
       </div>
-      <Box display="flex" justifyContent="space-between" mt={4}>
-        <Box width="30%">
-          <Typography variant="h6">Effectif par Employeur</Typography>
-          <Doughnut data={mockData.donutDataEffectif} options={{ maintainAspectRatio: false }} width={200} height={200} />
-        </Box>
-        <Box width="30%">
-          <Typography variant="h6">Formations par Type</Typography>
-          <Doughnut data={mockData.donutDataFormation} options={{ maintainAspectRatio: false }} width={200} height={200} />
-        </Box>
-        <Box width="30%">
-          <Typography variant="h6">Participation aux Formations</Typography>
-          <Doughnut data={mockData.donutDataParticipation} options={{ maintainAspectRatio: false }} width={200} height={200} />
-        </Box>
+      <Box mt={2} display="flex" justifyContent="space-between">
+        <Button variant="contained" color="primary" onClick={downloadExcel}>
+          Télécharger en Excel
+        </Button>
       </Box>
     </div>
   );
