@@ -1,175 +1,143 @@
 import React, { useState } from 'react';
-import { Box, TextField, MenuItem, Typography, Card, CardContent, Grid } from '@mui/material';
-import { PieChart } from '@mui/x-charts/PieChart';
-import { BarChart } from '@mui/x-charts/BarChart';
-import Header from '../../components/Header';
-import { directions, employeurs } from '../../data/mockData';
-
-const sampleTrainingCategories = [
-  { value: 'leadership', label: 'Formation Leadership' },
-  { value: 'projectManagement', label: 'Gestion de Projet' },
-  { value: 'webDevelopment', label: 'Développement Web' },
-  { value: 'digitalMarketing', label: 'Marketing Digital' },
-];
+import { Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Pie } from 'react-chartjs-2';
+import 'chart.js/auto';
 
 const TrainingDashboard = () => {
-  const [filters, setFilters] = useState({
-    employeur: '',
-    direction: '',
-    trainingCategory: '',
-  });
+  const [filters, setFilters] = useState({ filterName: '' });
 
-  const handleFilterChange = (event) => {
-    const { name, value } = event.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const data = {
+    totalAgents: 676,
+    trainingParticipation: {
+      inPerson: 44,
+      eLearning: 220,
+      total: 676,
+    },
+    directions: [
+      { name: 'Direction Commercial et Marketing B2B', total: 33, notTrained: 33, trained: 0, inPerson: 0, eLearning: 0 },
+      { name: 'Direction de Ventes & Distribution grand public', total: 56, notTrained: 0, trained: 56, inPerson: 0, eLearning: 0 },
+      // Add other directions...
+    ],
   };
 
-  // Dummy data for training statistics
-  const trainingStats = {
-    leadership: { onlineTraining: 15, offlineTraining: 10, participants: 80, participationRate: '60%' },
-    projectManagement: { onlineTraining: 20, offlineTraining: 15, participants: 100, participationRate: '70%' },
-    webDevelopment: { onlineTraining: 25, offlineTraining: 20, participants: 120, participationRate: '75%' },
-    digitalMarketing: { onlineTraining: 30, offlineTraining: 25, participants: 150, participationRate: '80%' },
+  const pieDataEffectif = {
+    labels: ['BENSIZWE', 'ITM', 'ORDC'],
+    datasets: [
+      {
+        data: [272, 140, 264],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+      },
+    ],
   };
 
-  const currentStats = trainingStats[filters.trainingCategory] || {};
+  const pieDataFormation = {
+    labels: ['Total Formations Hors E-Learning', 'Total Formations E-Learning'],
+    datasets: [
+      {
+        data: [44, 220],
+        backgroundColor: ['#FF6384', '#FFCE56'],
+      },
+    ],
+  };
+
+  const pieDataParticipation = {
+    labels: ['Aucune Participation', 'Au Moins Une Participation'],
+    datasets: [
+      {
+        data: [676, 0],
+        backgroundColor: ['#FF6384', '#FFCE56'],
+      },
+    ],
+  };
+
+  const handleChange = (event) => {
+    setFilters({
+      ...filters,
+      [event.target.name]: event.target.value,
+    });
+  };
 
   return (
-    <Box m="20px">
-      <Header title="DASHBOARD DE FORMATION" subtitle="Vue d'ensemble des formations" />
-
-      <Box display="flex" justifyContent="space-between" mb="20px">
-        <TextField
-          select
-          label="Employeur"
-          name="employeur"
-          value={filters.employeur}
-          onChange={handleFilterChange}
-          variant="outlined"
-          sx={{ width: '30%', color: '#FF7900' }}
-        >
-          {employeurs.map((employeur) => (
-            <MenuItem key={employeur.value} value={employeur.value}>
-              {employeur.label}
-            </MenuItem>
-          ))}
-        </TextField>
-
-        <TextField
-          select
-          label="Direction"
-          name="direction"
-          value={filters.direction}
-          onChange={handleFilterChange}
-          variant="outlined"
-          sx={{ width: '30%', color: 'black' }}
-        >
-          {directions.map((direction) => (
-            <MenuItem key={direction.value} value={direction.value}>
-              {direction.label}
-            </MenuItem>
-          ))}
-        </TextField>
-
-        <TextField
-          select
-          label="Categorie de Formation"
-          name="trainingCategory"
-          value={filters.trainingCategory}
-          onChange={handleFilterChange}
-          variant="outlined"
-          sx={{ width: '30%', color: 'black' }}
-        >
-          {sampleTrainingCategories.map((category) => (
-            <MenuItem key={category.value} value={category.value}>
-              {category.label}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Box>
-
-      {filters.trainingCategory && (
-        <>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h5" sx={{ color: '#FF7900' }}>
-                    Formations Online
-                  </Typography>
-                  <Typography variant="h2">{currentStats.onlineTraining}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h5" sx={{ color: '#FF7900' }}>
-                    Formations Offline
-                  </Typography>
-                  <Typography variant="h2">{currentStats.offlineTraining}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h5" sx={{ color: '#FF7900' }}>
-                    Participants
-                  </Typography>
-                  <Typography variant="h2">{currentStats.participants}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h5" sx={{ color: '#FF7900' }}>
-                    Taux de participation
-                  </Typography>
-                  <Typography variant="h2">{currentStats.participationRate}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-
-          <Box mt="20px">
-            <Typography variant="h5" mb="10px">
-              Statistiques des Formations
-            </Typography>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <PieChart
-                  series={[
-                    {
-                      data: [
-                        { id: 0, value: 30, label: 'Formation Leadership' },
-                        { id: 1, value: 25, label: 'Gestion de Projet' },
-                        { id: 2, value: 20, label: 'Développement Web' },
-                        { id: 3, value: 25, label: 'Marketing Digital' },
-                      ],
-                    },
-                  ]}
-                  width={600}
-                  height={400}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <BarChart
-                  xAxis={[{ scaleType: 'band', data: ['Formation A', 'Formation B', 'Formation C'] }]}
-                  series={[{ data: [4, 3, 5] }, { data: [1, 6, 3] }, { data: [2, 5, 6] }]}
-                  width={600}
-                  height={400}
-                />
-              </Grid>
-            </Grid>
-          </Box>
-        </>
-      )}
-    </Box>
+    <div>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <FormControl variant="outlined" style={{ minWidth: 200, marginRight: 20 }}>
+            <InputLabel>Filter Name</InputLabel>
+            <Select
+              name="filterName"
+              value={filters.filterName}
+              onChange={handleChange}
+              label="Filter Name"
+            >
+              <MenuItem value=""><em>None</em></MenuItem>
+              <MenuItem value="value1">Value 1</MenuItem>
+              <MenuItem value="value2">Value 2</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <div className="total-agents">
+            <h2>TOTAL AGENTS</h2>
+            <p>{data.totalAgents}</p>
+          </div>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <div className="training-participation">
+            <h2>FORMATION EN HORS E-LEARNING</h2>
+            <p>{data.trainingParticipation.inPerson}</p>
+            <h2>FORMATION E-LEARNING</h2>
+            <p>{data.trainingParticipation.eLearning}</p>
+          </div>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <div className="overall-participation">
+            <h2>PARTICIPATION GLOBALE</h2>
+            <p>{data.trainingParticipation.total}</p>
+          </div>
+        </Grid>
+        <Grid item xs={12}>
+          <div className="directions-table">
+            <h2>DIRECTIONS</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Direction</th>
+                  <th>Total</th>
+                  <th>Pas Formés</th>
+                  <th>Formés</th>
+                  <th>Hors E-Learning</th>
+                  <th>E-Learning</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.directions.map((direction, index) => (
+                  <tr key={index}>
+                    <td>{direction.name}</td>
+                    <td>{direction.total}</td>
+                    <td>{direction.notTrained}</td>
+                    <td>{direction.trained}</td>
+                    <td>{direction.inPerson}</td>
+                    <td>{direction.eLearning}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <h3>Graphique sur l'effectif</h3>
+          <Pie data={pieDataEffectif} />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <h3>Graphique des formations en présentiel et par E-learning</h3>
+          <Pie data={pieDataFormation} />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <h3>Graphique sur la participation aux formations</h3>
+          <Pie data={pieDataParticipation} />
+        </Grid>
+      </Grid>
+    </div>
   );
 };
 

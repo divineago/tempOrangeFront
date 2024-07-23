@@ -8,15 +8,20 @@ body,
   height: 100%;
   width: 100%;
   font-family: "Source Sans Pro", sans-serif;
+  scroll-behavior: smooth;
 }
 
 .app {
   display: flex;
   position: relative;
+
+
 }
 
 ::-webkit-scrollbar {
   width: 10px;
+ 
+
 }
 
 /* Track */
@@ -42,12 +47,13 @@ body,
   height: 150%;
   background-color: #FF7900;
   overflow: auto;
-  z-index: 1000;
-  transition: background-color 0.3s ease;
+  z-index: 1;
+ 
+  
 }
 
 .sidebar:hover {
-  background-color: #FF7900;
+  background-color: #444;
 }
 
 .topbar {
@@ -71,6 +77,8 @@ body,
   padding: 20px;
   width: calc(100% - 250px);
   overflow-y: auto;
+
+
 }
 
 .footer {
@@ -94,4 +102,62 @@ body,
 /* Remove orange color on burger click */
 .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-footer .pro-menu-item:focus {
   background-color: none !important;
+}
+/* Media query pour les appareils de taille réduite */
+@media (max-width: 960px) {
+  .sidebar {
+    width: 80px; /* Réduire la largeur de la sidebar */
+  }
+
+  .topbar {
+    left: 80px; /* Déplacer la topbar vers la droite */
+  }
+
+  .content {
+    margin-left: 80px; /* Ajuster la marge à gauche du contenu */
+    width: calc(100% - 80px); 
+    position: fixed;/* Ajuster la largeur du contenu */
+  }
+
+  .footer {
+    left: 80px; /* Déplacer le footer vers la droite */
+  }
+
+  .sidebar .pro-sidebar-inner {
+    width: 80px; /* Ajuster la largeur du sidebar burger */
+  }
+
+  .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-header,
+  .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-footer {
+    display: none; /* Cacher l'en-tête et le footer du sidebar burger */
+  }
+
+  .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-content {
+    padding-top: 0; /* Ajuster le padding top du contenu du sidebar burger */
+  }
+
+  .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-menu {
+    padding-top: 60px; /* Ajuster le padding top du menu du sidebar burger */
+  }
+
+  .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-menu .pro-menu-item {
+    padding: 10px 0a; /* Ajuster le padding des éléments du menu du sidebar burger */
+  }
+
+  .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-menu .pro-menu-item-text {
+    display: contents; /* Cacher le texte des éléments du menu du sidebar burger */
+  }
+
+  .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-menu .pro-icon-wrapper {
+    padding: 10px; /* Ajuster le padding des icônes du sidebar burger */
+  }
+
+  .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-menu .pro-inner-item {
+    padding: 5px 0; /* Ajuster le padding des sous-éléments du sidebar burger */
+  } enu */
+  
+
+  .pro-burger-menu .pro-burger-icon {
+    color: #FFF; /* Couleur du burger icon */
+  }
 }

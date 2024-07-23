@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Box, Button, Snackbar, Alert } from '@mui/material';
 import Header from '../../components/Header';
-import { trainingData as initialTrainingData } from '../../data/mockData';
+import { trainingData as initialTrainingData, trainingTypes } from '../../data/mockData';
 import { DataGrid } from '@mui/x-data-grid';
 import * as XLSX from 'xlsx';
 import { fetchDataFromAPI } from '../../api'; 
@@ -13,7 +13,7 @@ const TrainingList = () => {
     id: '',
     titre: '',
     date_debut: '',
-    date_fin: '',
+    date_fin: '', 
     stream: '',
     mode: '',
     categorie: '',
@@ -32,10 +32,25 @@ const TrainingList = () => {
   }, []);
 
   const fetchTrainingData = async () => {
-    const data = await fetchDataFromAPI('/formation/formation/'); 
-    setTrainingData(data.results); 
+    try {
+      // Appel de l'API
+      const response = await fetchDataFromAPI('/formation/formation/');
+      console.log('Full response:', response); // Log de la réponse complète
+  
+      // Vérification du format des données
+      if (response.data && Array.isArray(response.data)) {
+        setTrainingData(response.data);
+      } else if (response.data && Array.isArray(response.data.results)) {
+        setTrainingData(response.data.results);
+      } else {
+        console.error('Invalid data format:', response);
+        setTrainingData([]); // Mise à jour de l'état avec un tableau vide si le format est incorrect
+      }
+    } catch (error) {
+      console.error('Error fetching training data:', error);
+      setTrainingData([]); // Mise à jour de l'état avec un tableau vide en cas d'erreur
+    }
   };
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
@@ -80,6 +95,7 @@ const TrainingList = () => {
   };
 
   const handleEdit = (training) => {
+    console.log('Editing training:', training); // Log 
     setFormData({ ...training });
     setEditMode(true);
     setOpenDialog(true);
@@ -206,16 +222,25 @@ const TrainingList = () => {
         openDialog={openDialog}
         handleCloseDialog={handleCloseDialog}
         editMode={editMode}
-      />
+      /> <Button variant="contained" color="primary" onClick={handleOpenDialog} style={{ marginLeft: '5px' }}>
+      ajouter formation
+    </Button>
         <Button variant="contained" color="primary" onClick={handleExportExcel} style={{ marginLeft: '5px' }}>
           Exporter vers Excel
         </Button>
-      
+        <input 
+          accept='.xlsx, .xls' 
+          style={{display: 'none'}} 
+          id='import-excel'
+          type='file'
+          onChange={handleImportExcel}
+        /> 
         <label htmlFor="import-excel">
           <Button variant="contained" component="span" style={{ marginLeft: '5px' }}>
             Importer vers Excel
           </Button>
         </label>
+        
       </Box>
       <Box height="70vh">
         <DataGrid rows={trainingData} columns={columns} pageSize={100} rowsPerPageOptions={[100]} />

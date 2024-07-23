@@ -9,7 +9,7 @@ import {
   DialogContent,
   DialogActions
 } from '@mui/material';
-import { fetchDataFromAPI, postDataToAPI } from '../../api';
+import { fetchDataFromAPI, postDataToAPI, updateDataToAPI } from '../../api';
 
 const initialFormData = {
   id: '',
@@ -23,40 +23,58 @@ const initialFormData = {
   cible: '',
 };
 
-const TrainingForm = () => {
+const TrainingForm = ({
+  formData: initialFormDataProp,
+  handleInputChange: handleInputChangeProp,
+  handleTypeChange,
+  handleFormSubmit,
+  openDialog,
+  handleCloseDialog,
+  editMode
+}) => {
   const [formData, setFormData] = useState(initialFormData);
-  const [openDialog, setOpenDialog] = useState(false);
   const [streamOptions, setStreamOptions] = useState([]);
   const [modeOptions, setModeOptions] = useState([]);
   const [categorieOptions, setCategorieOptions] = useState([]);
+  const [loading, setLoading] = useState(true); // Indicateur de chargement
+
+  useEffect(() => {
+    if (editMode && initialFormDataProp) {
+      setFormData(initialFormDataProp); // Met à jour les données du formulaire en mode édition
+    }
+  }, [editMode, initialFormDataProp]);
 
   useEffect(() => {
     const fetchTrainingData = async () => {
       try {
-        const response = await fetchDataFromAPI('/formation/formation/creer%20formation/');
+        const response = await fetchDataFromAPI('/formation/formation/get-form-choices/');
         const { stream, mode, categorie } = response.data;
+
+        console.log("API response data:", response.data); // Ajout d'un log pour vérifier la structure des données
 
         const transformChoices = (choices) => {
           return Array.isArray(choices)
             ? choices.map(choice => ({
-                value: choice[0],
-                label: choice[1],
+                value: choice.value,
+                label: choice.label,
               }))
             : [];
         };
 
-        setStreamOptions(transformChoices(stream?.choices || []));
-        setModeOptions(transformChoices(mode?.choices || []));
-        setCategorieOptions(transformChoices(categorie?.choices || []));
+        setStreamOptions(transformChoices(stream || []));
+        setModeOptions(transformChoices(mode || []));
+        setCategorieOptions(transformChoices(categorie || []));
+        setLoading(false); // Données chargées
       } catch (error) {
         console.error('Erreur lors du chargement des données de formation :', error);
+        setLoading(false); // En cas d'erreur, arrêtez le chargement
       }
     };
 
     fetchTrainingData();
   }, []);
 
-  const handleInputChange = (event) => {
+  const handleFormInputChange = (event) => {
     const { name, value } = event.target;
     setFormData(prevData => ({
       ...prevData,
@@ -64,51 +82,45 @@ const TrainingForm = () => {
     }));
   };
 
-  const handleFormSubmit = async () => {
+  const handleSubmit = async () => {
     try {
-      await postDataToAPI('/formation/formation/creer%20formation/', formData);
-      setOpenDialog(false);
+      if (editMode) {
+        await updateDataToAPI(`/formation/formation/${formData.id}/`, formData); // Mise à jour avec l'ID
+      } else {
+        await postDataToAPI('/formation/formation/creer%20formation/', formData); // Ajout
+      }
+      handleCloseDialog(); // Utilise la prop pour fermer la boîte de dialogue
       setFormData(initialFormData); // Réinitialise le formulaire après soumission
     } catch (error) {
-      console.error('Erreur lors de l\'ajout de la formation :', error);
+      console.error('Erreur lors de la soumission de la formation :', error);
     }
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
+  console.log("openDialog:", openDialog);
+  console.log("editMode:", editMode);
 
   return (
     <>
-      <Button onClick={handleOpenDialog} color="primary" variant="contained">
-        Ajouter Formation
-      </Button>
       <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="md">
-        <DialogTitle>Ajouter une formation</DialogTitle>
+        <DialogTitle>{editMode ? 'Modifier Formation' : 'Ajouter Formation'}</DialogTitle>
         <DialogContent>
           <Box display="flex" flexDirection="column" gap="10px" mb="20px">
             <TextField
               label="Titre"
               name="titre"
               value={formData.titre}
-              onChange={handleInputChange}
+              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
               variant="outlined"
-              required
             />
             <TextField
               select
               label="Stream"
               name="stream"
               value={formData.stream}
-              onChange={handleInputChange}
+              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
               variant="outlined"
-              required
             >
-              {streamOptions.length > 0 ? (
+              {!loading && streamOptions.length > 0 ? (
                 streamOptions.map(option => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
@@ -123,11 +135,10 @@ const TrainingForm = () => {
               label="Mode"
               name="mode"
               value={formData.mode}
-              onChange={handleInputChange}
+              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
               variant="outlined"
-              required
             >
-              {modeOptions.length > 0 ? (
+              {!loading && modeOptions.length > 0 ? (
                 modeOptions.map(option => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
@@ -142,11 +153,10 @@ const TrainingForm = () => {
               label="Catégorie"
               name="categorie"
               value={formData.categorie}
-              onChange={handleInputChange}
+              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
               variant="outlined"
-              required
             >
-              {categorieOptions.length > 0 ? (
+              {!loading && categorieOptions.length > 0 ? (
                 categorieOptions.map(option => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
@@ -160,14 +170,14 @@ const TrainingForm = () => {
               label="Description"
               name="description"
               value={formData.description}
-              onChange={handleInputChange}
+              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
               variant="outlined"
             />
             <TextField
               label="Cible"
               name="cible"
               value={formData.cible}
-              onChange={handleInputChange}
+              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
               variant="outlined"
             />
             <TextField
@@ -175,7 +185,7 @@ const TrainingForm = () => {
               name="date_debut"
               type="date"
               value={formData.date_debut}
-              onChange={handleInputChange}
+              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               required
@@ -185,7 +195,7 @@ const TrainingForm = () => {
               name="date_fin"
               type="date"
               value={formData.date_fin}
-              onChange={handleInputChange}
+              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               required
@@ -196,8 +206,8 @@ const TrainingForm = () => {
           <Button onClick={handleCloseDialog} color="secondary">
             Annuler
           </Button>
-          <Button onClick={handleFormSubmit} color="primary">
-            Ajouter
+          <Button onClick={handleSubmit} color="primary">
+            {editMode ? 'Modifier' : 'Ajouter'}
           </Button>
         </DialogActions>
       </Dialog>

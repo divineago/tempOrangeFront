@@ -11,7 +11,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import NotificationIcon from "../../scenes/Form/NotificationIcon";
+
 
 const Topbar = () => {
   const theme = useTheme();
@@ -34,7 +34,6 @@ const Topbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <NotificationIcon component={Link} to="/notificationicon" />
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton>

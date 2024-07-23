@@ -4,7 +4,26 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Box, Button, Modal, TextField, Typography } from '@mui/material'; 
 
+// Configurer moment en français
+import 'moment/locale/fr';
+moment.locale('fr');
+
 const localizer = momentLocalizer(moment);
+
+const messages = {
+  allDay: 'Toute la journée',
+  previous: 'Précédent',
+  next: 'Suivant',
+  today: "Aujourd'hui",
+  month: 'Mois',
+  week: 'Semaine',
+  day: 'Jour',
+  agenda: 'Agenda',
+  date: 'Date',
+  time: 'Heure',
+  event: 'Événement',
+  showMore: total => `+ ${total} plus`,
+};
 
 const TrainingCalendar = () => {
   const [events, setEvents] = useState([]);
@@ -35,6 +54,7 @@ const TrainingCalendar = () => {
         selectable
         onSelectSlot={handleSelect}
         style={{ height: 500 }}
+        messages={messages} // Ajouter les messages en français
       />
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box p={4} bgcolor="white" margin="auto" borderRadius={4}>
