@@ -1,19 +1,15 @@
-// src/scenes/global/Topbar.js
-
 import React from "react";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
-import {  tokens } from "../../theme";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+import { tokens } from "../../theme";
 
 const Topbar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
 
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center" p={2} className="topbar">
@@ -23,20 +19,30 @@ const Topbar = () => {
       </Typography>
 
       {/* ICONS */}
-      <Box display="flex">
-
-        <IconButton>
-          <SettingsOutlinedIcon />
+      <Box display="flex" alignItems="center">
+        <IconButton component={Link} to="/">
+          <HomeOutlinedIcon />
+          <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
+            {/*  Home  */}
+          </Typography>
+        </IconButton>
+        <IconButton component={Link} to="/trainingdashboard">
+          <ListAltIcon />
+          <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
+             {/*  Training */}
+          </Typography>
         </IconButton>
         <IconButton component={Link} to="/effectifdashboard">
           <PeopleAltIcon />
+          <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
+        {/*  effectifdashboard*/}
+          </Typography>
         </IconButton>
         <IconButton component={Link} to="/calendar">
-          <ListAltIcon />
-        </IconButton>
-        <IconButton component={Link} to="/trainingdashboard">
-          <HomeOutlinedIcon />
-        
+          <CalendarTodayOutlinedIcon />
+          <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
+           {/*  calendar*/}
+          </Typography>
         </IconButton>
       </Box>
     </Box>

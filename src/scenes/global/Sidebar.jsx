@@ -8,7 +8,8 @@ import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import Login from '../user/Login';  
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+import Login from '../user/Login';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   return (
@@ -27,7 +28,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selected, setSelected] = useState('Dashboard');
+  const [selected, setSelected] = useState('Home');
   const [openLogin, setOpenLogin] = useState(false);
 
   const toggleSidebar = () => {
@@ -107,7 +108,7 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Home"
-              to="/login"
+              to="/"
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -150,7 +151,7 @@ const Sidebar = () => {
             <Item
               title="Effectif List"
               to="/effectiflist"
-              icon={<PersonOutlinedIcon />}
+              icon={<PeopleAltIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -166,7 +167,7 @@ const Sidebar = () => {
             <Item
               title="Planning"
               to="/calendar"
-              icon={<ListAltIcon />}
+              icon={<CalendarTodayOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
