@@ -33,7 +33,6 @@ function App() {
             <div className="main-content">
               <Routes>
                 <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<SignUpForm />} />
                 <Route path="/trainingdashboard" element={<TrainingDashboard />} />
                 <Route path="/trainingform" element={<TrainingForm />} />
                 <Route path="/trainingprogress" element={<TrainingProgress />} />

@@ -161,26 +161,19 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-             <Item
-              title="test donnée api"
-              to="/mycomponent"
-              icon={<PeopleAltIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            
-            <Item
-              title="Evaluation"
-              to="/evaluation"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+          
             
             <Item
               title="Planning"
               to="/calendar"
               icon={<ListAltIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+             <Item
+              title="Login"
+              to="/login"
+              icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
