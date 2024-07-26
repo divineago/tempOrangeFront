@@ -297,6 +297,23 @@ export const initialEffectifData = [
   },
   // Ajoutez plus d'effectifs initiaux au besoin
 ];
+export const orangeInterns = {
+  total: 100,
+  male: 60,
+  female: 40,
+};
+
+export const orangeMoneyInterns = {
+  total: 50,
+  male: 30,
+  female: 20,
+};
+
+export const externals = {
+  total: 150,
+  male: 90,
+  female: 60,
+};
 export const mockData = {
   totalAgents: 676,
   trainingParticipation: {

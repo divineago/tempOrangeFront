@@ -9,6 +9,9 @@ import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined'; // Import de l'icône bloc-notes
 import Login from '../User/Login';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
@@ -123,7 +126,7 @@ const Sidebar = () => {
             <Item
               title="Dashboard Formation"
               to="/trainingdashboard"
-              icon={<ListAltIcon />}
+              icon={<AssessmentIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -137,14 +140,14 @@ const Sidebar = () => {
              <Item
               title="Participation"
               to="/trainingparticipation"
-              icon={<ListAltIcon />}
+              icon={<AssignmentIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Evaluation"
               to="/evaluation"
-              icon={<PersonOutlinedIcon />}
+              icon={<AssignmentTurnedInOutlinedIcon />} // Utilisation de l'icône bloc-notes
               selected={selected}
               setSelected={setSelected}
             />
@@ -165,7 +168,7 @@ const Sidebar = () => {
             <Item
               title="Dashboard Effectif"
               to="/effectifdashboard"
-              icon={<PeopleAltIcon />}
+              icon={<AssessmentIcon />}
               selected={selected}
               setSelected={setSelected}
             />

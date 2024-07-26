@@ -1,168 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import { Box, TextField, MenuItem, Grid, Typography } from '@mui/material';
-import Header from '../../components/Header';
-import { directions, genderOptions, agePyramid, statusOptions, initialEffectifData } from '../../data/mockData';
-import { BarChart, Bar, PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, CartesianGrid, XAxis, YAxis } from 'recharts';
+import React from 'react';
+import { Grid, Card, CardContent, Typography, Box } from '@mui/material';
+import { orangeInterns, orangeMoneyInterns, externals } from '../../data/mockData'; // Assurez-vous que le chemin est correct
 
 const EffectifDashboard = () => {
-  const [effectifData, setEffectifData] = useState(initialEffectifData);
-  const [filters, setFilters] = useState({
-    direction: '',
-    gender: '',
-    ageGroup: '',
-    status: '',
-  });
-
-  const [filteredData, setFilteredData] = useState(initialEffectifData);
-
-  useEffect(() => {
-    let filtered = initialEffectifData;
-
-    if (filters.direction) {
-      filtered = filtered.filter(item => item.directionId === filters.direction);
-    }
-    if (filters.gender) {
-      filtered = filtered.filter(item => item.gender === filters.gender);
-    }
-    if (filters.ageGroup) {
-      // Add age group filtering logic here
-    }
-    if (filters.status) {
-      filtered = filtered.filter(item => item.status === filters.status);
-    }
-
-    setFilteredData(filtered);
-  }, [filters]);
-
-  const handleFilterChange = (event) => {
-    const { name, value } = event.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const renderBarChart = (data, xKey, yKey, title) => (
-    <Box mb="20px">
-      <Typography variant="h6">{title}</Typography>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey={xKey} />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey={yKey} fill="#8884d8">
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </Box>
-  );
-
-  const renderPieChart = (data, dataKey, nameKey, title) => (
-    <Box mb="20px">
-      <Typography variant="h6">{title}</Typography>
-      <ResponsiveContainer width="100%" height={300}>
-        <PieChart>
-          <Pie data={data} dataKey={dataKey} nameKey={nameKey} fill="#8884d8" label>
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
-    </Box>
+  const renderWidget = (title, value, color) => (
+    <Card sx={{ minWidth: 275, backgroundColor: color }}>
+      <CardContent>
+        <Typography variant="h5" component="div">
+          {title}
+        </Typography>
+        <Typography variant="h3">
+          {value}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 
   return (
-    <Box m="20px">
-      <Header title="Tableau de Bord de l'Effectif" subtitle="Statistiques de l'Effectif des Agents" />
-
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          {renderBarChart(filteredData, 'directionId', 'count', 'Effectif par Direction')}
-          {renderPieChart(filteredData, 'count', 'gender', 'Répartition par Genre')}
+    <Box p={3}>
+      <Typography variant="h4" gutterBottom>
+        Effectif Dashboard
+      </Typography>
+      <Grid container spacing={2}>
+        {/* Internes Orange Section */}
+        <Grid item xs={12}>
+          <Typography variant="h6">LES INTERNES ORANGE</Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={3}>
+              {renderWidget('Total Internes', orangeInterns.total, '#FF7F50')}
+            </Grid>
+            <Grid item xs={3}>
+              {renderWidget('Hommes', orangeInterns.male, '#FFA07A')}
+            </Grid>
+            <Grid item xs={3}>
+              {renderWidget('Femmes', orangeInterns.female, '#FF6347')}
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
-          {renderBarChart(agePyramid, 'ageGroup', 'count', 'Pyramide des Âges')}
-          {renderPieChart(filteredData, 'count', 'status', 'Répartition par Statut')}
+
+        {/* Internes Orange Money Section */}
+        <Grid item xs={12}>
+          <Typography variant="h6">LES INTERNES ORANGE MONEY</Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={3}>
+              {renderWidget('Total Internes', orangeMoneyInterns.total, '#FF7F50')}
+            </Grid>
+            <Grid item xs={3}>
+              {renderWidget('Hommes', orangeMoneyInterns.male, '#FFA07A')}
+            </Grid>
+            <Grid item xs={3}>
+              {renderWidget('Femmes', orangeMoneyInterns.female, '#FF6347')}
+            </Grid>
+          </Grid>
+        </Grid>
+
+        {/* Externes Section */}
+        <Grid item xs={12}>
+          <Typography variant="h6">LES EXTERNES</Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={3}>
+              {renderWidget('Total Externes', externals.total, '#1E90FF')}
+            </Grid>
+            <Grid item xs={3}>
+              {renderWidget('Hommes', externals.male, '#87CEFA')}
+            </Grid>
+            <Grid item xs={3}>
+              {renderWidget('Femmes', externals.female, '#4682B4')}
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
-
-      <Box mt="20px">
-        <Typography variant="h6">Filtres</Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Direction"
-              name="direction"
-              value={filters.direction}
-              onChange={handleFilterChange}
-              select
-              fullWidth
-            >
-              {directions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Genre"
-              name="gender"
-              value={filters.gender}
-              onChange={handleFilterChange}
-              select
-              fullWidth
-            >
-              {genderOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Tranche d'Âge"
-              name="ageGroup"
-              value={filters.ageGroup}
-              onChange={handleFilterChange}
-              select
-              fullWidth
-            >
-              {agePyramid.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Statut"
-              name="status"
-              value={filters.status}
-              onChange={handleFilterChange}
-              select
-              fullWidth
-            >
-              {statusOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-        </Grid>
-      </Box>
     </Box>
   );
 };
