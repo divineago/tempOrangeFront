@@ -16,6 +16,9 @@ import Login from './scenes/User/Login';
 import SignUpForm from './scenes/User/SignupForm';
 import Evaluation from './scenes/training/Evaluation';
 import TrainingCalendar from './scenes/training/TrainingCalendar';
+import TrainingParticipation from './scenes/training/TrainingParticipation';
+
+
 import './index.css'; // Assurez-vous d'importer le fichier de styles
 
 function App() {
@@ -42,6 +45,7 @@ function App() {
                 <Route path="/notificationpopup" element={<NotificationPopup />} />
                 <Route path="/evaluation" element={<Evaluation />} />
                 <Route path="/calendar" element={<TrainingCalendar />} />
+                <Route path="/trainingparticipation" element={<TrainingParticipation />} />
                 <Route path="/admin" element={<AdminView />} />
               </Routes>
             </div>

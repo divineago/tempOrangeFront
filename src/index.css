@@ -1,14 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
 
-html,
-body,
-#root,
-.app,
-.content {
-  height: 100%;
-  width: 100%;
-  font-family: "Source Sans Pro", sans-serif;
-}
+
 
 .app {
   display: flex;
@@ -43,6 +35,9 @@ body,
   background-color: #FF7900;
   overflow: auto;
   z-index: 1000;
+  overflow-x: hidden;
+  scrollbar-width: none;
+
   transition: background-color 0.3s ease;
 }
 

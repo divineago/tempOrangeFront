@@ -134,6 +134,13 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+             <Item
+              title="Participation"
+              to="/trainingparticipation"
+              icon={<ListAltIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
             <Item
               title="Evaluation"
               to="/evaluation"
