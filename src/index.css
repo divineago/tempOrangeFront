@@ -1,15 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
 
-html,
-body,
-#root,
-.app,
-.content {
-  height: 100%;
-  width: 100%;
-  font-family: "Source Sans Pro", sans-serif;
-  scroll-behavior: smooth;
-}
+
 
 .app {
   display: flex;
@@ -47,9 +38,8 @@ body,
   height: 150%;
   background-color: #FF7900;
   overflow: auto;
-  z-index: 1;
- 
-  
+  z-index: 1000;
+  transition: background-color 0.3s ease;
 }
 
 .sidebar:hover {

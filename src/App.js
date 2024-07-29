@@ -15,7 +15,9 @@ import AdminView from './scenes/user/AdminView';
 import Login from './scenes/user/Login';
 import Evaluation from './scenes/training/Evaluation';
 import TrainingCalendar from './scenes/training/TrainingCalendar';
-import MyComponent from './components/MyComponent'; 
+import TrainingParticipation from './scenes/training/TrainingParticipation';
+
+
 import './index.css'; // Assurez-vous d'importer le fichier de styles
 
 function App() {
@@ -42,6 +44,7 @@ function App() {
                 <Route path="/notificationpopup" element={<NotificationPopup />} />
                 <Route path="/evaluation" element={<Evaluation />} />
                 <Route path="/calendar" element={<TrainingCalendar />} />
+                <Route path="/trainingparticipation" element={<TrainingParticipation />} />
                 <Route path="/admin" element={<AdminView />} />
               </Routes>
             </div>

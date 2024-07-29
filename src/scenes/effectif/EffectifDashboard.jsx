@@ -1,167 +1,213 @@
-import React, { useState, useEffect } from 'react';
-import { Box, TextField, MenuItem, Grid, Typography } from '@mui/material';
-import Header from '../../components/Header';
-import { directions, genderOptions, agePyramid, statusOptions, initialEffectifData } from '../../data/mockData';
-import { BarChart, Bar, PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, CartesianGrid, XAxis, YAxis } from 'recharts';
+import React, { useState } from 'react';
+import { Grid, Card, CardContent, Typography, Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Bar, Line } from 'react-chartjs-2';
+import { orangeInterns, orangeMoneyInterns, externals } from '../../data/mockData';
+import 'chart.js/auto'; // Ensure that chart.js is registered
 
 const EffectifDashboard = () => {
-  const [effectifData, setEffectifData] = useState(initialEffectifData);
-  const [filters, setFilters] = useState({
-    direction: '',
-    gender: '',
-    ageGroup: '',
-    status: '',
-  });
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedGender, setSelectedGender] = useState('all');
 
-  const [filteredData, setFilteredData] = useState(initialEffectifData);
-
-  useEffect(() => {
-    let filtered = initialEffectifData;
-
-    if (filters.direction) {
-      filtered = filtered.filter(item => item.directionId === filters.direction);
-    }
-    if (filters.gender) {
-      filtered = filtered.filter(item => item.gender === filters.gender);
-    }
-    if (filters.ageGroup) {
-      // Add age group filtering logic here
-    }
-    if (filters.status) {
-      filtered = filtered.filter(item => item.status === filters.status);
-    }
-
-    setFilteredData(filtered);
-  }, [filters]);
-
-  const handleFilterChange = (event) => {
-    const { name, value } = event.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
   };
 
-  const renderBarChart = (data, xKey, yKey, title) => (
-    <Box mb="20px">
-      <Typography variant="h6">{title}</Typography>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey={xKey} />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey={yKey} fill="#8884d8">
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </Box>
+  const handleGenderChange = (event) => {
+    setSelectedGender(event.target.value);
+  };
+
+  const renderWidget = (title, value, color) => (
+    <Card sx={{ minWidth: 275, backgroundColor: color, mb: 2, borderRadius: 2, boxShadow: 3 }}>
+      <CardContent>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#fff' }}>
+          {title}
+        </Typography>
+        <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#fff' }}>
+          {value}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 
-  const renderPieChart = (data, dataKey, nameKey, title) => (
-    <Box mb="20px">
-      <Typography variant="h6">{title}</Typography>
-      <ResponsiveContainer width="100%" height={300}>
-        <PieChart>
-          <Pie data={data} dataKey={dataKey} nameKey={nameKey} fill="#8884d8" label>
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
-    </Box>
-  );
+  const data = [
+    { name: 'Internes Orange', total: orangeInterns.total, male: orangeInterns.male, female: orangeInterns.female },
+    { name: 'Internes Orange Money', total: orangeMoneyInterns.total, male: orangeMoneyInterns.male, female: orangeMoneyInterns.female },
+    { name: 'Externes', total: externals.total, male: externals.male, female: externals.female },
+  ];
+
+  const barChartData = {
+    labels: data.map(item => item.name),
+    datasets: [
+      {
+        label: 'Total',
+        backgroundColor: '#4caf50',
+        data: data.map(item => item.total),
+      },
+      {
+        label: 'Hommes',
+        backgroundColor: '#2196f3',
+        data: data.map(item => item.male),
+      },
+      {
+        label: 'Femmes',
+        backgroundColor: '#ff9800',
+        data: data.map(item => item.female),
+      },
+    ],
+  };
+
+  const lineChartData = {
+    labels: data.map(item => item.name),
+    datasets: [
+      {
+        label: 'Total',
+        borderColor: '#4caf50',
+        fill: false,
+        data: data.map(item => item.total),
+      },
+      {
+        label: 'Hommes',
+        borderColor: '#2196f3',
+        fill: false,
+        data: data.map(item => item.male),
+      },
+      {
+        label: 'Femmes',
+        borderColor: '#ff9800',
+        fill: false,
+        data: data.map(item => item.female),
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: false,
+  };
 
   return (
-    <Box m="20px">
-      <Header title="Tableau de Bord de l'Effectif" subtitle="Statistiques de l'Effectif des Agents" />
+    <Box p={3}>
+      <Typography variant="h4" gutterBottom>
+        Effectif Dashboard
+      </Typography>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          {renderBarChart(filteredData, 'directionId', 'count', 'Effectif par Direction')}
-          {renderPieChart(filteredData, 'count', 'gender', 'Répartition par Genre')}
+      {/* Filters */}
+      <Grid container spacing={2} mb={2}>
+        <Grid item xs={6}>
+          <FormControl fullWidth>
+            <InputLabel>Category</InputLabel>
+            <Select value={selectedCategory} onChange={handleCategoryChange}>
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="orangeInterns">Internes Orange</MenuItem>
+              <MenuItem value="orangeMoneyInterns">Internes Orange Money</MenuItem>
+              <MenuItem value="externals">Externes</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
-        <Grid item xs={12} md={6}>
-          {renderBarChart(agePyramid, 'ageGroup', 'count', 'Pyramide des Âges')}
-          {renderPieChart(filteredData, 'count', 'status', 'Répartition par Statut')}
+        <Grid item xs={6}>
+          <FormControl fullWidth>
+            <InputLabel>Gender</InputLabel>
+            <Select value={selectedGender} onChange={handleGenderChange}>
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="male">Hommes</MenuItem>
+              <MenuItem value="female">Femmes</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
       </Grid>
 
-      <Box mt="20px">
-        <Typography variant="h6">Filtres</Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Direction"
-              name="direction"
-              value={filters.direction}
-              onChange={handleFilterChange}
-              select
-              fullWidth
-            >
-              {directions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
+      <Grid container spacing={2}>
+        {/* Internes Orange Section */}
+        {selectedCategory === 'all' || selectedCategory === 'orangeInterns' ? (
+          <Grid item xs={12}>
+            <Typography variant="h6" sx={{ mb: 2 }}>LES INTERNES ORANGE</Typography>
+            <Grid container spacing={2}>
+              {selectedGender === 'all' || selectedGender === 'total' ? (
+                <Grid item xs={3}>
+                  {renderWidget('Total Internes', orangeInterns.total, '#4caf50')}
+                </Grid>
+              ) : null}
+              {selectedGender === 'all' || selectedGender === 'male' ? (
+                <Grid item xs={3}>
+                  {renderWidget('Hommes', orangeInterns.male, '#2196f3')}
+                </Grid>
+              ) : null}
+              {selectedGender === 'all' || selectedGender === 'female' ? (
+                <Grid item xs={3}>
+                  {renderWidget('Femmes', orangeInterns.female, '#ff9800')}
+                </Grid>
+              ) : null}
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Genre"
-              name="gender"
-              value={filters.gender}
-              onChange={handleFilterChange}
-              select
-              fullWidth
-            >
-              {genderOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
+        ) : null}
+
+        {/* Internes Orange Money Section */}
+        {selectedCategory === 'all' || selectedCategory === 'orangeMoneyInterns' ? (
+          <Grid item xs={12}>
+            <Typography variant="h6" sx={{ mb: 2 }}>LES INTERNES ORANGE MONEY</Typography>
+            <Grid container spacing={2}>
+              {selectedGender === 'all' || selectedGender === 'total' ? (
+                <Grid item xs={3}>
+                  {renderWidget('Total Internes', orangeMoneyInterns.total, '#4caf50')}
+                </Grid>
+              ) : null}
+              {selectedGender === 'all' || selectedGender === 'male' ? (
+                <Grid item xs={3}>
+                  {renderWidget('Hommes', orangeMoneyInterns.male, '#2196f3')}
+                </Grid>
+              ) : null}
+              {selectedGender === 'all' || selectedGender === 'female' ? (
+                <Grid item xs={3}>
+                  {renderWidget('Femmes', orangeMoneyInterns.female, '#ff9800')}
+                </Grid>
+              ) : null}
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Tranche d'Âge"
-              name="ageGroup"
-              value={filters.ageGroup}
-              onChange={handleFilterChange}
-              select
-              fullWidth
-            >
-              {agePyramid.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
+        ) : null}
+
+        {/* Externes Section */}
+        {selectedCategory === 'all' || selectedCategory === 'externals' ? (
+          <Grid item xs={12}>
+            <Typography variant="h6" sx={{ mb: 2 }}>LES EXTERNES</Typography>
+            <Grid container spacing={2}>
+              {selectedGender === 'all' || selectedGender === 'total' ? (
+                <Grid item xs={3}>
+                  {renderWidget('Total Externes', externals.total, '#4caf50')}
+                </Grid>
+              ) : null}
+              {selectedGender === 'all' || selectedGender === 'male' ? (
+                <Grid item xs={3}>
+                  {renderWidget('Hommes', externals.male, '#2196f3')}
+                </Grid>
+              ) : null}
+              {selectedGender === 'all' || selectedGender === 'female' ? (
+                <Grid item xs={3}>
+                  {renderWidget('Femmes', externals.female, '#ff9800')}
+                </Grid>
+              ) : null}
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Statut"
-              name="status"
-              value={filters.status}
-              onChange={handleFilterChange}
-              select
-              fullWidth
-            >
-              {statusOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-        </Grid>
+        ) : null}
+      </Grid>
+
+      {/* Charts */}
+      <Box mt={4}>
+        <Typography variant="h6" gutterBottom>
+          Effectif Par Categorie
+        </Typography>
+        <Box sx={{ height: '400px' }}>
+          <Bar data={barChartData} options={chartOptions} />
+        </Box>
+      </Box>
+
+      <Box mt={4}>
+        <Typography variant="h6" gutterBottom>
+          Evolution Par Categorie
+        </Typography>
+        <Box sx={{ height: '400px' }}>
+          <Line data={lineChartData} options={chartOptions} />
+        </Box>
       </Box>
     </Box>
   );

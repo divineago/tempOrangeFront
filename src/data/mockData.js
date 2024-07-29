@@ -37,6 +37,37 @@ export const directions = [
   { value: "KC", label: "KONGO CENTRAL" },
   { value: "KIN", label: "KINSHASA" },
 ];
+export const trainingParticipation = [
+  {
+    id:1,
+    direction: 'Direction Générale',
+    participant: 'John Doe',
+    gender: 'Masculin',
+    type: 'En ligne',
+  },
+  {
+    id:2,
+    direction: 'Direction Financière',
+    participant: 'Jane Smith',
+    gender: 'Feminin',
+    type: 'En présentiel',
+  },
+  {
+    id:3,
+    direction: 'Direction Stratégie et Transformation',
+    participant: 'Peter Johnson',
+    gender: 'Masculin',
+    type: 'En ligne',
+  },
+  {
+    id:4,
+    direction: 'Direction des Ressources Humaines',
+    participant: 'Emily Davis',
+    gender: 'Feminin',
+    type: 'En présentiel',
+  },
+  // Ajoutez plus de données de participation à la formation au besoin
+];
 
 export const agePyramid = [
   { ageRange: '20-25', male: 40, female: 45 },
@@ -230,7 +261,6 @@ export const trainingProgressData = [
     satisfaction: 2,
   },
 ];
-
 export const initialEffectifData = [
   {
     id: 1,
@@ -267,6 +297,23 @@ export const initialEffectifData = [
   },
   // Ajoutez plus d'effectifs initiaux au besoin
 ];
+export const orangeInterns = {
+  total: 100,
+  male: 60,
+  female: 40,
+};
+
+export const orangeMoneyInterns = {
+  total: 50,
+  male: 30,
+  female: 20,
+};
+
+export const externals = {
+  total: 150,
+  male: 90,
+  female: 60,
+};
 export const mockData = {
   totalAgents: 676,
   trainingParticipation: {
