@@ -39,10 +39,10 @@ const Topbar = () => {
           </Typography>
         </IconButton>
         <IconButton component={Link} to="/calendar">
-          <CalendarTodayOutlinedIcon />
-          <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
-           {/*  calendar*/}
-          </Typography>
+          <ListAltIcon />
+        </IconButton>
+        <IconButton component={Link} to="/trainingdashboard">
+          <HomeOutlinedIcon />
         </IconButton>
       </Box>
     </Box>

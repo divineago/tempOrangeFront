@@ -1,34 +1,39 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, MenuItem, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import Header from '../../components/Header';
 import { directions, employeurs, effectifList as initialEffectifList, genderOptions, contractOptions, statusOptions, classificationOptions } from '../../data/mockData';
 import { DataGrid } from '@mui/x-data-grid';
 import * as XLSX from 'xlsx';
+import { fetchDataFromAPI } from '../../api'; 
+import EffectifForm from './EffectifForm';
+
 
 const EffectifList = () => {
   const [effectifList, setEffectifList] = useState(initialEffectifList);
   const [formData, setFormData] = useState({
     id: '',
-    nom: '',
+    name: '',
     prenom: '',
     postnom: '',
-    directionId: '',
-    employeurId: '',
-    gender: '',
-    dateNaissance: '',
+    direction: '',
+    employeur: '',
+    genre: '',
+    date_naissance: '',
     contrat: '',
-    mat: '',
-    classification: '',
+    num_mat: '',
+    statut_contrat: '',
     fonction: '',
-    city: '',
-    embauche: '',
     email: '',
-    status: '',
-    endcontrat: '',
-    hiringplace: '',
-    hiringdate: '',
-    dureecontrat: '',
-    essai: '',
+    age: '',
+    anciennete_annee:'',
+    anciennete_mois:'',
+    nationalite: '',
+    lieu_embauche: '',
+    grade: '',
+    date_fin_contrat: '',
+    date_embauche: '',
+    dure_contrat: '',
+    periode_essai: '',
   });
   const [editMode, setEditMode] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -36,13 +41,9 @@ const EffectifList = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [openDialog, setOpenDialog] = useState(false);
 
-  const calculateSeniority = (hireDate) => {
-    const startDate = new Date(hireDate);
-    const currentDate = new Date();
-    const seniority = currentDate.getFullYear() - startDate.getFullYear();
-    return seniority;
-  };
-
+  useEffect(() => {
+    fetchEffectifData(); // Utilisation de useEffect pour charger les données initiales
+  }, []);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
@@ -50,53 +51,53 @@ const EffectifList = () => {
       [name]: value,
     }));
   };
-
+const fetchEffectifData = async () => {
+    try {
+      // Appel de l'API
+      const response = await fetchDataFromAPI('/effectif/agent/');
+      console.log('Full response:', response); // Log de la réponse complète
+  
+      // Vérification du format des données
+      if (response.data && Array.isArray(response.data)) {
+        setEffectifList(response.data);
+      } else if (response.data && Array.isArray(response.data.results)) {
+        setEffectifList(response.data.results);
+      } else {
+        console.error('Invalid data format:', response);
+        setEffectifList([]); 
+      }
+    } catch (error) {
+      console.error('Error fetching training data:', error);
+      setEffectifList([]); 
+    }
+  };
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    const seniority = calculateSeniority(formData.embauche);
-    const currentDate = new Date();
-    const birthDate = new Date(formData.dateNaissance);
-    const age = currentDate.getFullYear() - birthDate.getFullYear();
-
-    if (age < 18) {
-      setSnackbarMessage('L\'âge doit être d\'au moins 18 ans');
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
-      return;
-    }
-
-    if (editMode) {
-      const updatedList = effectifList.map((effectif) =>
-        effectif.id === formData.id ? { ...formData, seniority } : effectif
-      );
-      setEffectifList(updatedList);
-    } else {
-      const newEffectif = { ...formData, id: effectifList.length + 1, seniority };
-      setEffectifList([...effectifList, newEffectif]);
-    }
-
+   
     setFormData({
       id: '',
-      nom: '',
+      name: '',
       prenom: '',
       postnom: '',
-      directionId: '',
-      employeurId: '',
-      gender: '',
-      dateNaissance: '',
+      direction: '',
+      employeur: '',
+      genre: '',
+      date_naissance: '',
       contrat: '',
-      mat: '',
-      classification: '',
+      num_mat: '',
+      age: '',
+      statut_contrat: '',
       fonction: '',
-      city: '',
-      embauche: '',
       email: '',
-      status: '',
-      endcontrat: '',
-      hiringplace: '',
-      hiringdate: '',
-      dureecontrat: '',
-      essai: '',
+      anciennete_annee:'',
+      anciennete_mois:'',
+      nationalite: '',
+      lieu_embauche: '',
+      grade: '',
+      date_fin_contrat: '',
+      date_embauche: '',
+      dure_contrat: '',
+      periode_essai: '',
     });
     setEditMode(false);
     setOpenDialog(false);
@@ -155,42 +156,35 @@ const EffectifList = () => {
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'nom', headerName: 'Nom', width: 150 },
+    { field: 'name', headerName: 'Nom', width: 150 },
     { field: 'prenom', headerName: 'Prénom', width: 150 },
     { field: 'postnom', headerName: 'Postnom', width: 150 },
-    {
-      field: 'directionId',
-      headerName: 'Direction',
-      width: 200,
-      valueGetter: (params) => directions.find((dir) => dir.value === params.row.directionId)?.label,
-    },
-    {
-      field: 'employeurId',
-      headerName: 'Employeur',
-      width: 200,
-      valueGetter: (params) => employeurs.find((emp) => emp.value === params.row.employeurId)?.label,
-    },
-    { field: 'gender', headerName: 'Genre', width: 150 },
-    { field: 'dateNaissance', headerName: 'Date de Naissance', width: 150 },
-    { 
-      field: 'seniority', 
-      headerName: 'Ancienneté (années)', 
-      width: 130, 
-      valueGetter: (params) => calculateSeniority(params.row.embauche)
-    },
+    { field: 'direction', headerName: 'Direction', width: 200 },
+    { field: 'employeur', headerName: 'Employeur', width: 200 },
+    { field: 'genre', headerName: 'Genre', width: 150 },
+    { field: 'date_naissance', headerName: 'Date de Naissance', width: 150 },
     { field: 'contrat', headerName: 'Contrat', width: 150 },
-    { field: 'classification', headerName: 'Classification', width: 150 },
-    { field: 'status', headerName: 'Statut', width: 150 },
-    { field: 'hiringplace', headerName: 'Lieu d\'embauche', width: 150 },
+    { field: 'num_mat', headerName: 'Numéro Matricule', width: 150 },
+    { field: 'statut_contrat', headerName: 'statut_contrat', width: 150 },
+    { field: 'fonction', headerName: 'Fonction', width: 150 },
+    { field: 'email', headerName: 'Email', width: 200 },
+    { field: 'anciennete_annee', headerName: 'Ancienneté (années)', width: 150 },
+    { field: 'anciennete_mois', headerName: 'Ancienneté (mois)', width: 150 },
+    { field: 'nationalite', headerName: 'Nationalité', width: 150 },
+    { field: 'lieu_embauche', headerName: 'Lieu d\'embauche', width: 150 },
+    { field: 'grade', headerName: 'Grade', width: 150 },
+    { field: 'date_fin_contrat', headerName: 'Date de Fin de Contrat', width: 150 },
     { 
-      field: 'hiringdate', 
+      field: 'date_embauche', 
       headerName: 'Date d\'embauche', 
       width: 150,
       valueGetter: (params) => {
-        const date = new Date(params.row.hiringdate);
+        const date = new Date(params.row.date_embauche);
         return date.toLocaleDateString('fr-FR');
       }
     },
+    { field: 'dure_contrat', headerName: 'Durée du Contrat', width: 150 },
+    { field: 'periode_essai', headerName: 'Période d\'essai', width: 150 },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -207,6 +201,7 @@ const EffectifList = () => {
       ),
     },
   ];
+  
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
@@ -221,26 +216,27 @@ const EffectifList = () => {
     setEditMode(false);
     setFormData({
       id: '',
-      nom: '',
+      name: '',
       prenom: '',
       postnom: '',
-      directionId: '',
-      employeurId: '',
-      gender: '',
-      dateNaissance: '',
+      direction: '',
+      employeur: '',
+      genre: '',
+      date_naissance: '',
       contrat: '',
-      mat: '',
-      classification: '',
+      num_mat: '',
+      statut_contrat: '',
       fonction: '',
-      city: '',
-      embauche: '',
       email: '',
-      status: '',
-      endcontrat: '',
-      hiringplace: '',
-      hiringdate: '',
-      dureecontrat: '',
-      essai: '',
+      anciennete_annee:'',
+      anciennete_mois:'',
+      nationalite: '',
+      lieu_embauche: '',
+      grade: '',
+      date_fin_contrat: '',
+      date_embauche: '',
+      dure_contrat: '',
+      periode_essai: '',
     });
   };
 
@@ -249,6 +245,14 @@ const EffectifList = () => {
       <Header title="LISTE DES EFFECTIFS" subtitle="Liste des effectifs" />
 
       <Box mb="20px">
+      <EffectifForm
+        formData={formData}
+        handleInputChange={handleInputChange}
+        handleFormSubmit={handleFormSubmit}
+        openDialog={openDialog}
+        handleCloseDialog={handleCloseDialog}
+        editMode={editMode}
+      />
         <Button variant="contained" color="primary" onClick={handleOpenDialog} style={{ marginLeft: '5px' }}>
           Ajouter un Agent
         </Button>
@@ -266,156 +270,6 @@ const EffectifList = () => {
       <Box height="400px" mb="20px">
         <DataGrid rows={effectifList} columns={columns} pageSize={5} />
       </Box>
-
-      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="md">
-        <DialogTitle>{editMode ? 'Modifier Effectif' : 'Ajouter Agent'}</DialogTitle>
-        <DialogContent>
-          <Box display="flex" flexDirection="column" gap="10px" mb="20px">
-            <TextField label="Nom" name="nom" value={formData.nom} onChange={handleInputChange} required />
-            <TextField label="Prénom" name="prenom" value={formData.prenom} onChange={handleInputChange} required />
-            <TextField label="Postnom" name="postnom" value={formData.postnom} onChange={handleInputChange} required />
-            <TextField
-              label="Direction"
-              name="directionId"
-              value={formData.directionId}
-              onChange={handleInputChange}
-              select
-              required
-            >
-              {directions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              label="Employeur"
-              name="employeurId"
-              value={formData.employeurId}
-              onChange={handleInputChange}
-              select
-              required
-            >
-              {employeurs.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              label="Genre"
-              name="gender"
-              value={formData.gender}
-              onChange={handleInputChange}
-              select
-              required
-            >
-              {genderOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              label="Date de Naissance"
-              name="dateNaissance"
-              value={formData.dateNaissance}
-              onChange={handleInputChange}
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              required
-            />
-            <TextField
-              label="Contrat"
-              name="contrat"
-              value={formData.contrat}
-              onChange={handleInputChange}
-              select
-              required
-            >
-              {contractOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField label="Matricule" name="mat" value={formData.mat} onChange={handleInputChange} required />
-            <TextField
-              label="Classification"
-              name="classification"
-              value={formData.classification}
-              onChange={handleInputChange}
-              select
-              required
-            >
-              {classificationOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField label="Fonction" name="fonction" value={formData.fonction} onChange={handleInputChange} required />
-            <TextField label="Lieu d'embauche" name="hiringplace" value={formData.hiringplace} onChange={handleInputChange} required />
-            <TextField
-              label="Date d'Embauche"
-              name="embauche"
-              value={formData.embauche}
-              onChange={handleInputChange}
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              required
-            />
-            <TextField label="Email" name="email" value={formData.email} onChange={handleInputChange} type="email" required />
-            <TextField
-              label="Statut"
-              name="status"
-              value={formData.status}
-              onChange={handleInputChange}
-              select
-              required
-            >
-              {statusOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              label="Date de fin de contrat"
-              name="endcontrat"
-              value={formData.endcontrat}
-              onChange={handleInputChange}
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              required
-            />        
-            <TextField
-              label="Durée du contrat (mois)"
-              name="dureecontrat"
-              value={formData.dureecontrat}
-              onChange={handleInputChange}
-              type="number"
-              required
-            />
-            <TextField
-              label="Période d'essai (mois)"
-              name="essai"
-              value={formData.essai}
-              onChange={handleInputChange}
-              type="number"
-              required
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Annuler
-          </Button>
-          <Button onClick={handleFormSubmit} color="primary">
-            {editMode ? 'Mettre à jour' : 'Ajouter'}
-          </Button>
-        </DialogActions>
-      </Dialog>
 
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>

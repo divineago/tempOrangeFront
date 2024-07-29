@@ -1,8 +1,148 @@
-import React from 'react';
-import { Box, Button, TextField, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from '@mui/material';
-import { directions, employeurs, genderOptions, contractOptions, statusOptions, classificationOptions } from '../../data/mockData';
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Button,
+  TextField,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions, 
+  Checkbox,
+  FormControlLabel,
+  Grid
+} from '@mui/material';
+import { fetchDataFromAPI, postDataToAPI, updateDataToAPI } from '../../api';
 
-const EffectifForm = ({ formData, handleInputChange, handleFormSubmit, openDialog, handleCloseDialog, editMode }) => {
+
+const initialFormData = {
+      id: '',
+      name: '',
+      prenom: '',
+      postnom: '',
+      direction: '',
+      employeur: '',
+      genre: '',
+      date_naissance: '',
+      contrat: '',
+      num_mat: '',
+      age: '',
+      statut_contrat: '',
+      fonction: '',
+      email: '',
+      anciennete_annee:'',
+      anciennete_mois:'',
+      nationalite: '',
+      lieu_embauche: '',
+      grade: '',
+      date_fin_contrat: '',
+      date_embauche: '',
+      dure_contrat: '',
+      periode_essai: '',
+};
+
+const EffectifForm = ({
+  formData: initialFormDataProp,
+  handleInputChange: handleInputChangeProp,
+  handleFormSubmit,
+  openDialog,
+  handleCloseDialog,
+  handleInputChange,
+  editMode
+}) => {
+  const [formData, setFormData] = useState(initialFormData);
+  const [nationaliteOptions, setNationaliteOptions] = useState([]);
+  const [genreOptions, setGenreOptions] = useState([]);
+  const [ageOptions, setAgeOptions] = useState([]);
+  const [statut_contratOptions, setStatut_contratOptions] = useState([]);
+  const [directionOptions, setDirectionOptions] = useState([]);
+  const [employeurOptions, setEmployeurOptions] = useState([]);
+  const [contratOptions, setContratOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  
+  useEffect(() => {
+    if (editMode && initialFormDataProp) {
+      setFormData(initialFormDataProp);
+    }
+  }, [editMode, initialFormDataProp]);
+
+  useEffect(() => {
+    const fetchEffectifData = async () => {
+      try {
+        const [choicesResponse, directionResponse, employeurResponse,contratResponse] = await Promise.all([
+          fetchDataFromAPI('/effectif/agent/get_choices/'),
+          fetchDataFromAPI('/effectif/agent/get_direction/'),
+          fetchDataFromAPI('/effectif/agent/get_employeur/'),
+          fetchDataFromAPI('/effectif/agent/get_contrat/')
+
+        ]);
+        console.log('Réponse API:', choicesResponse.data, directionResponse.data);
+        const { age, genre, statut_contrat, nationalite } = choicesResponse.data;
+        const direction = directionResponse.data;
+        const employeur = employeurResponse.data;
+        const contrat = contratResponse.data;
+
+
+  
+        const transformChoices = (choices) => {
+          return Array.isArray(choices)
+            ? choices.map(choice => ({
+                value: choice.value,
+                label: choice.label,
+              }))
+            : [];
+        };
+  
+        setGenreOptions(transformChoices(genre || []));
+        setAgeOptions(transformChoices(age || []));
+        setStatut_contratOptions(transformChoices(statut_contrat || []));
+        setDirectionOptions(transformChoices(direction || []));
+        setEmployeurOptions(transformChoices(employeur || []));
+        setContratOptions(transformChoices(contrat || []));
+        setNationaliteOptions(transformChoices(nationalite || []));
+        setLoading(false);
+      } catch (error) {
+        console.error('Erreur lors du chargement des données de l\'effectif :', error);
+        setLoading(false);
+      }
+    };
+  
+    fetchEffectifData();
+  }, []);
+
+  const handleFormInputChange = (event) => {
+    const { name, value, checked, type } = event.target;
+    console.log('Valeur reçue:', value); 
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+
+    }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const submitData = {
+        ...formData,
+        employeur: Number(formData.employeur),
+        direction: Number(formData.direction),
+        contrat: Number(formData.contrat),
+      };
+  
+      if (editMode) {
+        await updateDataToAPI(`/effectif/agent/${formData.id}/`, submitData);
+      } else {
+        await postDataToAPI('/effectif/agent/creer_agent/', submitData);
+      }
+      handleCloseDialog();
+      setFormData(initialFormData);
+    } catch (error) {
+      console.error('Erreur lors de la soumission de l\'agent :', error);
+    }
+  };
+  
+
   return (
     <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="md">
       <DialogTitle>{editMode ? 'Modifier Effectif' : 'Ajouter Agent'}</DialogTitle>
@@ -13,9 +153,9 @@ const EffectifForm = ({ formData, handleInputChange, handleFormSubmit, openDialo
               <TextField
                 fullWidth
                 label="Nom"
-                name="nom"
-                value={formData.nom}
-                onChange={handleInputChange}
+                name="name"
+                value={formData.name}
+                onChange={handleFormInputChange}
                 required
               />
             </Grid>
@@ -25,7 +165,7 @@ const EffectifForm = ({ formData, handleInputChange, handleFormSubmit, openDialo
                 label="Prénom"
                 name="prenom"
                 value={formData.prenom}
-                onChange={handleInputChange}
+                onChange={handleFormInputChange}
                 required
               />
             </Grid>
@@ -35,68 +175,80 @@ const EffectifForm = ({ formData, handleInputChange, handleFormSubmit, openDialo
                 label="Postnom"
                 name="postnom"
                 value={formData.postnom}
-                onChange={handleInputChange}
+                onChange={handleFormInputChange}
                 required
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+            <TextField
                 fullWidth
                 label="Direction"
-                name="directionId"
-                value={formData.directionId}
-                onChange={handleInputChange}
+                name="direction"
+                value={formData.direction}
+                onChange={handleFormInputChange}
                 select
                 required
               >
-                {directions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
+                {!loading && directionOptions.length > 0 ? (
+                  directionOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>Loading...</MenuItem>
+                )}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Employeur"
-                name="employeurId"
-                value={formData.employeurId}
-                onChange={handleInputChange}
+                name="employeur"
+                value={formData.employeur}
+                onChange={handleFormInputChange}
                 select
                 required
               >
-                {employeurs.map((option) => (
+              {!loading && employeurOptions.length > 0 ? (
+                employeurOptions.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
-                ))}
+                ))
+              ) : (
+                <MenuItem disabled>Loading...</MenuItem>
+              )}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Genre"
-                name="gender"
-                value={formData.gender}
-                onChange={handleInputChange}
+                name="genre"
+                value={formData.genre}
+                onChange={handleFormInputChange}
                 select
                 required
               >
-                {genderOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
+                {!loading && genreOptions.length > 0 ? (
+                  genreOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>Loading...</MenuItem>
+                )}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Date de Naissance"
-                name="dateNaissance"
-                value={formData.dateNaissance}
-                onChange={handleInputChange}
+                name="date_naissance"
+                value={formData.date_naissance}
+                onChange={handleFormInputChange}
                 type="date"
                 InputLabelProps={{ shrink: true }}
                 required
@@ -108,73 +260,80 @@ const EffectifForm = ({ formData, handleInputChange, handleFormSubmit, openDialo
                 label="Contrat"
                 name="contrat"
                 value={formData.contrat}
-                onChange={handleInputChange}
+                onChange={handleFormInputChange}
                 select
                 required
-              >
-                {contractOptions.map((option) => (
+              >{!loading && contratOptions.length > 0 ? (
+                contratOptions.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
-                ))}
+                ))
+              ) : (
+                <MenuItem disabled>Loading...</MenuItem>
+              )}
+                
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Matricule"
-                name="mat"
-                value={formData.mat}
-                onChange={handleInputChange}
+                name="num_mat"
+                value={formData.num_mat}
+                onChange={handleFormInputChange}
                 required
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Classification"
-                name="classification"
-                value={formData.classification}
-                onChange={handleInputChange}
+                label="Statut du Contrat"
+                name="statut_contrat"
+                value={formData.statut_contrat}
+                onChange={handleFormInputChange}
                 select
                 required
               >
-                {classificationOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
+                {!loading && statut_contratOptions.length > 0 ? (
+                  statut_contratOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>Loading...</MenuItem>
+                )}
               </TextField>
             </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="tranche d'age"
+                name="age"
+                value={formData.age}
+                onChange={handleFormInputChange}
+                select
+                required
+              >
+                {!loading && ageOptions.length > 0 ? (
+                  ageOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>Loading...</MenuItem>
+                )}
+              </TextField>
+              </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Fonction"
                 name="fonction"
                 value={formData.fonction}
-                onChange={handleInputChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Lieu d'embauche"
-                name="hiringplace"
-                value={formData.hiringplace}
-                onChange={handleInputChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Date d'Embauche"
-                name="embauche"
-                value={formData.embauche}
-                onChange={handleInputChange}
-                type="date"
-                InputLabelProps={{ shrink: true }}
+                onChange={handleFormInputChange}
                 required
               />
             </Grid>
@@ -184,7 +343,7 @@ const EffectifForm = ({ formData, handleInputChange, handleFormSubmit, openDialo
                 label="Email"
                 name="email"
                 value={formData.email}
-                onChange={handleInputChange}
+                onChange={handleFormInputChange}
                 type="email"
                 required
               />
@@ -192,27 +351,51 @@ const EffectifForm = ({ formData, handleInputChange, handleFormSubmit, openDialo
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Statut"
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
+                label="Nationalité"
+                name="nationalite"
+                value={formData.nationalite}
+                onChange={handleFormInputChange}
                 select
                 required
               >
-                {statusOptions.map((option) => (
+               {!loading && nationaliteOptions.length > 0 ? (
+                nationaliteOptions.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
-                ))}
-              </TextField>
+                ))
+              ) : (
+                <MenuItem disabled>Loading...</MenuItem>
+              )}
+               </TextField>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Date de fin de contrat"
-                name="endcontrat"
-                value={formData.endcontrat}
-                onChange={handleInputChange}
+                label="Lieu d'Embauche"
+                name="lieu_embauche"
+                value={formData.lieu_embauche}
+                onChange={handleFormInputChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Grade"
+                name="grade"
+                value={formData.grade}
+                onChange={handleFormInputChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Date de Fin de Contrat"
+                name="date_fin_contrat"
+                value={formData.date_fin_contrat}
+                onChange={handleFormInputChange}
                 type="date"
                 InputLabelProps={{ shrink: true }}
                 required
@@ -221,23 +404,36 @@ const EffectifForm = ({ formData, handleInputChange, handleFormSubmit, openDialo
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Durée du contrat (mois)"
-                name="dureecontrat"
-                value={formData.dureecontrat}
-                onChange={handleInputChange}
-                type="number"
+                label="Date d'Embauche"
+                name="date_embauche"
+                value={formData.date_embauche}
+                onChange={handleFormInputChange}
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 required
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Période d'essai (mois)"
-                name="essai"
-                value={formData.essai}
-                onChange={handleInputChange}
+                label="Durée du Contrat (mois)"
+                name="dure_contrat"
+                value={formData.dure_contrat}
+                onChange={handleFormInputChange}
                 type="number"
                 required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+            <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.periode_essai}
+                    onChange={handleFormInputChange}
+                    name="periode_essai"
+                  />
+                }
+                label="Période d'Essai"
               />
             </Grid>
           </Grid>
@@ -247,9 +443,9 @@ const EffectifForm = ({ formData, handleInputChange, handleFormSubmit, openDialo
         <Button onClick={handleCloseDialog} color="primary">
           Annuler
         </Button>
-        <Button onClick={handleFormSubmit} color="primary">
-          {editMode ? 'Mettre à jour' : 'Ajouter'}
-        </Button>
+        <Button onClick={handleSubmit} color="primary">
+            {editMode ? 'Modifier' : 'Ajouter'}
+          </Button>
       </DialogActions>
     </Dialog>
   );

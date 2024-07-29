@@ -8,8 +8,7 @@ import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
-import Login from '../user/Login';
+import Login from '../user/Login';  
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   return (
@@ -28,7 +27,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selected, setSelected] = useState('Home');
+  const [selected, setSelected] = useState('Dashboard');
   const [openLogin, setOpenLogin] = useState(false);
 
   const toggleSidebar = () => {
@@ -108,7 +107,7 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Home"
-              to="/"
+              to="/login"
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -151,7 +150,7 @@ const Sidebar = () => {
             <Item
               title="Effectif List"
               to="/effectiflist"
-              icon={<PeopleAltIcon />}
+              icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -162,19 +161,17 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-          
-            
+             <Item
+              title="test donnée api"
+              to="/mycomponent"
+              icon={<PeopleAltIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            /> 
             <Item
               title="Planning"
               to="/calendar"
-              icon={<CalendarTodayOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-             <Item
-              title="Login"
-              to="/login"
-              icon={<PersonOutlinedIcon />}
+              icon={<ListAltIcon />}
               selected={selected}
               setSelected={setSelected}
             />
