@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Button, Snackbar, Alert, Select, MenuItem, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import {
+  Box, Button, Snackbar, Alert, Select, MenuItem, TextField,
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+} from '@mui/material';
 import Header from '../../components/Header';
 import { trainingParticipation as initialTrainingParticipation, directions } from '../../data/mockData';
 import { DataGrid } from '@mui/x-data-grid';
@@ -11,7 +14,14 @@ const TrainingParticipation = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogData, setDialogData] = useState({});
+  const [dialogData, setDialogData] = useState({
+    id: '',
+    participant: '',
+    direction: '',
+    type: '',
+    gender: '',
+    assigned: ''
+  });
 
   const handleExportExcel = () => {
     const ws = XLSX.utils.json_to_sheet(trainingParticipation);
@@ -31,11 +41,15 @@ const TrainingParticipation = () => {
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
           const json = XLSX.utils.sheet_to_json(worksheet);
+
+          console.log('Imported data:', json);  // Log de la donnée importée
+
           setTrainingParticipation(json);
           setSnackbarMessage('Data imported successfully');
           setSnackbarSeverity('success');
           setOpenSnackbar(true);
         } catch (error) {
+          console.error('Error importing data:', error);  // Log de l'erreur
           setSnackbarMessage('Error importing data');
           setSnackbarSeverity('error');
           setOpenSnackbar(true);
@@ -66,8 +80,9 @@ const TrainingParticipation = () => {
     setTrainingParticipation((prev) => {
       const index = prev.findIndex((row) => row.id === dialogData.id);
       if (index !== -1) {
-        prev[index] = dialogData;
-        return [...prev];
+        const newData = [...prev];
+        newData[index] = dialogData;
+        return newData;
       }
       return [...prev, dialogData];
     });
