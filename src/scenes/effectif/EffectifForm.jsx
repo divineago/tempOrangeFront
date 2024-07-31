@@ -47,7 +47,6 @@ const EffectifForm = ({
   handleFormSubmit,
   openDialog,
   handleCloseDialog,
-  handleInputChange,
   editMode
 }) => {
   const [formData, setFormData] = useState(initialFormData);
@@ -59,12 +58,17 @@ const EffectifForm = ({
   const [employeurOptions, setEmployeurOptions] = useState([]);
   const [contratOptions, setContratOptions] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  
+  console.log('Contrat Options:', contratOptions);
+  console.log('form data: ',formData.contrat)
+
   useEffect(() => {
     if (editMode && initialFormDataProp) {
       setFormData(initialFormDataProp);
+    } else {
+      setFormData(initialFormData);  
     }
+    console.log('Valeur initiale de formData:', initialFormDataProp);
+    console.log('Valeur actuelle de formData:', formData);
   }, [editMode, initialFormDataProp]);
 
   useEffect(() => {
@@ -77,12 +81,11 @@ const EffectifForm = ({
           fetchDataFromAPI('/effectif/agent/get_contrat/')
 
         ]);
-        console.log('Réponse API:', choicesResponse.data, directionResponse.data);
-        const { age, genre, statut_contrat, nationalite } = choicesResponse.data;
+        const { age, genre, statut_contrat, nationalite} = choicesResponse.data;
         const direction = directionResponse.data;
         const employeur = employeurResponse.data;
         const contrat = contratResponse.data;
-
+        console.log('Réponse API:',choicesResponse.data,contratResponse.data,directionResponse.data);
 
   
         const transformChoices = (choices) => {
@@ -93,13 +96,21 @@ const EffectifForm = ({
               }))
             : [];
         };
-  
+        const transformForeignKeyData = (data) => {
+          return Array.isArray(data)
+            ? data.map(item => ({
+                id: item.id,
+                value: item.value,
+                label: item.label,
+              }))
+            : [];
+        };
         setGenreOptions(transformChoices(genre || []));
         setAgeOptions(transformChoices(age || []));
         setStatut_contratOptions(transformChoices(statut_contrat || []));
-        setDirectionOptions(transformChoices(direction || []));
-        setEmployeurOptions(transformChoices(employeur || []));
-        setContratOptions(transformChoices(contrat || []));
+        setDirectionOptions(transformForeignKeyData(direction || []));
+        setEmployeurOptions(transformForeignKeyData(employeur || []));
+        setContratOptions(transformForeignKeyData(contrat || []));
         setNationaliteOptions(transformChoices(nationalite || []));
         setLoading(false);
       } catch (error) {
@@ -113,7 +124,7 @@ const EffectifForm = ({
 
   const handleFormInputChange = (event) => {
     const { name, value, checked, type } = event.target;
-    console.log('Valeur reçue:', value); 
+    console.log('Nom:', name, 'Valeur reçue:', value);
     setFormData(prevData => ({
       ...prevData,
       [name]: type === 'checkbox' ? checked : value,
@@ -142,7 +153,7 @@ const EffectifForm = ({
     }
   };
   
-
+  
   return (
     <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="md">
       <DialogTitle>{editMode ? 'Modifier Effectif' : 'Ajouter Agent'}</DialogTitle>
@@ -184,15 +195,15 @@ const EffectifForm = ({
                 fullWidth
                 label="Direction"
                 name="direction"
-                value={formData.direction}
+                value={formData.direction || ''}
                 onChange={handleFormInputChange}
                 select
                 required
               >
                 {!loading && directionOptions.length > 0 ? (
                   directionOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                    <MenuItem key={option.id} value={option.id}>
+                     {option.label}
                     </MenuItem>
                   ))
                 ) : (
@@ -205,15 +216,15 @@ const EffectifForm = ({
                 fullWidth
                 label="Employeur"
                 name="employeur"
-                value={formData.employeur}
+                value={formData.employeur|| ''}
                 onChange={handleFormInputChange}
                 select
                 required
               >
               {!loading && employeurOptions.length > 0 ? (
                 employeurOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                  <MenuItem key={option.id} value={option.id}>
+                     {option.label}
                   </MenuItem>
                 ))
               ) : (
@@ -259,16 +270,17 @@ const EffectifForm = ({
                 fullWidth
                 label="Contrat"
                 name="contrat"
-                value={formData.contrat}
+                value={formData.contrat || ''}
                 onChange={handleFormInputChange}
                 select
                 required
               >{!loading && contratOptions.length > 0 ? (
-                contratOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                contratOptions.map((option) => {
+                console.log('Clé de MenuItem:', option.id); // Vérifiez les clés
+                  <MenuItem key={option.id} value={option.id}>
+                      {option.label}
                   </MenuItem>
-                ))
+                })
               ) : (
                 <MenuItem disabled>Loading...</MenuItem>
               )}

@@ -46,6 +46,7 @@ const EffectifList = () => {
   }, []);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    console.log('valeur :', value)
     setFormData((prev) => ({
       ...prev,
       [name]: value,
