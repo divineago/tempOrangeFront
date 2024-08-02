@@ -13,6 +13,8 @@ import DirectionForm from './scenes/effectif/DirectionForm';
 import ContratList from './scenes/effectif/ContratList';
 import ContratForm from './scenes/effectif/ContratForm';
 
+import EmployeurList from './scenes/effectif/EmployeurList';
+import EmployeurForm from './scenes/effectif/EmployeurForm';
 
 import TrainingList from './scenes/training/TrainingList';
 import TrainingDashboard from './scenes/training/TrainingDashboard';
@@ -50,6 +52,9 @@ function App() {
 
                 <Route path="/ContratList" element={<ContratList/>} />
                 <Route path="/ContratForm" element={<ContratForm/>} />
+                
+                <Route path="/EmployeurList" element={<EmployeurList/>} />
+                <Route path="/EmployeurForm" element={<EmployeurForm/>} />
 
                 <Route path="/effectiflist" element={<EffectifList />} />
                 <Route path="/traininglist" element={<TrainingList />} />
