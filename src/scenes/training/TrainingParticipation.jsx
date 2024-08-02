@@ -42,14 +42,14 @@ const TrainingParticipation = () => {
           const worksheet = workbook.Sheets[sheetName];
           const json = XLSX.utils.sheet_to_json(worksheet);
 
-          console.log('Imported data:', json);  // Log de la donnée importée
+          console.log('Imported data:', json);
 
           setTrainingParticipation(json);
           setSnackbarMessage('Data imported successfully');
           setSnackbarSeverity('success');
           setOpenSnackbar(true);
         } catch (error) {
-          console.error('Error importing data:', error);  // Log de l'erreur
+          console.error('Error importing data:', error);
           setSnackbarMessage('Error importing data');
           setSnackbarSeverity('error');
           setOpenSnackbar(true);
@@ -142,8 +142,15 @@ const TrainingParticipation = () => {
           </Button>
         </label>
       </Box>
-      <Box height="70vh">
-        <DataGrid rows={trainingParticipation} columns={columns} pageSize={100} rowsPerPageOptions={[100]} />
+      <Box height="70vh" sx={{ display: 'flex', flexDirection: 'column' }}>
+        <DataGrid
+          rows={trainingParticipation}
+          columns={columns}
+          pageSize={10}
+          rowsPerPageOptions={[10, 20, 50]}
+          autoHeight
+          disableSelectionOnClick
+        />
       </Box>
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>

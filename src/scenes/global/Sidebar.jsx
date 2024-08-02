@@ -4,7 +4,6 @@ import { Box, IconButton, Typography, Modal } from '@mui/material';
 import { Link } from 'react-router-dom';
 import 'react-pro-sidebar/dist/css/styles.css';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
@@ -109,13 +108,7 @@ const Sidebar = () => {
             >
               {/* Optional section title */}
             </Typography>
-            <Item
-              title="Home"
-              to="/"
-              icon={<HomeOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+           
             <Typography
               variant="h6"
               color="#6C757D"
@@ -179,9 +172,6 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            <MenuItem onClick={handleOpenLogin} icon={<PersonOutlinedIcon />}>
-              <Typography>Login</Typography>
-            </MenuItem>
           </Box>
         </Menu>
       </ProSidebar>

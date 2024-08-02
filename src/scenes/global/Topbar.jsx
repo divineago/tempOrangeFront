@@ -20,24 +20,7 @@ const Topbar = () => {
 
       {/* ICONS */}
       <Box display="flex" alignItems="center">
-        <IconButton component={Link} to="/">
-          <HomeOutlinedIcon />
-          <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
-            {/*  Home  */}
-          </Typography>
-        </IconButton>
-        <IconButton component={Link} to="/trainingdashboard">
-          <ListAltIcon />
-          <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
-             {/*  Training */}
-          </Typography>
-        </IconButton>
-        <IconButton component={Link} to="/effectifdashboard">
-          <PeopleAltIcon />
-          <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
-        {/*  effectifdashboard*/}
-          </Typography>
-        </IconButton>
+    
         <IconButton component={Link} to="/calendar">
           <CalendarTodayOutlinedIcon />
           <Typography variant="body2" color={colors.grey[100]} sx={{ ml: 1 }}>
