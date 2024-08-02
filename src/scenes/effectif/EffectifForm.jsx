@@ -20,6 +20,7 @@ import { fetchDataFromAPI, postDataToAPI, updateDataToAPI } from '../../api';
 
 const initialFormData = {
       id: '',
+      cuid: '',
       name: '',
       prenom: '',
       postnom: '',
@@ -153,13 +154,23 @@ const EffectifForm = ({
     }
   };
   
-  
+  console.log('formdata:', formData);
   return (
     <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="md">
       <DialogTitle>{editMode ? 'Modifier Effectif' : 'Ajouter Agent'}</DialogTitle>
       <DialogContent>
         <Box component="form" onSubmit={handleFormSubmit} sx={{ mt: 2 }}>
           <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Cuid"
+                name="cuid"
+                value={formData.cuid}
+                onChange={handleInputChange}
+                required
+              />
+            </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth

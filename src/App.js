@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { ColorModeContext, useMode } from './theme';
 import { Routes, Route } from 'react-router-dom';
@@ -31,17 +31,16 @@ import './index.css';
 
 function App() {
   const [theme, colorMode] = useMode();
+  const [isSidebar, setIsSidebar] = useState(true);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          {<Sidebar />}
-          <Sidebar />
+          <Sidebar isSidebar={isSidebar} />
           <main className="content">
-            <Topbar />
-            <div className="main-content">
+            <Topbar setIsSidebar={setIsSidebar} />
               <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/trainingdashboard" element={<TrainingDashboard />} />
@@ -64,8 +63,7 @@ function App() {
                 <Route path="/calendar" element={<TrainingCalendar />} />
                 <Route path="/trainingparticipation" element={<TrainingParticipation />} />
                 <Route path="/admin" element={<AdminView />} />
-              </Routes>
-            </div>
+                </Routes>
           </main>
         </div>
       </ThemeProvider>

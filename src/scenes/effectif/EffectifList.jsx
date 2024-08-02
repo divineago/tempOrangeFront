@@ -7,34 +7,36 @@ import { fetchDataFromAPI } from '../../api';
 import EffectifForm from './EffectifForm';
 
 
-const initialEffectifList = [];
+const initialEffectifList = {  
+  id: '',
+  cuid: '',
+  name: '',
+  prenom: '',
+  postnom: '',
+  direction: '',
+  employeur: '',
+  genre: '',
+  date_naissance: '',
+  contrat: '',
+  num_mat: '',
+  statut_contrat: '',
+  fonction: '',
+  email: '',
+  age: '',
+  anciennete_annee:'',
+  anciennete_mois:'',
+  nationalite: '',
+  lieu_embauche: '',
+  grade: '',
+  date_fin_contrat: '',
+  date_embauche: '',
+  dure_contrat: '',
+  periode_essai: '',
+};
+   
 const EffectifList = () => {
   const [effectifList, setEffectifList] = useState(initialEffectifList);
-  const [formData, setFormData] = useState({
-    id: '',
-    name: '',
-    prenom: '',
-    postnom: '',
-    direction: '',
-    employeur: '',
-    genre: '',
-    date_naissance: '',
-    contrat: '',
-    num_mat: '',
-    statut_contrat: '',
-    fonction: '',
-    email: '',
-    age: '',
-    anciennete_annee:'',
-    anciennete_mois:'',
-    nationalite: '',
-    lieu_embauche: '',
-    grade: '',
-    date_fin_contrat: '',
-    date_embauche: '',
-    dure_contrat: '',
-    periode_essai: '',
-  });
+  const [formData, setFormData] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -42,11 +44,11 @@ const EffectifList = () => {
   const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
-    fetchEffectifData(); // Utilisation de useEffect pour charger les données initiales
+    fetchEffectifData(); 
   }, []);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    console.log('valeur :', value)
+    // console.log('valeur :', value)
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -54,16 +56,22 @@ const EffectifList = () => {
   };
 const fetchEffectifData = async () => {
     try {
-      // Appel de l'API
+      
       const response = await fetchDataFromAPI('/effectif/agent/');
-      console.log('Full response:', response); // Log de la réponse complète
+      console.log('Full response:', response.data.results[0].user.cuid); 
   
       // Vérification du format des données
-      if (response.data && Array.isArray(response.data)) {
-        setEffectifList(response.data);
+      if (response.data && Array.isArray(response.data.results)) {
+        console.log('_________________________________________________________________________bonjour div');
+        setEffectifList(response.data.results);
+        // console.log('effectif: ',effectifList.set('cuid', 'bonjour'));
+        console.log('effectif: ',typeof effectifList);
       } else if (response.data && Array.isArray(response.data.results)) {
+        console.log('___________________________________________________________________________bonsoir div');
+
         setEffectifList(response.data.results);
       } else {
+        
         console.error('Invalid data format:', response);
         setEffectifList([]); 
       }
@@ -77,6 +85,7 @@ const fetchEffectifData = async () => {
    
     setFormData({
       id: '',
+      cuid: '',
       name: '',
       prenom: '',
       postnom: '',
@@ -162,7 +171,9 @@ const fetchEffectifData = async () => {
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'user', headerName: 'user', width: 150 },
     { field: 'name', headerName: 'Nom', width: 150 },
+    { field: 'prenom', headerName: 'Prénom', width: 150 },
     { field: 'prenom', headerName: 'Prénom', width: 150 },
     { field: 'postnom', headerName: 'Postnom', width: 150 },
     { field: 'direction', headerName: 'Direction', width: 150 },
@@ -198,7 +209,7 @@ const fetchEffectifData = async () => {
       renderCell: (params) => (
         <>
           <Button variant="outlined" color="primary" size="small" onClick={() => handleEdit(params.row)}>
-            Modifier
+            Modifier 
           </Button>
           <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)}>
             Supprimer
@@ -222,6 +233,7 @@ const fetchEffectifData = async () => {
     setEditMode(false);
     setFormData({
       id: '',
+      ciud: '',
       name: '',
       prenom: '',
       postnom: '',
