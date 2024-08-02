@@ -147,10 +147,10 @@ const TrainingList = () => {
       renderCell: (params) => (
         <>
           <Button variant="outlined" color="primary" size="small" onClick={() => handleEdit(params.row)}>
-            Modifier
+            Edit
           </Button>
           <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)}>
-            Supprimer
+            Delete
           </Button>
         </>
       ),
@@ -171,13 +171,13 @@ const TrainingList = () => {
 
   return (
     <Box m="20px">
-      <Header title="Training List" subtitle="Liste de toutes les formations" />
-      <Box m="10px 0">
-        <Button variant="contained" color="primary" onClick={handleOpenDialog} style={{ marginLeft: '5px' }}>
-          Ajouter formation
+      <Header title="Training List" subtitle="List of all trainings" />
+      <Box mb="10px">
+        <Button variant="contained" color="primary" onClick={handleOpenDialog} style={{ marginRight: '10px' }}>
+          Add Training
         </Button>
-        <Button variant="contained" color="primary" onClick={handleExportExcel} style={{ marginLeft: '5px' }}>
-          Exporter vers Excel
+        <Button variant="contained" color="primary" onClick={handleExportExcel} style={{ marginRight: '10px' }}>
+          Export to Excel
         </Button>
         <input
           accept=".xlsx, .xls"
@@ -187,13 +187,23 @@ const TrainingList = () => {
           onChange={handleImportExcel}
         />
         <label htmlFor="import-excel">
-          <Button variant="contained" component="span" style={{ marginLeft: '5px' }}>
-            Importer vers Excel
+          <Button variant="contained" component="span">
+            Import from Excel
           </Button>
         </label>
       </Box>
-      <Box height="70vh">
-        <DataGrid rows={trainingData} columns={columns} pageSize={100} rowsPerPageOptions={[100]} />
+      <Box
+        height="70vh"
+        sx={{
+          overflowX: 'auto',
+          overflowY: 'auto',
+          '& .MuiDataGrid-cell': {
+            whiteSpace: 'normal',
+            wordWrap: 'break-word',
+          },
+        }}
+      >
+        <DataGrid rows={trainingData} columns={columns} pageSize={10} rowsPerPageOptions={[10, 20, 50]} />
       </Box>
       <TrainingForm
         formData={formData}

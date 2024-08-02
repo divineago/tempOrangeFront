@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, FormControl, InputLabel, Select, MenuItem, Typography, Box, Button } from '@mui/material';
+import { Grid, FormControl, InputLabel, Select, MenuItem, Typography, Box, Button, Card, CardContent } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
@@ -18,7 +18,7 @@ const TrainingDashboard = () => {
 
   const directionsWithId = mockData.directions.map((direction, index) => ({
     id: index + 1, // Ensure each id is unique
-    ...direction
+    ...direction,
   }));
 
   const filteredDirections = filters.direction
@@ -52,12 +52,26 @@ const TrainingDashboard = () => {
     ],
   });
 
+  const renderWidget = (title, value, color) => (
+    <Card sx={{ minWidth: 275, backgroundColor: color, mb: 2, borderRadius: 2, boxShadow: 3 }}>
+      <CardContent>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#fff' }}>
+          {title}
+        </Typography>
+        <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#fff' }}>
+          {value}
+        </Typography>
+      </CardContent>
+    </Card>
+  );
+
   return (
-    <div id="training-dashboard" style={{ padding: '20px' }}>
+    <Box p={3}>
       <Typography variant="h4" gutterBottom>
         Tableau de bord de la formation
       </Typography>
-      <Grid container spacing={2} alignItems="center">
+
+      <Grid container spacing={2} mb={2}>
         <Grid item xs={12} sm={6} md={4}>
           <FormControl variant="outlined" fullWidth>
             <InputLabel>Direction</InputLabel>
@@ -74,39 +88,51 @@ const TrainingDashboard = () => {
             </Select>
           </FormControl>
         </Grid>
+      </Grid>
+
+      <Grid container spacing={2} mb={2}>
         <Grid item xs={12} md={4}>
-          <Typography variant="h6">TOTAL AGENTS</Typography>
-          <Typography variant="body1">{mockData.totalAgents}</Typography>
+          {renderWidget('TOTAL AGENTS', mockData.totalAgents, '#4caf50')}
         </Grid>
         <Grid item xs={12} md={4}>
-          <Typography variant="h6">FORMATION EN HORS E-LEARNING</Typography>
-          <Typography variant="body1">{mockData.trainingParticipation.inPerson}</Typography>
-          <Typography variant="h6">FORMATION E-LEARNING</Typography>
-          <Typography variant="body1">{mockData.trainingParticipation.eLearning}</Typography>
+          {renderWidget('FORMATION EN HORS E-LEARNING', mockData.trainingParticipation.inPerson, '#2196f3')}
         </Grid>
         <Grid item xs={12} md={4}>
-          <Typography variant="h6">PARTICIPATION GLOBALE</Typography>
-          <Typography variant="body1">{mockData.trainingParticipation.total}</Typography>
+          {renderWidget('FORMATION E-LEARNING', mockData.trainingParticipation.eLearning, '#ff9800')}
+        </Grid>
+        <Grid item xs={12} md={4}>
+          {renderWidget('PARTICIPATION GLOBALE', mockData.trainingParticipation.total, '#f44336')}
         </Grid>
       </Grid>
-      <Box display="flex" justifyContent="space-between" mt={4} sx={{ '& > *': { flex: 1, margin: '0 10px' } }}>
-        <Box sx={{ height: '300px' }}>
-          <Typography variant="h6">Effectif par Employeur</Typography>
-          <Doughnut data={createDoughnutData(mockData.donutDataEffectif)} options={{ maintainAspectRatio: false }} />
-        </Box>
-        <Box sx={{ height: '300px' }}>
-          <Typography variant="h6">Formations par Type</Typography>
-          <Doughnut data={createDoughnutData(mockData.donutDataFormation)} options={{ maintainAspectRatio: false }} />
-        </Box>
-        <Box sx={{ height: '300px' }}>
-          <Typography variant="h6">Participation aux Formations</Typography>
-          <Doughnut data={createDoughnutData(mockData.donutDataParticipation)} options={{ maintainAspectRatio: false }} />
-        </Box>
-        <Box sx={{ height: '300px' }}>
-          <Typography variant="h6">Formations par Titre</Typography>
-          <Doughnut data={createDoughnutData(mockData.donutDataByFormation)} options={{ maintainAspectRatio: false }} />
-        </Box>
-      </Box>
+
+      <Grid container spacing={2} mt={3}>
+        <Grid item xs={12} md={6}>
+          <Card sx={{ p: 2 }}>
+            <Typography variant="h6">Effectif par Employeur</Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
+              <Doughnut data={createDoughnutData(mockData.donutDataEffectif)} options={{ maintainAspectRatio: false }} />
+            </Box>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Card sx={{ p: 2 }}>
+            <Typography variant="h6">Formations par Type</Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
+              <Doughnut data={createDoughnutData(mockData.donutDataFormation)} options={{ maintainAspectRatio: false }} />
+            </Box>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Card sx={{ p: 2 }}>
+            <Typography variant="h6">Participation aux Formations</Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
+              <Doughnut data={createDoughnutData(mockData.donutDataParticipation)} options={{ maintainAspectRatio: false }} />
+            </Box>
+          </Card>
+        </Grid>
+      
+      </Grid>
+
       <Typography variant="h6" style={{ marginTop: '20px' }}>DIRECTIONS</Typography>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
@@ -121,7 +147,7 @@ const TrainingDashboard = () => {
           Télécharger en Excel
         </Button>
       </Box>
-    </div>
+    </Box>
   );
 };
 

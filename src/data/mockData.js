@@ -24,6 +24,7 @@ export const directions = [
   { value: "DRH", label: "Direction des Ressources Humaines" },
   { value: "DEC", label: "Direction Expérience Client" },
   { value: "DAL", label: "Direction Achats et Logistique" },
+  { value: "DRE", label: "Direction Reseaux" },
   { value: "DJAR", label: "Direction Juridique & Affaires Réglementaires" },
   { value: "B2C", label: "Direction Marketing & Communication B2C" },
   { value: "DVD", label: "Direction de Ventes & Distribution" },
