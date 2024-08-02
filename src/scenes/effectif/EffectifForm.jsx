@@ -2,15 +2,18 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
-  TextField,
   MenuItem,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions, 
+  DialogActions,
   Checkbox,
+  FormControl,
   FormControlLabel,
-  Grid
+  Grid,
+  InputLabel,
+  Select,
+  TextField
 } from '@mui/material';
 import { fetchDataFromAPI, postDataToAPI, updateDataToAPI } from '../../api';
 
@@ -43,7 +46,6 @@ const initialFormData = {
 
 const EffectifForm = ({
   formData: initialFormDataProp,
-  handleInputChange: handleInputChangeProp,
   handleFormSubmit,
   openDialog,
   handleCloseDialog,
@@ -58,8 +60,10 @@ const EffectifForm = ({
   const [employeurOptions, setEmployeurOptions] = useState([]);
   const [contratOptions, setContratOptions] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log('Contrat Options:', contratOptions);
-  console.log('form data: ',formData.contrat)
+  console.log("Direction Options:", directionOptions);
+  console.log("Employeur Options:", employeurOptions);
+  console.log("Contrat Options:", contratOptions[0]);
+  
 
   useEffect(() => {
     if (editMode && initialFormDataProp) {
@@ -67,27 +71,24 @@ const EffectifForm = ({
     } else {
       setFormData(initialFormData);  
     }
-    console.log('Valeur initiale de formData:', initialFormDataProp);
-    console.log('Valeur actuelle de formData:', formData);
   }, [editMode, initialFormDataProp]);
 
   useEffect(() => {
     const fetchEffectifData = async () => {
       try {
-        const [choicesResponse, directionResponse, employeurResponse,contratResponse] = await Promise.all([
+        const [choicesResponse, directionResponse, employeurResponse, contratResponse] = await Promise.all([
           fetchDataFromAPI('/effectif/agent/get_choices/'),
           fetchDataFromAPI('/effectif/agent/get_direction/'),
           fetchDataFromAPI('/effectif/agent/get_employeur/'),
           fetchDataFromAPI('/effectif/agent/get_contrat/')
-
         ]);
-        const { age, genre, statut_contrat, nationalite} = choicesResponse.data;
+
+        const { age, genre, statut_contrat, nationalite } = choicesResponse.data;
         const direction = directionResponse.data;
         const employeur = employeurResponse.data;
         const contrat = contratResponse.data;
-        console.log('Réponse API:',choicesResponse.data,contratResponse.data,directionResponse.data);
+        console.log('Contrat Response:', contratResponse.data);
 
-  
         const transformChoices = (choices) => {
           return Array.isArray(choices)
             ? choices.map(choice => ({
@@ -97,10 +98,11 @@ const EffectifForm = ({
             : [];
         };
         const transformForeignKeyData = (data) => {
+          console.log('Transforming foreign key data:', data);
           return Array.isArray(data)
             ? data.map(item => ({
                 id: item.id,
-                value: item.value,
+                value: item.id, 
                 label: item.label,
               }))
             : [];
@@ -118,17 +120,15 @@ const EffectifForm = ({
         setLoading(false);
       }
     };
-  
+
     fetchEffectifData();
   }, []);
 
-  const handleFormInputChange = (event) => {
+  const handleInputChange = (event) => {
     const { name, value, checked, type } = event.target;
-    console.log('Nom:', name, 'Valeur reçue:', value);
     setFormData(prevData => ({
       ...prevData,
       [name]: type === 'checkbox' ? checked : value,
-
     }));
   };
 
@@ -166,7 +166,7 @@ const EffectifForm = ({
                 label="Nom"
                 name="name"
                 value={formData.name}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 required
               />
             </Grid>
@@ -176,9 +176,10 @@ const EffectifForm = ({
                 label="Prénom"
                 name="prenom"
                 value={formData.prenom}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 required
               />
+              
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -186,7 +187,7 @@ const EffectifForm = ({
                 label="Postnom"
                 name="postnom"
                 value={formData.postnom}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 required
               />
             </Grid>
@@ -196,19 +197,14 @@ const EffectifForm = ({
                 label="Direction"
                 name="direction"
                 value={formData.direction || ''}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 select
                 required
               >
-                {!loading && directionOptions.length > 0 ? (
-                  directionOptions.map((option) => (
-                    <MenuItem key={option.id} value={option.id}>
-                     {option.label}
-                    </MenuItem>
-                  ))
-                ) : (
-                  <MenuItem disabled>Loading...</MenuItem>
-                )}
+                {directionOptions.map(option => (
+                  <MenuItem key={`direction-${option.id}`} value={option.value}>
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -216,20 +212,16 @@ const EffectifForm = ({
                 fullWidth
                 label="Employeur"
                 name="employeur"
-                value={formData.employeur|| ''}
-                onChange={handleFormInputChange}
+                value={formData.employeur || ''}
+                onChange={handleInputChange}
                 select
                 required
               >
-              {!loading && employeurOptions.length > 0 ? (
-                employeurOptions.map((option) => (
-                  <MenuItem key={option.id} value={option.id}>
-                     {option.label}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>Loading...</MenuItem>
-              )}
+              {employeurOptions.map(option => (
+                <MenuItem key={`employeur-${option.id}`} value={option.value}>
+                  {option.label}
+                </MenuItem>
+                  ))}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -238,7 +230,7 @@ const EffectifForm = ({
                 label="Genre"
                 name="genre"
                 value={formData.genre}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 select
                 required
               >
@@ -259,33 +251,32 @@ const EffectifForm = ({
                 label="Date de Naissance"
                 name="date_naissance"
                 value={formData.date_naissance}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 type="date"
                 InputLabelProps={{ shrink: true }}
                 required
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Contrat"
-                name="contrat"
-                value={formData.contrat || ''}
-                onChange={handleFormInputChange}
-                select
-                required
-              >{!loading && contratOptions.length > 0 ? (
-                contratOptions.map((option) => {
-                console.log('Clé de MenuItem:', option.id); // Vérifiez les clés
-                  <MenuItem key={option.id} value={option.id}>
-                      {option.label}
-                  </MenuItem>
-                })
-              ) : (
-                <MenuItem disabled>Loading...</MenuItem>
-              )}
-                
-              </TextField>
+            <FormControl fullWidth required>
+                <InputLabel>Contrat</InputLabel>
+                <Select
+                  name="contrat"
+                  value={formData.contrat || ''}
+                  onChange={handleInputChange}
+                  label="Contrat"
+                >
+                  {!loading ? (
+                    contratOptions.map(option => (
+                      <MenuItem key={`contrat-${option.id}`} value={option.id}>
+                        {option.label}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem disabled>Loading...</MenuItem>
+                  )}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -293,7 +284,7 @@ const EffectifForm = ({
                 label="Matricule"
                 name="num_mat"
                 value={formData.num_mat}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 required
               />
             </Grid>
@@ -303,7 +294,7 @@ const EffectifForm = ({
                 label="Statut du Contrat"
                 name="statut_contrat"
                 value={formData.statut_contrat}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 select
                 required
               >
@@ -324,7 +315,7 @@ const EffectifForm = ({
                 label="tranche d'age"
                 name="age"
                 value={formData.age}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 select
                 required
               >
@@ -345,7 +336,7 @@ const EffectifForm = ({
                 label="Fonction"
                 name="fonction"
                 value={formData.fonction}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 required
               />
             </Grid>
@@ -355,7 +346,7 @@ const EffectifForm = ({
                 label="Email"
                 name="email"
                 value={formData.email}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 type="email"
                 required
               />
@@ -366,7 +357,7 @@ const EffectifForm = ({
                 label="Nationalité"
                 name="nationalite"
                 value={formData.nationalite}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 select
                 required
               >
@@ -387,7 +378,7 @@ const EffectifForm = ({
                 label="Lieu d'Embauche"
                 name="lieu_embauche"
                 value={formData.lieu_embauche}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 required
               />
             </Grid>
@@ -397,7 +388,7 @@ const EffectifForm = ({
                 label="Grade"
                 name="grade"
                 value={formData.grade}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 required
               />
             </Grid>
@@ -407,7 +398,7 @@ const EffectifForm = ({
                 label="Date de Fin de Contrat"
                 name="date_fin_contrat"
                 value={formData.date_fin_contrat}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 type="date"
                 InputLabelProps={{ shrink: true }}
                 required
@@ -419,7 +410,7 @@ const EffectifForm = ({
                 label="Date d'Embauche"
                 name="date_embauche"
                 value={formData.date_embauche}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 type="date"
                 InputLabelProps={{ shrink: true }}
                 required
@@ -431,7 +422,7 @@ const EffectifForm = ({
                 label="Durée du Contrat (mois)"
                 name="dure_contrat"
                 value={formData.dure_contrat}
-                onChange={handleFormInputChange}
+                onChange={handleInputChange}
                 type="number"
                 required
               />
@@ -440,8 +431,8 @@ const EffectifForm = ({
             <FormControlLabel
                 control={
                   <Checkbox
-                    checked={formData.periode_essai}
-                    onChange={handleFormInputChange}
+                    checked={Boolean(formData.periode_essai)}
+                    onChange={handleInputChange}
                     name="periode_essai"
                   />
                 }

@@ -7,6 +7,13 @@ import Topbar from './scenes/global/Topbar';
 import TrainingForm from './scenes/training/TrainingForm';
 import TrainingProgress from './scenes/training/TrainingProgress';
 import EffectifList from './scenes/effectif/EffectifList';
+import DirectionList from './scenes/effectif/DirectionList';
+import DirectionForm from './scenes/effectif/DirectionForm';
+
+import ContratList from './scenes/effectif/ContratList';
+import ContratForm from './scenes/effectif/ContratForm';
+
+
 import TrainingList from './scenes/training/TrainingList';
 import TrainingDashboard from './scenes/training/TrainingDashboard';
 import EffectifDashboard from './scenes/effectif/EffectifDashboard';
@@ -18,7 +25,7 @@ import TrainingCalendar from './scenes/training/TrainingCalendar';
 import TrainingParticipation from './scenes/training/TrainingParticipation';
 
 
-import './index.css'; // Assurez-vous d'importer le fichier de styles
+import './index.css'; 
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -38,6 +45,12 @@ function App() {
                 <Route path="/trainingdashboard" element={<TrainingDashboard />} />
                 <Route path="/trainingform" element={<TrainingForm />} />
                 <Route path="/trainingprogress" element={<TrainingProgress />} />
+                <Route path="/directionList" element={<DirectionList/>} />
+                <Route path="/directionForm" element={<DirectionForm/>} />
+
+                <Route path="/ContratList" element={<ContratList/>} />
+                <Route path="/ContratForm" element={<ContratForm/>} />
+
                 <Route path="/effectiflist" element={<EffectifList />} />
                 <Route path="/traininglist" element={<TrainingList />} />
                 <Route path="/effectifdashboard" element={<EffectifDashboard />} />

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, MenuItem, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import Header from '../../components/Header';
-import { directions, employeurs, effectifList as initialEffectifList, genderOptions, contractOptions, statusOptions, classificationOptions } from '../../data/mockData';
 import { DataGrid } from '@mui/x-data-grid';
 import * as XLSX from 'xlsx';
 import { fetchDataFromAPI } from '../../api'; 
 import EffectifForm from './EffectifForm';
 
 
+const initialEffectifList = [];
 const EffectifList = () => {
   const [effectifList, setEffectifList] = useState(initialEffectifList);
   const [formData, setFormData] = useState({
@@ -154,17 +154,22 @@ const fetchEffectifData = async () => {
       reader.readAsArrayBuffer(file);
     }
   };
+  const transformOptions = (options, value) => {
+    const option = options.find(opt => opt.id === value);
+    console.log(`Transforming ${value} to ${option ? option.label : 'N/A'}`);
+    return option ? option.label : 'N/A';
+  };
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
     { field: 'name', headerName: 'Nom', width: 150 },
     { field: 'prenom', headerName: 'Prénom', width: 150 },
     { field: 'postnom', headerName: 'Postnom', width: 150 },
-    { field: 'direction', headerName: 'Direction', width: 200 },
-    { field: 'employeur', headerName: 'Employeur', width: 200 },
+    { field: 'direction', headerName: 'Direction', width: 150 },
+    { field: 'employeur', headerName: 'Employeur', width: 150 },
     { field: 'genre', headerName: 'Genre', width: 150 },
     { field: 'date_naissance', headerName: 'Date de Naissance', width: 150 },
-    { field: 'contrat', headerName: 'Contrat', width: 150 },
+    { field: 'contrat', headerName: 'Contrat', width: 150 },  
     { field: 'num_mat', headerName: 'Numéro Matricule', width: 150 },
     { field: 'statut_contrat', headerName: 'statut_contrat', width: 150 },
     { field: 'fonction', headerName: 'Fonction', width: 150 },

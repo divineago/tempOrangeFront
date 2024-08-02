@@ -157,34 +157,48 @@ const Sidebar = () => {
             >
               Effectif
             </Typography>
-            <Item
-              title="Effectif List"
-              to="/effectiflist"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Dashboard Effectif"
-              to="/effectifdashboard"
-              icon={<AssessmentIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-             <Item
-              title="test donnée api"
-              to="/mycomponent"
+              <Item
+                title="Effectif List"
+                to="/effectiflist"
+                icon={<PersonOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Dashboard Effectif"
+                to="/effectifdashboard"
+                icon={<AssessmentIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Direction"
+                to="/directionList"
+                icon={<PeopleAltIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />   
+              <Item
+              title="Contrat"
+              to="/ContratList"
               icon={<PeopleAltIcon />}
               selected={selected}
               setSelected={setSelected}
-            /> 
-            <Item
-              title="Planning"
-              to="/calendar"
-              icon={<ListAltIcon />}
+              /> 
+               <Item
+              title="Employeur"
+              to="/EmployeurList"
+              icon={<PeopleAltIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+              /> 
+              <Item
+                title="Planning"
+                to="/calendar"
+                icon={<ListAltIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
             <MenuItem onClick={handleOpenLogin} icon={<PersonOutlinedIcon />}>
               <Typography>Login</Typography>
             </MenuItem>
