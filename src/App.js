@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { ColorModeContext, useMode } from './theme';
 import { Routes, Route } from 'react-router-dom';
@@ -17,9 +17,7 @@ import SignUpForm from './scenes/User/SignupForm';
 import Evaluation from './scenes/training/Evaluation';
 import TrainingCalendar from './scenes/training/TrainingCalendar';
 import TrainingParticipation from './scenes/training/TrainingParticipation';
-
-
-import './index.css'; // Assurez-vous d'importer le fichier de styles
+import './index.css';
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -29,26 +27,29 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div className="app">
+        <div className={`app ${isSidebar ? '' : 'collapsed'}`}>
           <Sidebar isSidebar={isSidebar} />
-          <main className="content">
+          <main className={`content ${isSidebar ? '' : 'collapsed'}`}>
             <Topbar setIsSidebar={setIsSidebar} />
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<SignUpForm />} />
-                <Route path="/trainingdashboard" element={<TrainingDashboard />} />
-                <Route path="/trainingform" element={<TrainingForm />} />
-                <Route path="/trainingprogress" element={<TrainingProgress />} />
-                <Route path="/effectiflist" element={<EffectifList />} />
-                <Route path="/traininglist" element={<TrainingList />} />
-                <Route path="/effectifdashboard" element={<EffectifDashboard />} />
-                <Route path="/notificationpopup" element={<NotificationPopup />} />
-                <Route path="/evaluation" element={<Evaluation />} />
-                <Route path="/calendar" element={<TrainingCalendar />} />
-                <Route path="/trainingparticipation" element={<TrainingParticipation />} />
-                <Route path="/admin" element={<AdminView />} />
-                </Routes>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUpForm />} />
+              <Route path="/trainingdashboard" element={<TrainingDashboard />} />
+              <Route path="/trainingform" element={<TrainingForm />} />
+              <Route path="/trainingprogress" element={<TrainingProgress />} />
+              <Route path="/effectiflist" element={<EffectifList />} />
+              <Route path="/traininglist" element={<TrainingList />} />
+              <Route path="/effectifdashboard" element={<EffectifDashboard />} />
+              <Route path="/notificationpopup" element={<NotificationPopup />} />
+              <Route path="/evaluation" element={<Evaluation />} />
+              <Route path="/calendar" element={<TrainingCalendar />} />
+              <Route path="/trainingparticipation" element={<TrainingParticipation />} />
+              <Route path="/admin" element={<AdminView />} />
+            </Routes>
           </main>
+          <div className={`footer ${isSidebar ? '' : 'collapsed'}`}>
+            &copy; {new Date().getFullYear()} ORDC
+          </div>
         </div>
       </ThemeProvider>
     </ColorModeContext.Provider>
