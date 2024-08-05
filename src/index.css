@@ -1,18 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
 
-
-
 .app {
   display: flex;
   position: relative;
-
-
+  min-height: 100vh;
 }
 
+/* Styles pour la scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
- 
-
 }
 
 /* Track */
@@ -30,21 +26,29 @@
   background: #444;
 }
 
+/* Styles de la sidebar */
 .sidebar {
   position: fixed;
   left: 0;
   top: 0;
   width: 250px;
-  height: 150%;
-
+  height: 100%;
   z-index: 1000;
-  transition: background-color 0.3s ease;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  background-color: #333;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 80px; /* Largeur réduite en mode collapsed */
 }
 
 .sidebar:hover {
-  background-color: #444;
+  background-color: #FF7900;
 }
 
+/* Styles de la topbar */
 .topbar {
   position: fixed;
   top: 0;
@@ -53,25 +57,35 @@
   height: 60px;
   background-color: #444;
   z-index: 1001;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, left 0.3s ease;
+}
+
+.topbar.collapsed {
+  left: 80px; /* Déplacer la topbar en mode collapsed */
 }
 
 .topbar:hover {
   background-color: #FF7900;
 }
 
+/* Styles du contenu principal */
 .content {
   margin-top: 60px;
   margin-left: 250px;
   padding: 25px;
   width: calc(100% - 250px);
   overflow-y: auto;
-
-
+  transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
+.content.collapsed {
+  margin-left: 80px; /* Ajuster la marge en mode collapsed */
+  width: calc(100% - 80px); /* Ajuster la largeur en mode collapsed */
+}
+
+/* Styles du footer */
 .footer {
-  padding: 10px;
+  padding: 1px;
   text-align: center;
   font-size: 0.8em;
   background-color: #FF7900;
@@ -79,10 +93,18 @@
   bottom: 0;
   left: 250px;
   right: 0;
+  transition: left 0.3s ease;
 }
+
+.footer.collapsed {
+  left: 80px; /* Déplacer le footer en mode collapsed */
+}
+
+/* Styles des éléments du menu */
 .menu-item-hover:hover {
   background-color: #FF7900 !important;
 }
+
 /* Remove shadow behind icons */
 .menu-item-hover .menu-item-icon {
   box-shadow: none !important;
@@ -92,7 +114,8 @@
 .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-footer .pro-menu-item:focus {
   background-color: none !important;
 }
-/* Media query pour les appareils de taille réduite */
+
+/* Styles pour les appareils de taille réduite */
 @media (max-width: 960px) {
   .sidebar {
     width: 80px; /* Réduire la largeur de la sidebar */
@@ -104,8 +127,7 @@
 
   .content {
     margin-left: 80px; /* Ajuster la marge à gauche du contenu */
-    width: calc(100% - 80px); 
-    position: fixed;/* Ajuster la largeur du contenu */
+    width: calc(100% - 80px); /* Ajuster la largeur du contenu */
   }
 
   .footer {
@@ -130,11 +152,11 @@
   }
 
   .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-menu .pro-menu-item {
-    padding: 10px 0a; /* Ajuster le padding des éléments du menu du sidebar burger */
+    padding: 10px 0; /* Ajuster le padding des éléments du menu du sidebar burger */
   }
 
   .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-menu .pro-menu-item-text {
-    display: contents; /* Cacher le texte des éléments du menu du sidebar burger */
+    display: none; /* Cacher le texte des éléments du menu du sidebar burger */
   }
 
   .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-menu .pro-icon-wrapper {
@@ -143,8 +165,11 @@
 
   .sidebar .pro-sidebar-inner .pro-sidebar-layout .pro-sidebar-menu .pro-inner-item {
     padding: 5px 0; /* Ajuster le padding des sous-éléments du sidebar burger */
-  } enu */
-  
+  }
+
+  .pro-burger-menu {
+    display: block; /* Afficher le burger menu */
+  }
 
   .pro-burger-menu .pro-burger-icon {
     color: #FFF; /* Couleur du burger icon */

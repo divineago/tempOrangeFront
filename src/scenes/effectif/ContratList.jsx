@@ -7,7 +7,7 @@ import { fetchDataFromAPI, postDataToAPI, updateDataToAPI, deleteDataToAPI } fro
 import ContratForm from './ContratForm'; 
 
 const ContratList = () => {
-  const [directionData, setDirectionData] = useState([]);
+  const [contratData, setContratData] = useState([]);
   const [formData, setFormData] = useState({
     id: '',
     nom: '',
@@ -31,16 +31,16 @@ const ContratList = () => {
   
       // Vérification du format des données
       if (response.data && Array.isArray(response.data)) {
-        setDirectionData(response.data);
+        setContratData(response.data);
       } else if (response.data && Array.isArray(response.data.results)) {
-        setDirectionData(response.data.results);
+        setContratData(response.data.results);
       } else {
         console.error('Invalid data format:', response);
-        setDirectionData([]); // Mise à jour de l'état avec un tableau vide si le format est incorrect
+        setContratData([]); // Mise à jour de l'état avec un tableau vide si le format est incorrect
       }
     } catch (error) {
       console.error('Error fetching contrat data:', error);
-      setDirectionData([]); // Mise à jour de l'état avec un tableau vide en cas d'erreur
+      setContratData([]); // Mise à jour de l'état avec un tableau vide en cas d'erreur
     }
   };
 
@@ -59,7 +59,7 @@ const ContratList = () => {
         await updateDataToAPI(`/effectif/contrat/${formData.id}/`, formData);
         setSnackbarMessage('Contrat mise à jour avec succès');
       } else {
-        await postDataToAPI('/effectif/contrat/creer_direction/', formData);
+        await postDataToAPI('/effectif/contrat/creer_contrat/', formData);
         setSnackbarMessage('Contrat ajoutée avec succès');
       }
       fetchContratData(); // Recharger les données après soumission
@@ -105,7 +105,7 @@ const ContratList = () => {
   };
 
   const handleExportExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(directionData);
+    const ws = XLSX.utils.json_to_sheet(contratData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'ContratList');
     XLSX.writeFile(wb, 'ContratList.xlsx');
@@ -122,7 +122,7 @@ const ContratList = () => {
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
           const json = XLSX.utils.sheet_to_json(worksheet);
-          setDirectionData(json);
+          setContratData(json);
           setSnackbarMessage('Data imported successfully');
           setSnackbarSeverity('success');
           setOpenSnackbar(true);
@@ -208,7 +208,7 @@ const ContratList = () => {
         </label>
       </Box>
       <Box height="70vh">
-        <DataGrid rows={directionData} columns={columns} pageSize={100} rowsPerPageOptions={[100]} />
+        <DataGrid rows={contratData} columns={columns} pageSize={100} rowsPerPageOptions={[100]} />
       </Box>
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>

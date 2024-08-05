@@ -109,7 +109,6 @@ const ContratForm = ({
               <MenuItem disabled>Loading...</MenuItem>
             )}
           </TextField>
-          {/* Ajout d'autres champs ici si nécessaire */}
         </Box>
       </DialogContent>
       <DialogActions>

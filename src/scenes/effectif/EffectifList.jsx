@@ -10,6 +10,7 @@ import EffectifForm from './EffectifForm';
 const initialEffectifList = {  
   id: '',
   cuid: '',
+  email: '',
   name: '',
   prenom: '',
   postnom: '',
@@ -21,7 +22,6 @@ const initialEffectifList = {
   num_mat: '',
   statut_contrat: '',
   fonction: '',
-  email: '',
   age: '',
   anciennete_annee:'',
   anciennete_mois:'',
@@ -58,23 +58,45 @@ const fetchEffectifData = async () => {
     try {
       
       const response = await fetchDataFromAPI('/effectif/agent/');
-      console.log('Full response:', response.data.results[0].user.cuid); 
-  
-      // Vérification du format des données
-      if (response.data && Array.isArray(response.data.results)) {
-        console.log('_________________________________________________________________________bonjour div');
-        setEffectifList(response.data.results);
-        // console.log('effectif: ',effectifList.set('cuid', 'bonjour'));
-        console.log('effectif: ',typeof effectifList);
-      } else if (response.data && Array.isArray(response.data.results)) {
-        console.log('___________________________________________________________________________bonsoir div');
+      // console.log('Full response:', response.data.results[0].user.cuid); 
+      
+   // Vérification du format des données
+   if (response.data && Array.isArray(response.data.results)) {
+    // Transformation des données pour correspondre à initialEffectifList
+    const transformedData = response.data.results.map(agent => ({
+      id: agent.id || '',
+      name: agent.name || '',
+      cuid: agent.user ? agent.user.cuid : '', // Récupérer cuid de l'objet user
+      email : agent.user ? agent.user.email : '', // Récupérer cuid de l'objet user
+      phone : agent.user ? agent.user.phone : '', // Récupérer cuid de l'objet user
+      prenom: agent.prenom || '',
+      postnom: agent.postnom || '',
+      direction: agent.direction ? agent.direction.name : '',
+      employeur: agent.employeur ? agent.employeur.type_employeur: '',
+      genre: agent.genre || '',
+      date_naissance: agent.date_naissance || '',
+      contrat: agent.contrat ? agent.contrat.type_contrat : '',
+      num_mat: agent.num_mat || '',
+      statut_contrat: agent.statut_contrat || '',
+      fonction: agent.fonction || '',
+      age: agent.age || '',
+      anciennete_annee: agent.anciennete_annee || '',
+      anciennete_mois: agent.anciennete_mois || '',
+      nationalite: agent.nationalite || '',
+      lieu_embauche: agent.lieu_embauche || '',
+      grade: agent.grade || '',
+      date_fin_contrat: agent.date_fin_contrat || '',
+      date_embauche: agent.date_embauche || '',
+      dure_contrat: agent.dure_contrat || '',
+      periode_essai: agent.periode_essai || '',
+    }));
 
-        setEffectifList(response.data.results);
-      } else {
-        
-        console.error('Invalid data format:', response);
-        setEffectifList([]); 
-      }
+    // Mise à jour du state avec les données transformées
+    setEffectifList(transformedData);
+  } else {
+    console.error('Invalid data format:', response);
+    setEffectifList([]); 
+  }
     } catch (error) {
       console.error('Error fetching training data:', error);
       setEffectifList([]); 
@@ -87,6 +109,8 @@ const fetchEffectifData = async () => {
       id: '',
       cuid: '',
       name: '',
+      email: '',
+      phone: '',
       prenom: '',
       postnom: '',
       direction: '',
@@ -98,7 +122,6 @@ const fetchEffectifData = async () => {
       age: '',
       statut_contrat: '',
       fonction: '',
-      email: '',
       anciennete_annee:'',
       anciennete_mois:'',
       nationalite: '',
@@ -171,10 +194,11 @@ const fetchEffectifData = async () => {
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'user', headerName: 'user', width: 150 },
+    { field: 'cuid', headerName: 'cuid', width: 150 },
+    { field: 'email', headerName: 'email', width: 150 },
     { field: 'name', headerName: 'Nom', width: 150 },
     { field: 'prenom', headerName: 'Prénom', width: 150 },
-    { field: 'prenom', headerName: 'Prénom', width: 150 },
+    { field: 'phone', headerName: 'phone', width: 150 },
     { field: 'postnom', headerName: 'Postnom', width: 150 },
     { field: 'direction', headerName: 'Direction', width: 150 },
     { field: 'employeur', headerName: 'Employeur', width: 150 },
@@ -184,7 +208,6 @@ const fetchEffectifData = async () => {
     { field: 'num_mat', headerName: 'Numéro Matricule', width: 150 },
     { field: 'statut_contrat', headerName: 'statut_contrat', width: 150 },
     { field: 'fonction', headerName: 'Fonction', width: 150 },
-    { field: 'email', headerName: 'Email', width: 200 },
     { field: 'anciennete_annee', headerName: 'Ancienneté (années)', width: 150 },
     { field: 'anciennete_mois', headerName: 'Ancienneté (mois)', width: 150 },
     { field: 'nationalite', headerName: 'Nationalité', width: 150 },
@@ -245,7 +268,6 @@ const fetchEffectifData = async () => {
       num_mat: '',
       statut_contrat: '',
       fonction: '',
-      email: '',
       anciennete_annee:'',
       anciennete_mois:'',
       nationalite: '',

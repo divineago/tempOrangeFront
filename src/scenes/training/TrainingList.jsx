@@ -177,10 +177,10 @@ const TrainingList = () => {
       renderCell: (params) => (
         <>
           <Button variant="outlined" color="primary" size="small" onClick={() => handleEdit(params.row)}>
-            Modifier
+            Edit
           </Button>
           <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)}>
-            Supprimer
+            Delete
           </Button>
         </>
       ),

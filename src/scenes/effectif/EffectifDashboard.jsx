@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Card, CardContent, Typography, Box, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
-import { Bar, Line, Pie, Doughnut } from 'react-chartjs-2';
+import { Bar, Doughnut } from 'react-chartjs-2';
 import { orangeInterns, orangeMoneyInterns, externals, directions } from '../../data/mockData';
 import 'chart.js/auto'; // Ensure that chart.js is registered
 
@@ -9,8 +9,8 @@ const EffectifDashboard = () => {
   const [selectedGender, setSelectedGender] = useState('all');
   const [selectedDirection, setSelectedDirection] = useState('all');
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage] = useState('');
-  const [snackbarSeverity] = useState('success');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
@@ -76,31 +76,7 @@ const EffectifDashboard = () => {
     ],
   };
 
-  const lineChartData = {
-    labels: data.map(item => item.name),
-    datasets: [
-      {
-        label: 'Total',
-        borderColor: '#4caf50',
-        fill: false,
-        data: data.map(item => item.total),
-      },
-      {
-        label: 'Hommes',
-        borderColor: '#2196f3',
-        fill: false,
-        data: data.map(item => item.male),
-      },
-      {
-        label: 'Femmes',
-        borderColor: '#ff9800',
-        fill: false,
-        data: data.map(item => item.female),
-      },
-    ],
-  };
-
-  const pieChartData = {
+  const doughnutChartDataTotal = {
     labels: ['Internes Orange', 'Internes Orange Money', 'Externes'],
     datasets: [
       {
@@ -111,25 +87,16 @@ const EffectifDashboard = () => {
     ],
   };
 
-  const genderDistributionData = {
+  const doughnutChartDataGender = {
     labels: ['Hommes', 'Femmes'],
     datasets: [
       {
-        data: [filteredOrangeInterns.male + filteredOrangeMoneyInterns.male + filteredExternals.male,
-               filteredOrangeInterns.female + filteredOrangeMoneyInterns.female + filteredExternals.female],
+        data: [
+          filteredOrangeInterns.male + filteredOrangeMoneyInterns.male + filteredExternals.male,
+          filteredOrangeInterns.female + filteredOrangeMoneyInterns.female + filteredExternals.female,
+        ],
         backgroundColor: ['#2196f3', '#ff9800'],
         hoverBackgroundColor: ['#42a5f5', '#ffa726'],
-      },
-    ],
-  };
-
-  const categoryDistributionData = {
-    labels: ['Internes Orange', 'Internes Orange Money', 'Externes'],
-    datasets: [
-      {
-        data: [filteredOrangeInterns.total, filteredOrangeMoneyInterns.total, filteredExternals.total],
-        backgroundColor: ['#4caf50', '#2196f3', '#ff9800'],
-        hoverBackgroundColor: ['#66bb6a', '#42a5f5', '#ffa726'],
       },
     ],
   };
@@ -261,28 +228,13 @@ const EffectifDashboard = () => {
           </Card>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Card sx={{ p: 2 }}>
-            <Line data={lineChartData} />
+          <Card sx={{ p: 2, height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Doughnut data={doughnutChartDataTotal} options={{ maintainAspectRatio: false, responsive: true }} />
           </Card>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Card sx={{ p: 2 }}>
-            <Pie data={pieChartData} />
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Card sx={{ p: 2 }}>
-            <Doughnut data={pieChartData} />
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Card sx={{ p: 2 }}>
-            <Pie data={genderDistributionData} />
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Card sx={{ p: 2 }}>
-            <Doughnut data={categoryDistributionData} />
+          <Card sx={{ p: 2, height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Doughnut data={doughnutChartDataGender} options={{ maintainAspectRatio: false, responsive: true }} />
           </Card>
         </Grid>
       </Grid>
