@@ -1,5 +1,10 @@
-/* CSS styles for the app */
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 .app {
   display: flex;
@@ -31,7 +36,6 @@
   height: 100%;
   z-index: 1000;
   overflow-x: hidden;
-  scrollbar-width: none;
   background-color: #333;
   transition: width 0.3s ease, background-color 0.3s ease;
 }
@@ -60,20 +64,18 @@
   width: calc(100% - 80px);
 }
 
-
-
 .content {
   margin-top: 60px;
-  margin-left: 100px;
+  margin-left: 250px;
   padding: 25px;
   width: calc(100% - 250px);
-  height: calc(100vh - 120px); /* Adjust to exclude topbar and footer */
+  height: calc(100vh - 80px); /* Adjust to exclude topbar and footer */
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
 .content.collapsed {
-  margin-left: 40px; /* Adjust margin for collapsed state */
+  margin-left: 80px; /* Adjust margin for collapsed state */
   width: calc(100% - 80px); /* Adjust width for collapsed state */
 }
 
@@ -110,6 +112,10 @@
 
 @media (max-width: 960px) {
   .sidebar {
+    width: 80px;
+  }
+
+  .sidebar.collapsed {
     width: 80px;
   }
 
