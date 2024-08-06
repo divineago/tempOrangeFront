@@ -282,6 +282,7 @@ const fetchEffectifData = async () => {
 
   return (
     <Box m="20px">
+      
       <Header title="LISTE DES EFFECTIFS" subtitle="Liste des effectifs" />
 
       <Box mb="20px">
@@ -308,7 +309,7 @@ const fetchEffectifData = async () => {
       </Box>
 
       <Box height="400px" mb="20px">
-        <DataGrid rows={effectifList} columns={columns} pageSize={5} />
+        <DataGrid rows={effectifList} columns={columns} pageSize={100} />
       </Box>
 
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>

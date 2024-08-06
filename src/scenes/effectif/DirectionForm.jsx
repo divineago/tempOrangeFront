@@ -35,7 +35,6 @@ const DirectionForm = ({
 
   const handleFormInputChange = (event) => {
     const { name, value } = event.target;
-    handleInputChange(event); // Appel de la fonction de gestion des changements passée en prop
     setFormData(prevData => ({
       ...prevData,
       [name]: value,
@@ -43,8 +42,17 @@ const DirectionForm = ({
   };
 
   const handleSubmit = async () => {
-    await handleFormSubmit();
-    setFormData(initialFormData); // Réinitialise le formulaire après soumission
+    try {
+      if (editMode) {
+        await updateDataToAPI(`/effectif/direction/${formData.id}/`, formData); 
+      } else {
+        await postDataToAPI('/effectif/direction/creer_direction/', formData); 
+      }
+      handleCloseDialog(); 
+      setFormData(initialFormData); 
+    } catch (error) {
+      console.error('Erreur lors de la soumission de la direction :', error);
+    }
   };
 
   return (

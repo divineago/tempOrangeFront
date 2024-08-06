@@ -151,7 +151,7 @@ const DirectionList = () => {
           <Button variant="outlined" color="primary" size="small" onClick={() => handleEdit(params.row)}>
             Modifier
           </Button>
-          <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)}>
+          <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)} style={{ marginLeft: '10px' }}>
             Supprimer
           </Button>
         </>

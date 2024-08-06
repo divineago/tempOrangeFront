@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Card, CardContent, Typography, Box, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import { orangeInterns, orangeMoneyInterns, externals, directions } from '../../data/mockData';
+import { orangeInterns, orangeMoneyInterns, externals, directions} from '../../data/mockData';
 import 'chart.js/auto'; // Ensure that chart.js is registered
 
 const EffectifDashboard = () => {
@@ -50,9 +50,9 @@ const EffectifDashboard = () => {
   );
 
   const data = [
-    { name: 'Internes Orange', total: filteredOrangeInterns.total, male: filteredOrangeInterns.male, female: filteredOrangeInterns.female },
-    { name: 'Internes Orange Money', total: filteredOrangeMoneyInterns.total, male: filteredOrangeMoneyInterns.male, female: filteredOrangeMoneyInterns.female },
-    { name: 'Externes', total: filteredExternals.total, male: filteredExternals.male, female: filteredExternals.female },
+    { name: 'Orange', total: filteredOrangeInterns.total, male: filteredOrangeInterns.male, female: filteredOrangeInterns.female },
+    { name: 'Orange Money', total: filteredOrangeMoneyInterns.total, male: filteredOrangeMoneyInterns.male, female: filteredOrangeMoneyInterns.female },
+    { name: 'ITM', totMal: filteredExternals.total, male: filteredExternals.male, female: filteredExternals.female },
   ];
 
   const barChartData = {

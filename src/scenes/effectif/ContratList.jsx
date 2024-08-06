@@ -59,7 +59,7 @@ const ContratList = () => {
         await updateDataToAPI(`/effectif/contrat/${formData.id}/`, formData);
         setSnackbarMessage('Contrat mise à jour avec succès');
       } else {
-        await postDataToAPI('/effectif/contrat/creer_contrat/', formData);
+        await postDataToAPI('/effectif/contrat/creer_/', formData);
         setSnackbarMessage('Contrat ajoutée avec succès');
       }
       fetchContratData(); // Recharger les données après soumission
@@ -137,19 +137,19 @@ const ContratList = () => {
   };
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'type_contrat', headerName: 'Type contrat', width: 150 },  
-    { field: 'is_active', headerName: 'actif', width: 200 },
+    { field: 'id', headerName: 'ID', width: 0 },
+    { field: 'type_contrat', headerName: 'Type contrat', width: 100 },  
+    { field: 'is_active', headerName: 'actif', width: 100 },
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 150,
+      width: 200,
       renderCell: (params) => (
         <>
           <Button variant="outlined" color="primary" size="small" onClick={() => handleEdit(params.row)}>
             Modifier
           </Button>
-          <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)}>
+          <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)}  style={{ marginLeft: '12px' }}>
             Supprimer
           </Button>
         </>
@@ -177,7 +177,7 @@ const ContratList = () => {
   };
 
   return (
-    <Box m="20px">
+    <Box m="10px">
       <Header title="Contrat List" subtitle="Liste de toutes les directions" />
       <Box m="10px 0">
         <ContratForm
@@ -208,7 +208,7 @@ const ContratList = () => {
         </label>
       </Box>
       <Box height="70vh">
-        <DataGrid rows={contratData} columns={columns} pageSize={100} rowsPerPageOptions={[100]} />
+        <DataGrid rows={contratData} columns={columns} pageSize={100} rowsPerPageOptions={[100]} width={'30 px'}/>
       </Box>
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
