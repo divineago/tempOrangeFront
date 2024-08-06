@@ -13,9 +13,6 @@ const Evaluationchaud = ({ onSave }) => {
     question8: '',
     question9: '',
     question10: '',
-    question11: '',
-    question12: '',
-    question13: '',
     commentaires: '',
   });
 
@@ -26,11 +23,6 @@ const Evaluationchaud = ({ onSave }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const allFieldsFilled = Object.values(formData).every(field => field.trim() !== '');
-    if (!allFieldsFilled) {
-      alert("Veuillez remplir tous les champs.");
-      return;
-    }
     onSave({ ...formData, type: 'à Chaud' });
     setFormData({
       question1: '',
@@ -43,99 +35,22 @@ const Evaluationchaud = ({ onSave }) => {
       question8: '',
       question9: '',
       question10: '',
-      question11: '',
-      question12: '',
-      question13: '',
       commentaires: '',
     });
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <b>(1)Pas bien, (2)Un peu Bien, (3)Bien, (4)Très bien, (5)Excellent</b> <br/>
-      <br/>
-      <Typography variant="body1">1. Le contenu de la formation était-il clair et compréhensible ?</Typography>
-      <RadioGroup name="question1" value={formData.question1} onChange={handleChange} required>
-        <FormControlLabel value="1" control={<Radio />} label="1" />
-        <FormControlLabel value="2" control={<Radio />} label="2" />
-        <FormControlLabel value="3" control={<Radio />} label="3" />
-        <FormControlLabel value="4" control={<Radio />} label="4" />
-        <FormControlLabel value="5" control={<Radio />} label="5" />
-      </RadioGroup>
-      <Typography variant="body1">2. Les supports pédagogiques étaient-ils utiles et pertinents ?</Typography>
-      <RadioGroup name="question2" value={formData.question2} onChange={handleChange} required>
-        <FormControlLabel value="1" control={<Radio />} label="1" />
-        <FormControlLabel value="2" control={<Radio />} label="2" />
-        <FormControlLabel value="3" control={<Radio />} label="3" />
-        <FormControlLabel value="4" control={<Radio />} label="4" />
-        <FormControlLabel value="5" control={<Radio />} label="5" />
-      </RadioGroup>
-      <Typography variant="body1">3. La durée de la formation était-elle adaptée ?</Typography>
-      <RadioGroup name="question3" value={formData.question3} onChange={handleChange} required>
-        <FormControlLabel value="1" control={<Radio />} label="1" />
-        <FormControlLabel value="2" control={<Radio />} label="2" />
-        <FormControlLabel value="3" control={<Radio />} label="3" />
-        <FormControlLabel value="4" control={<Radio />} label="4" />
-        <FormControlLabel value="5" control={<Radio />} label="5" />
-      </RadioGroup>
-      <Typography variant="body1">4. L'animateur a-t-il bien maîtrisé le sujet ?</Typography>
-      <RadioGroup name="question4" value={formData.question4} onChange={handleChange} required>
-        <FormControlLabel value="1" control={<Radio />} label="1" />
-        <FormControlLabel value="2" control={<Radio />} label="2" />
-        <FormControlLabel value="3" control={<Radio />} label="3" />
-        <FormControlLabel value="4" control={<Radio />} label="4" />
-        <FormControlLabel value="5" control={<Radio />} label="5" />
-      </RadioGroup>
-      <Typography variant="body1">5. L'animateur a-t-il répondu à vos questions ?</Typography>
-      <RadioGroup name="question5" value={formData.question5} onChange={handleChange} required>
-        <FormControlLabel value="1" control={<Radio />} label="1" />
-        <FormControlLabel value="2" control={<Radio />} label="2" />
-        <FormControlLabel value="3" control={<Radio />} label="3" />
-        <FormControlLabel value="4" control={<Radio />} label="4" />
-        <FormControlLabel value="5" control={<Radio />} label="5" />
-      </RadioGroup>
-      <Typography variant="body1">6. Comment évalueriez-vous globalement cette formation ?</Typography>
-      <RadioGroup name="question6" value={formData.question6} onChange={handleChange} required>
-        <FormControlLabel value="1" control={<Radio />} label="1" />
-        <FormControlLabel value="2" control={<Radio />} label="2" />
-        <FormControlLabel value="3" control={<Radio />} label="3" />
-        <FormControlLabel value="4" control={<Radio />} label="4" />
-        <FormControlLabel value="5" control={<Radio />} label="5" />
-      </RadioGroup>
-      <Typography variant="body1">7. Quels sont les points forts de la formation ?</Typography>
-      <TextField
-        name="question7"
-        value={formData.question7}
-        onChange={handleChange}
-        fullWidth
-        multiline
-        margin="normal"
-        required
-      />
-      <Typography variant="body1">8. Quels sont les points à améliorer ?</Typography>
-      <TextField
-        name="question8"
-        value={formData.question8}
-        onChange={handleChange}
-        fullWidth
-        multiline
-        margin="normal"
-        required
-      />
-      <Typography variant="body1">9. Recommanderiez-vous cette formation à vos collègues ?</Typography>
-      <RadioGroup name="question9" value={formData.question9} onChange={handleChange} required>
-        <FormControlLabel value="oui" control={<Radio />} label="Oui" />
-        <FormControlLabel value="non" control={<Radio />} label="Non" />
-      </RadioGroup>
-      <Typography variant="body1">10. Comment évalueriez-vous globalement cette formation ?</Typography>
-      <RadioGroup name="question10" value={formData.question10} onChange={handleChange} required>
-        <FormControlLabel value="1" control={<Radio />} label="1" />
-        <FormControlLabel value="2" control={<Radio />} label="2" />
-        <FormControlLabel value="3" control={<Radio />} label="3" />
-        <FormControlLabel value="4" control={<Radio />} label="4" />
-        <FormControlLabel value="5" control={<Radio />} label="5" />
-      </RadioGroup>
-       
+      {["Le contenu de la formation était-il clair et compréhensible ?", "Les supports pédagogiques étaient-ils utiles et pertinents ?", "La durée de la formation était-elle adaptée ?", "L'animateur a-t-il bien maîtrisé le sujet ?", "L'animateur a-t-il répondu à vos questions ?", "Comment évalueriez-vous globalement cette formation ?", "Quels sont les points forts de la formation ?", "Quels sont les points à améliorer ?", "Recommanderiez-vous cette formation à vos collègues ?", "Commentaires supplémentaires"].map((question, index) => (
+        <React.Fragment key={index}>
+          <Typography variant="body1">{index + 1}. {question}</Typography>
+          <RadioGroup name={`question${index + 1}`} value={formData[`question${index + 1}`]} onChange={handleChange} required>
+            {[1, 2, 3, 4, 5].map(value => (
+              <FormControlLabel key={value} value={String(value)} control={<Radio />} label={String(value)} />
+            ))}
+          </RadioGroup>
+        </React.Fragment>
+      ))}
       <Typography variant="body1">Commentaires</Typography>
       <TextField
         name="commentaires"
@@ -149,7 +64,6 @@ const Evaluationchaud = ({ onSave }) => {
       <Button type="submit" variant="contained" color="primary">
         Enregistrer
       </Button>
-      
     </form>
   );
 };

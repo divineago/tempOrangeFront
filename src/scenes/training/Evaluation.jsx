@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Container, Button, Menu, MenuItem, Typography, Paper, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import {
+  Container, Button, Menu, MenuItem, Typography, Paper,
+  Dialog, DialogTitle, DialogContent, DialogActions
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import EvaluationEfficacite from './EvaluationEfficacite';
 import Evaluationchaud from './Evaluationchaud';
 import Header from '../../components/Header';
 
-const evaluationData = [];
-
 const Evaluation = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedForm, setSelectedForm] = useState(null);
-  const [data, setData] = useState(evaluationData);
+  const [efficaciteData, setEfficaciteData] = useState([]);
+  const [chaudData, setChaudData] = useState([]);
   const [open, setOpen] = useState(false);
 
   const handleClick = (event) => {
@@ -33,26 +35,43 @@ const Evaluation = () => {
   };
 
   const handleSave = (newEvaluation) => {
-    setData((prevData) => [...prevData, { ...newEvaluation, id: prevData.length + 1 }]);
+    if (selectedForm === 'Efficacité') {
+      setEfficaciteData((prevData) => [...prevData, { ...newEvaluation, id: prevData.length + 1 }]);
+    } else if (selectedForm === 'à Chaud') {
+      setChaudData((prevData) => [...prevData, { ...newEvaluation, id: prevData.length + 1 }]);
+    }
     handleCloseForm();
   };
 
-  const columns = [
+  const columnsEfficacite = [
     { field: 'id', headerName: 'ID', width: 90 },
     { field: 'type', headerName: 'Type', width: 150 },
-    { field: 'question1', headerName: 'Question 1', width: 150 },
-    { field: 'question2', headerName: 'Question 2', width: 150 },
-    { field: 'question3', headerName: 'Question 3', width: 150 },
-    { field: 'question4', headerName: 'Question 4', width: 150 },
-    { field: 'question5', headerName: 'Question 5', width: 150 },
-    { field: 'question6', headerName: 'Question 6', width: 150, hide: selectedForm !== 'à Chaud' },
-    { field: 'question7', headerName: 'Question 7', width: 150, hide: selectedForm !== 'à Chaud' },
-    { field: 'question8', headerName: 'Question 8', width: 150, hide: selectedForm !== 'à Chaud' },
-    { field: 'question9', headerName: 'Question 9', width: 150, hide: selectedForm !== 'à Chaud' },
-    { field: 'question10', headerName: 'Question 10', width: 150, hide: selectedForm !== 'à Chaud' },
-    { field: 'question11', headerName: 'Question 11', width: 150, hide: selectedForm !== 'à Chaud' },
-    { field: 'question12', headerName: 'Question 12', width: 150, hide: selectedForm !== 'à Chaud' },
-    { field: 'question13', headerName: 'Question 13', width: 150, hide: selectedForm !== 'à Chaud' },
+    { field: 'question1', headerName: 'Avez-vous constaté un changement ?', width: 250 },
+    { field: 'question2', headerName: 'Effet immédiat dans la gestion ?', width: 250 },
+    { field: 'question3', headerName: 'Amélioration des compétences ?', width: 250 },
+    { field: 'question4', headerName: 'Valeur sur le marché du travail ?', width: 250 },
+    { field: 'question5', headerName: 'Les objectifs ont été atteints ?', width: 250 },
+    { field: 'question6', headerName: 'En adéquation avec la mission du poste ?', width: 250 },
+    { field: 'question7', headerName: 'Formation complémentaire nécessaire ?', width: 250 },
+    { field: 'question8', headerName: 'Retours concernant le cabinet ?', width: 250 },
+    { field: 'question9', headerName: 'Connaissances nouvellement acquises ?', width: 250 },
+    { field: 'question10', headerName: 'Recommandations pour l’organisation ?', width: 250 },
+    { field: 'commentaires', headerName: 'Commentaires', width: 300 },
+  ];
+
+  const columnsChaud = [
+    { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'type', headerName: 'Type', width: 150 },
+    { field: 'question1', headerName: 'Le formateur est compétent ?', width: 250 },
+    { field: 'question2', headerName: 'Le formateur est patient et enthousiaste ?', width: 250 },
+    { field: 'question3', headerName: 'Le formateur est attentif et adaptatif ?', width: 250 },
+    { field: 'question4', headerName: 'Les objectifs de la formation sont présentés ?', width: 250 },
+    { field: 'question5', headerName: 'Le déroulement a facilité la compréhension ?', width: 250 },
+    { field: 'question6', headerName: 'Les méthodes sont stimulantes ?', width: 250 },
+    { field: 'question7', headerName: 'La durée est appropriée ?', width: 250 },
+    { field: 'question8', headerName: 'Les documents matériels sont utiles ?', width: 250 },
+    { field: 'question9', headerName: 'L’environnement est propice ?', width: 250 },
+    { field: 'question10', headerName: 'Le timing est approprié ?', width: 250 },
     { field: 'commentaires', headerName: 'Commentaires', width: 300 },
   ];
 
@@ -85,8 +104,28 @@ const Evaluation = () => {
         </DialogActions>
       </Dialog>
 
+      <Typography variant="h5" gutterBottom>
+        Évaluations d'Efficacité
+      </Typography>
       <Paper elevation={3} sx={{ height: 400, marginTop: 2 }}>
-        <DataGrid rows={data} columns={columns} pageSize={5} rowsPerPageOptions={[5]} />
+        <DataGrid
+          rows={efficaciteData}
+          columns={columnsEfficacite}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
+        />
+      </Paper>
+
+      <Typography variant="h5" gutterBottom style={{ marginTop: '20px' }}>
+        Évaluations à Chaud
+      </Typography>
+      <Paper elevation={3} sx={{ height: 400, marginTop: 2 }}>
+        <DataGrid
+          rows={chaudData}
+          columns={columnsChaud}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
+        />
       </Paper>
     </Container>
   );
