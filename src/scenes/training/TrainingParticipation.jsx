@@ -142,7 +142,7 @@ const TrainingParticipation = () => {
           </Button>
         </label>
       </Box>
-      <Box height="70vh" sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Box height="70vh" sx={{ display: 'flex', flexDirection: 'column', height: '400%', width: '85%' }}>
         <DataGrid
           rows={trainingParticipation}
           columns={columns}
@@ -193,14 +193,7 @@ const TrainingParticipation = () => {
             value={dialogData.type}
             onChange={(e) => setDialogData({ ...dialogData, type: e.target.value })}
           />
-          <TextField
-            margin="dense"
-            label="Genre"
-            type="text"
-            fullWidth
-            value={dialogData.gender}
-            onChange={(e) => setDialogData({ ...dialogData, gender: e.target.value })}
-          />
+        
           <Select
             fullWidth
             value={dialogData.assigned}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, FormControl, InputLabel, Select, MenuItem, Typography, Box, Button, Card, CardContent } from '@mui/material';
+import { Grid, FormControl, InputLabel, Select, MenuItem, Typography, Box, Button, Card, CardContent, Modal } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
@@ -8,6 +8,8 @@ import * as XLSX from 'xlsx';
 
 const TrainingDashboard = () => {
   const [filters, setFilters] = useState({ direction: '' });
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalData, setModalData] = useState(null);
 
   const handleChange = (event) => {
     setFilters({
@@ -52,8 +54,16 @@ const TrainingDashboard = () => {
     ],
   });
 
-  const renderWidget = (title, value, color) => (
-    <Card sx={{ minWidth: 275, backgroundColor: color, mb: 2, borderRadius: 2, boxShadow: 3 }}>
+  const handleCardClick = (data) => {
+    setModalData(data);
+    setModalOpen(true);
+  };
+
+  const renderWidget = (title, value, color, data) => (
+    <Card
+      sx={{ minWidth: 275, backgroundColor: color, mb: 2, borderRadius: 2, boxShadow: 3, cursor: 'pointer' }}
+      onClick={() => handleCardClick(data)}
+    >
       <CardContent>
         <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#fff' }}>
           {title}
@@ -92,16 +102,16 @@ const TrainingDashboard = () => {
 
       <Grid container spacing={2} mb={2}>
         <Grid item xs={12} md={4}>
-          {renderWidget('TOTAL AGENTS', mockData.totalAgents, '#4caf50')}
+          {renderWidget('TOTAL AGENTS', mockData.totalAgents, '#4caf50', mockData.totalAgentsData)}
         </Grid>
         <Grid item xs={12} md={4}>
-          {renderWidget('FORMATION EN HORS E-LEARNING', mockData.trainingParticipation.inPerson, '#2196f3')}
+          {renderWidget('FORMATION EN HORS E-LEARNING', mockData.trainingParticipation.inPerson, '#2196f3', mockData.inPersonData)}
         </Grid>
         <Grid item xs={12} md={4}>
-          {renderWidget('FORMATION E-LEARNING', mockData.trainingParticipation.eLearning, '#ff9800')}
+          {renderWidget('FORMATION E-LEARNING', mockData.trainingParticipation.eLearning, '#ff9800', mockData.eLearningData)}
         </Grid>
         <Grid item xs={12} md={4}>
-          {renderWidget('PARTICIPATION GLOBALE', mockData.trainingParticipation.total, '#f44336')}
+          {renderWidget('PARTICIPATION GLOBALE', mockData.trainingParticipation.total, '#f44336', mockData.totalParticipationData)}
         </Grid>
       </Grid>
 
@@ -130,7 +140,6 @@ const TrainingDashboard = () => {
             </Box>
           </Card>
         </Grid>
-      
       </Grid>
 
       <Typography variant="h6" style={{ marginTop: '20px' }}>DIRECTIONS</Typography>
@@ -147,6 +156,33 @@ const TrainingDashboard = () => {
           Télécharger en Excel
         </Button>
       </Box>
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}>
+          <Typography id="modal-title" variant="h6" component="h2">
+            Détails
+          </Typography>
+          <Typography id="modal-description" sx={{ mt: 2 }}>
+            {JSON.stringify(modalData, null, 2)}
+          </Typography>
+          <Button onClick={() => setModalOpen(false)} sx={{ mt: 2 }}>Fermer</Button>
+        </Box>
+      </Modal>
     </Box>
   );
 };
