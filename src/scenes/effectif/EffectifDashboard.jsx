@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { Grid, Card, CardContent, Typography, Box, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Grid, Card, CardContent, Typography, Box, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, TextField, Button } from '@mui/material';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { orangeInterns, orangeMoneyInterns, externals, directions} from '../../data/mockData';
-import 'chart.js/auto'; // Ensure that chart.js is registered
+import 'chart.js/auto'; 
+import * as XLSX from 'xlsx';
+import { fetchDataFromAPI} from "../../api";
 
 const EffectifDashboard = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -11,7 +13,32 @@ const EffectifDashboard = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [directions, setDirections] = useState([]);
 
+  const [inputData, setInputData] = useState({
+    orangeInterns: { total: 0, male: 0, female: 0 },
+    orangeMoneyInterns: { total: 0, male: 0, female: 0 },
+    externals: { total: 0, male: 0, female: 0 },
+  });
+  useEffect(() => {
+    fetchEffectifData(); 
+  }, []);
+  const fetchEffectifData = async () => {
+    try {
+      const response = await fetchDataFromAPI('/effectif/direction/get_direction/');
+      console.log('Fetched directions:', response.data); 
+      if (Array.isArray(response.data)) {
+        setDirections(response.data); 
+      } else {
+        console.error('Expected an array but got:', response.data);
+        setDirections([]); 
+      }
+    } catch (error) {
+      console.error('Error fetching direction data:', error);
+      setDirections([]); 
+    }
+  };
+  
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
   };
@@ -24,8 +51,25 @@ const EffectifDashboard = () => {
     setSelectedDirection(event.target.value);
   };
 
+  const handleInputChange = (category, field, value) => {
+    setInputData((prevState) => ({
+      ...prevState,
+      [category]: {
+        ...prevState[category],
+        [field]: Number(value),
+      },
+    }));
+  };
+
   const filterDataByDirection = (data) => {
+    if (!data || !data.items || !Array.isArray(data.items)) {
+      console.error('Invalid data structure:', data);
+      return { ...data, items: [] }; 
+    }
+    
+   
     if (selectedDirection === 'all') return data;
+    
     return {
       ...data,
       items: data.items.filter(item => item.direction === selectedDirection),
@@ -80,7 +124,7 @@ const EffectifDashboard = () => {
     labels: ['Internes Orange', 'Internes Orange Money', 'Externes'],
     datasets: [
       {
-        data: [filteredOrangeInterns.total, filteredOrangeMoneyInterns.total, filteredExternals.total],
+        data: [inputData.orangeInterns.total, inputData.orangeMoneyInterns.total, inputData.externals.total],
         backgroundColor: ['#4caf50', '#2196f3', '#ff9800'],
         hoverBackgroundColor: ['#66bb6a', '#42a5f5', '#ffa726'],
       },
@@ -92,8 +136,8 @@ const EffectifDashboard = () => {
     datasets: [
       {
         data: [
-          filteredOrangeInterns.male + filteredOrangeMoneyInterns.male + filteredExternals.male,
-          filteredOrangeInterns.female + filteredOrangeMoneyInterns.female + filteredExternals.female,
+          inputData.orangeInterns.male + inputData.orangeMoneyInterns.male + inputData.externals.male,
+          inputData.orangeInterns.female + inputData.orangeMoneyInterns.female + inputData.externals.female,
         ],
         backgroundColor: ['#2196f3', '#ff9800'],
         hoverBackgroundColor: ['#42a5f5', '#ffa726'],
@@ -103,6 +147,13 @@ const EffectifDashboard = () => {
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'EffectifDashboard');
+    XLSX.writeFile(workbook, 'EffectifDashboard.xlsx');
   };
 
   return (
@@ -135,112 +186,205 @@ const EffectifDashboard = () => {
           </FormControl>
         </Grid>
         <Grid item xs={4}>
-          <FormControl fullWidth>
-            <InputLabel>Direction</InputLabel>
-            <Select value={selectedDirection} onChange={handleDirectionChange}>
-              <MenuItem value="all">All</MenuItem>
-              {directions.map((direction) => (
-                <MenuItem key={direction.value} value={direction.value}>
-                  {direction.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        <FormControl fullWidth>
+          <InputLabel>Direction</InputLabel>
+          <Select value={selectedDirection} onChange={handleDirectionChange}>
+            <MenuItem value="all">All</MenuItem>
+            {Array.isArray(directions) && directions.map((direction) => (
+              <MenuItem key={direction.id} value={direction.id}>
+                {direction.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+
+      </Grid>
+
+      <Grid container spacing={2} mb={2}>
+        <Grid item xs={4}>
+          <TextField
+            label="Total Internes Orange"
+            type="number"
+            value={inputData.orangeInterns.total}
+            onChange={(e) => handleInputChange('orangeInterns', 'total', e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Hommes Internes Orange"
+            type="number"
+            value={inputData.orangeInterns.male}
+            onChange={(e) => handleInputChange('orangeInterns', 'male', e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Femmes Internes Orange"
+            type="number"
+            value={inputData.orangeInterns.female}
+            onChange={(e) => handleInputChange('orangeInterns', 'female', e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Total Internes Orange Money"
+            type="number"
+            value={inputData.orangeMoneyInterns.total}
+            onChange={(e) => handleInputChange('orangeMoneyInterns', 'total', e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Hommes Internes Orange Money"
+            type="number"
+            value={inputData.orangeMoneyInterns.male}
+            onChange={(e) => handleInputChange('orangeMoneyInterns', 'male', e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Femmes Internes Orange Money"
+            type="number"
+            value={inputData.orangeMoneyInterns.female}
+            onChange={(e) => handleInputChange('orangeMoneyInterns', 'female', e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Total Externes"
+            type="number"
+            value={inputData.externals.total}
+            onChange={(e) => handleInputChange('externals', 'total', e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Hommes Externes"
+            type="number"
+            value={inputData.externals.male}
+            onChange={(e) => handleInputChange('externals', 'male', e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Femmes Externes"
+            type="number"
+            value={inputData.externals.female}
+            onChange={(e) => handleInputChange('externals', 'female', e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} textAlign="center">
+          <Button variant="contained" onClick={exportToExcel} color="primary">
+            Export to Excel
+          </Button>
         </Grid>
       </Grid>
 
+      {/* Widgets */}
+      <Grid container spacing={2} mb={2}>
+      <Grid item xs={4} style={{ position: 'relative' }}>
+          {renderWidget('Total Internes Orange', inputData.orangeInterns.total, '#4caf50')}
+          <Button
+            variant="contained"
+            color="primary"
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              margin: '8px',
+            }}
+            onClick={() => {
+              // Action à effectuer lorsque le bouton est cliqué
+            }}
+          >
+            Voir plus
+          </Button>
+        </Grid>
+
+        <Grid item xs={4} style={{ position: 'relative' }}>
+        {renderWidget('Total Internes Orange Money', inputData.orangeMoneyInterns.total, '#2196f3')}
+        <Button
+            variant="contained"
+            color="primary"
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              margin: '8px',
+            }}
+            onClick={() => {
+              // Action à effectuer lorsque le bouton est cliqué
+            }}
+          >
+            Voir plus
+          </Button>
+        </Grid>
+        <Grid item xs={4} style={{ position: 'relative' }}>
+        {renderWidget('Total Externes', inputData.externals.total, '#ff9800')}
+        <Button
+            variant="contained"
+            color="primary"
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              margin: '8px',
+            }}
+            onClick={() => {
+              // Action à effectuer lorsque le bouton est cliqué
+            }}
+          >
+            Voir plus
+          </Button>
+        </Grid>
+      </Grid>
+
+      {/* Charts */}
       <Grid container spacing={2}>
-        {/* Internes Orange Section */}
-        {selectedCategory === 'all' || selectedCategory === 'orangeInterns' ? (
-          <Grid item xs={12}>
-            <Typography variant="h6" sx={{ mb: 2 }}>LES INTERNES ORANGE</Typography>
-            <Grid container spacing={2}>
-              {selectedGender === 'all' || selectedGender === 'total' ? (
-                <Grid item xs={3}>
-                  {renderWidget('Total Internes', filteredOrangeInterns.total, '#4caf50')}
-                </Grid>
-              ) : null}
-              {selectedGender === 'all' || selectedGender === 'male' ? (
-                <Grid item xs={3}>
-                  {renderWidget('Hommes', filteredOrangeInterns.male, '#2196f3')}
-                </Grid>
-              ) : null}
-              {selectedGender === 'all' || selectedGender === 'female' ? (
-                <Grid item xs={3}>
-                  {renderWidget('Femmes', filteredOrangeInterns.female, '#ff9800')}
-                </Grid>
-              ) : null}
-            </Grid>
-          </Grid>
-        ) : null}
-        {/* Internes Orange Money Section */}
-        {selectedCategory === 'all' || selectedCategory === 'orangeMoneyInterns' ? (
-          <Grid item xs={12}>
-            <Typography variant="h6" sx={{ mb: 2 }}>LES INTERNES ORANGE MONEY</Typography>
-            <Grid container spacing={2}>
-              {selectedGender === 'all' || selectedGender === 'total' ? (
-                <Grid item xs={3}>
-                  {renderWidget('Total Internes', filteredOrangeMoneyInterns.total, '#4caf50')}
-                </Grid>
-              ) : null}
-              {selectedGender === 'all' || selectedGender === 'male' ? (
-                <Grid item xs={3}>
-                  {renderWidget('Hommes', filteredOrangeMoneyInterns.male, '#2196f3')}
-                </Grid>
-              ) : null}
-              {selectedGender === 'all' || selectedGender === 'female' ? (
-                <Grid item xs={3}>
-                  {renderWidget('Femmes', filteredOrangeMoneyInterns.female, '#ff9800')}
-                </Grid>
-              ) : null}
-            </Grid>
-          </Grid>
-        ) : null}
-        {/* Externes Section */}
-        {selectedCategory === 'all' || selectedCategory === 'externals' ? (
-          <Grid item xs={12}>
-            <Typography variant="h6" sx={{ mb: 2 }}>LES EXTERNES</Typography>
-            <Grid container spacing={2}>
-              {selectedGender === 'all' || selectedGender === 'total' ? (
-                <Grid item xs={3}>
-                  {renderWidget('Total Externes', filteredExternals.total, '#4caf50')}
-                </Grid>
-              ) : null}
-              {selectedGender === 'all' || selectedGender === 'male' ? (
-                <Grid item xs={3}>
-                  {renderWidget('Hommes', filteredExternals.male, '#2196f3')}
-                </Grid>
-              ) : null}
-              {selectedGender === 'all' || selectedGender === 'female' ? (
-                <Grid item xs={3}>
-                  {renderWidget('Femmes', filteredExternals.female, '#ff9800')}
-                </Grid>
-              ) : null}
-            </Grid>
-          </Grid>
-        ) : null}
-      </Grid>
-
-      <Grid container spacing={2} mt={3}>
         <Grid item xs={12} md={6}>
-          <Card sx={{ p: 2 }}>
-            <Bar data={barChartData} />
+          <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
+            <CardContent>
+              <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+                Répartition par type de personnel
+              </Typography>
+              <Bar data={barChartData} />
+            </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Card sx={{ p: 2, height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Doughnut data={doughnutChartDataTotal} options={{ maintainAspectRatio: false, responsive: true }} />
+        <Grid item xs={12} md={3}>
+          <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
+            <CardContent>
+              <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+                Répartition totale
+              </Typography>
+              <Doughnut data={doughnutChartDataTotal} />
+            </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Card sx={{ p: 2, height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Doughnut data={doughnutChartDataGender} options={{ maintainAspectRatio: false, responsive: true }} />
+        <Grid item xs={12} md={3}>
+          <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
+            <CardContent>
+              <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+                Répartition par genre
+              </Typography>
+              <Doughnut data={doughnutChartDataGender} />
+            </CardContent>
           </Card>
         </Grid>
       </Grid>
 
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

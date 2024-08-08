@@ -52,6 +52,8 @@ const EffectifForm = ({
   openDialog,
   handleCloseDialog,
   editMode,
+  onSuccess, // Nouveau prop pour signaler une opération réussie
+
 }) => {
   const [isSuccess, setIsSuccess] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
@@ -85,9 +87,9 @@ const EffectifForm = ({
           cuidResponse,
         ] = await Promise.all([
           fetchDataFromAPI("/effectif/agent/get_choices/"),
-          fetchDataFromAPI("/effectif/agent/get_direction/"),
-          fetchDataFromAPI("/effectif/agent/get_employeur/"),
-          fetchDataFromAPI("/effectif/agent/get_contrat/"),
+          fetchDataFromAPI("/effectif/direction/get_direction/"),
+          fetchDataFromAPI("/effectif/employeur/get_employeur/"),
+          fetchDataFromAPI("/effectif/contrat/get_contrat/"),
           fetchDataFromAPI("/effectif/agent/get_user/"),
         ]);
 
@@ -161,36 +163,7 @@ const EffectifForm = ({
       };
       delete submitData.cuid;
       console.log("**********submit data:", submitData);
-      //   const data={
-      //     "contrat":2,
-      //     "employeur": 1,
-      //     "direction": 1,
-      //     "user": {
-      //         "cuid": "YUIOE7567",
-      //         "email": "woso@mailatTYor.com",
-      //         "phone": "825 6653899",
-
-      //     },
-      //     "statut_contrat": "local",
-      //     "name": "YEUIO",
-      //     "postnom": "URU",
-      //     "prenom": "HJK",
-      //     "age": "51-60",
-      //     "genre": "Homme",
-      //     "nationalite": "Congolaise",
-      //     "fonction": "Est facere eos dolo",
-      //     "grade": "Ex nisi perspiciatis",
-      //     "anciennete_annee": "4",
-      //     "anciennete_mois": "9",
-      //     "num_mat": "13425HDYU",
-      //     "periode_essai": true,
-      //     "lieu_embauche": "Veniam qui aut est",
-      //     "date_embauche": "2019-10-04",
-      //     "date_naissance": "1998-01-20",
-      //     "dure_contrat": "Magnam ut at in exce",
-      //     "date_fin_contrat": "2023-12-20",
-      //     "is_directeur": false
-      // }
+    
 
       if (editMode) {
         await updateDataToAPI(`/effectif/agent/${formData.id}/`, submitData);
@@ -201,6 +174,7 @@ const EffectifForm = ({
         );
         if (response.status === 200) {
           setIsSuccess(true);
+          if (onSuccess) onSuccess(); // Appeler la fonction de succès
         } else {
           setIsSuccess(false);
         }

@@ -32,6 +32,7 @@ const initialEffectifList = {
   date_embauche: '',
   dure_contrat: '',
   periode_essai: '',
+  date_depart: '',
 };
    
 const EffectifList = () => {
@@ -42,6 +43,7 @@ const EffectifList = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [openDialog, setOpenDialog] = useState(false);
+  
 
   useEffect(() => {
     fetchEffectifData(); 
@@ -89,6 +91,8 @@ const fetchEffectifData = async () => {
       date_embauche: agent.date_embauche || '',
       dure_contrat: agent.dure_contrat || '',
       periode_essai: agent.periode_essai || '',
+      manager_name: agent.manager_name || '',
+      date_depart: agent.date_depart || '',
     }));
 
     // Mise à jour du state avec les données transformées
@@ -131,6 +135,8 @@ const fetchEffectifData = async () => {
       date_embauche: '',
       dure_contrat: '',
       periode_essai: '',
+      manager_name: '',
+      date_depart:'',
     });
     setEditMode(false);
     setOpenDialog(false);
@@ -210,10 +216,10 @@ const fetchEffectifData = async () => {
     { field: 'fonction', headerName: 'Fonction', width: 150 },
     { field: 'anciennete_annee', headerName: 'Ancienneté (années)', width: 150 },
     { field: 'anciennete_mois', headerName: 'Ancienneté (mois)', width: 150 },
+    { field: 'date_depart', headerName: 'date_depart ', width: 150 },
     { field: 'nationalite', headerName: 'Nationalité', width: 150 },
     { field: 'lieu_embauche', headerName: 'Lieu d\'embauche', width: 150 },
     { field: 'grade', headerName: 'Grade', width: 150 },
-    { field: 'date_fin_contrat', headerName: 'Date de Fin de Contrat', width: 150 },
     { 
       field: 'date_embauche', 
       headerName: 'Date d\'embauche', 
@@ -223,8 +229,10 @@ const fetchEffectifData = async () => {
         return date.toLocaleDateString('fr-FR');
       }
     },
+    { field: 'date_fin_contrat', headerName: 'Date de Fin de Contrat', width: 150 },
     { field: 'dure_contrat', headerName: 'Durée du Contrat', width: 150 },
     { field: 'periode_essai', headerName: 'Période d\'essai', width: 150 },
+    { field: 'manager_name', headerName: 'manager', width: 150 },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -277,6 +285,7 @@ const fetchEffectifData = async () => {
       date_embauche: '',
       dure_contrat: '',
       periode_essai: '',
+      manager_name: '',
     });
   };
 

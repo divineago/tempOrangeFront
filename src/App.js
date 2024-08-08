@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { ColorModeContext, useMode } from './theme';
 import { Routes, Route } from 'react-router-dom';
@@ -25,9 +25,8 @@ import Login from './scenes/user/Login';
 import Evaluation from './scenes/training/Evaluation';
 import TrainingCalendar from './scenes/training/TrainingCalendar';
 import TrainingParticipation from './scenes/training/TrainingParticipation';
-
-
-import './index.css'; 
+import './index.css';
+import AssignSubordinatesForm from './scenes/effectif/AssignSubordinatesForm';
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -37,9 +36,9 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div className="app">
+        <div className={`app ${isSidebar ? '' : 'collapsed'}`}>
           <Sidebar isSidebar={isSidebar} />
-          <main className="content">
+          <main className={`content ${isSidebar ? '' : 'collapsed'}`}>
             <Topbar setIsSidebar={setIsSidebar} />
               <Routes>
                 <Route path="/login" element={<Login />} />
@@ -55,6 +54,8 @@ function App() {
                 <Route path="/EmployeurList" element={<EmployeurList/>} />
                 <Route path="/EmployeurForm" element={<EmployeurForm/>} />
 
+                <Route path="/assign-subordinates" element={<AssignSubordinatesForm/>} />
+
                 <Route path="/effectiflist" element={<EffectifList />} />
                 <Route path="/traininglist" element={<TrainingList />} />
                 <Route path="/effectifdashboard" element={<EffectifDashboard />} />
@@ -65,6 +66,9 @@ function App() {
                 <Route path="/admin" element={<AdminView />} />
                 </Routes>
           </main>
+          <div className={`footer ${isSidebar ? '' : 'collapsed'}`}>
+            &copy; {new Date().getFullYear()} ORDC
+          </div>
         </div>
       </ThemeProvider>
     </ColorModeContext.Provider>
