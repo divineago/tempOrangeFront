@@ -1,226 +1,148 @@
-import React, { useState } from 'react';
-import { ProSidebar, Menu, MenuItem } from 'react-pro-sidebar';
-import { Box, IconButton, Typography, Modal } from '@mui/material';
-import { Link } from 'react-router-dom';
-import 'react-pro-sidebar/dist/css/styles.css';
-import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined'; // Import de l'icône bloc-notes
-import Login from '../user/Login';
+import React, { useState, useEffect } from "react";
+import {
+  Menu as FaBars,
+  ListAlt as FaListAlt,
+  Person as FaUserAlt,
+  BarChart as FaRegChartBar,
+  Assignment as FaClipboardList,
+  InsertChart as FaChartBar,
+  Description as FaFileContract,
+} from "@mui/icons-material";
+import { NavLink } from "react-router-dom";
 
-const Item = ({ title, to, icon, selected, setSelected }) => {
+const Sidebar = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  const toggle = () => setIsOpen(!isOpen);
+
+  const handleResize = () => {
+    setWindowWidth(window.innerWidth);
+    if (window.innerWidth < 960) {
+      setIsOpen(false);
+    } else {
+      setIsOpen(true);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const menuItemsFormation = [
+    {
+      path: "/trainingdashboard",
+      name: "Dashboard Formation",
+      icon: <FaChartBar />,
+    },
+    {
+      path: "/traininglist",
+      name: "Training List",
+      icon: <FaListAlt />,
+    },
+    {
+      path: "/trainingparticipation",
+      name: "Participation",
+      icon: <FaClipboardList />,
+    },
+    {
+      path: "/evaluation",
+      name: "Evaluation",
+      icon: <FaClipboardList />,
+    },
+  ];
+
+  const menuItemsEffectif = [
+    {
+      path: "/effectiflist",
+      name: "Effectif List",
+      icon: <FaUserAlt />,
+    },
+    {
+      path: "/effectifdashboard",
+      name: "Dashboard Effectif",
+      icon: <FaRegChartBar />,
+    },
+    {
+      path: "/directionList",
+      name: "Direction",
+      icon: <FaUserAlt />,
+    },
+    {
+      path: "/assign-subordinates",
+      name: "Assign Subordinates",
+      icon: <FaUserAlt />,
+    },
+    {
+      path: "/ContratList",
+      name: "Contrat",
+      icon: <FaFileContract />,
+    },
+    {
+      path: "/EmployeurList",
+      name: "Employeur",
+      icon: <FaUserAlt />,
+    },
+    {
+      path: "/calendar",
+      name: "Planning",
+      icon: <FaBars />,
+    },
+  ];
+
   return (
-    <MenuItem
-      active={selected === title}
-      className="menu-item-hover"
-      onClick={() => setSelected(title)}
-      icon={icon}
-      style={{ color: '#fff', background: 'none' }}
-    >
-      <Typography>{title}</Typography>
-      <Link to={to} />
-    </MenuItem>
-  );
-};
+    <div className={`app ${!isOpen ? "collapsed" : ""}`}>
+      <div className={`sidebar ${!isOpen ? "collapsed" : ""}`}>
+        <div className="top_section">
+          <h1 className="logo" style={{ display: isOpen ? "block" : "none" }}>
+            HR Dashboard
+          </h1>
+          <div className="bars" onClick={toggle}>
+            <FaBars />
+          </div>
+        </div>
 
-const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selected, setSelected] = useState('Dashboard');
-  const [openLogin, setOpenLogin] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
-  const handleOpenLogin = () => {
-    setOpenLogin(false);
-  };
-
-  const handleCloseLogin = () => {
-    setOpenLogin(false);
-  };
-
-  return (
-    <Box className="app">
-      <Box className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-        <ProSidebar collapsed={isCollapsed}>
-          <Menu iconShape="square">
-            <MenuItem
-              onClick={toggleSidebar}
-              icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
-              style={{
-                margin: '10px 0 20px 0',
-                color: '#007BFF',
-                background: 'none',
-              }}
+        <div className="menu_section">
+          <h2 className="menu_title">FORMATION</h2>
+          {menuItemsFormation.map((item, index) => (
+            <NavLink
+              to={item.path}
+              key={index}
+              className="link"
+              activeClassName="active"
             >
-              {!isCollapsed && (
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  ml="15px"
-                >
-                  <Typography variant="h3" color="#fff">
-                    HR Dashboard
-                  </Typography>
-                  <IconButton onClick={toggleSidebar} style={{ color: '#fff' }}>
-                    <MenuOutlinedIcon />
-                  </IconButton>
-                </Box>
-              )}
-            </MenuItem>
-
-            {!isCollapsed && (
-              <Box mb="25px" textAlign="center">
-                <Box display="flex" justifyContent="center" alignItems="center">
-                  <img
-                    alt="profile-user"
-                    width="100px"
-                    height="100px"
-                    src={`../../assets/Ordc.png`}
-                    style={{ cursor: 'pointer', borderRadius: '50%' }}
-                  />
-                </Box>
-                <Typography
-                  variant="h2"
-                  color="#fff"
-                  fontWeight="bold"
-                  sx={{ m: '10px 0 0 0' }}
-                >
-                  {/* Add user's name here */}
-                </Typography>
-                <Typography variant="h5" color="#28A745">
-                  {/* Add user's role or additional info here */}
-                </Typography>
-              </Box>
-            )}
-
-            <Box paddingLeft={isCollapsed ? '10px' : '10%'}>
-              <Typography
-                variant="h6"
-                color="#6C757D"
-                sx={{ m: '15px 0 5px 20px' }}
-              >
-                Formation
-              </Typography>
-              <Item
-                title="Dashboard Formation"
-                to="/trainingdashboard"
-                icon={<AssessmentIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Training List"
-                to="/traininglist"
-                icon={<ListAltIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Participation"
-                to="/trainingparticipation"
-                icon={<AssignmentIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Evaluation"
-                to="/evaluation"
-                icon={<AssignmentTurnedInOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Typography
-                variant="h6"
-                color="#6C757D"
-                sx={{ m: '15px 0 5px 20px' }}
-              >
-                Effectif
-              </Typography>
-                <Item
-                  title="Effectif List"
-                  to="/effectiflist"
-                  icon={<MenuOutlinedIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />
-                <Item
-                  title="Dashboard Effectif"
-                  to="/effectifdashboard"
-                  icon={<AssessmentIcon />}
-                  selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Direction"
-                to="/directionList"
-                icon={<PeopleAltIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />   
-              <Item
-                title="assign"
-                to="/assign-subordinates"
-                icon={<PeopleAltIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />   
-              <Item
-              title="Contrat"
-              to="/ContratList"
-              icon={<PeopleAltIcon />}
-              selected={selected}
-              setSelected={setSelected}
-              /> 
-               <Item
-              title="Employeur"
-              to="/EmployeurList"
-              icon={<PeopleAltIcon />}
-              selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Planning"
-                to="/calendar"
-                icon={<MenuOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-            </Box>
-          </Menu>
-        </ProSidebar>
-      </Box>
-
-      <Box className={`topbar ${isCollapsed ? 'collapsed' : ''}`}>
-        <Typography variant="h6">
-       
-        </Typography>
-      </Box>
-
-      <Box className={`content ${isCollapsed ? 'collapsed' : ''}`}>
-        {/* Your main content goes here */}
-      </Box>
-
-      <Box className={`footer ${isCollapsed ? 'collapsed' : ''}`}>
-        <Typography variant="caption">
-          &copy; 2024 ORDC
-        </Typography>
-      </Box>
-
-      <Modal
-        open={openLogin}
-        onClose={handleCloseLogin}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Login />
-      </Modal>
-    </Box>
+              <div className="icon-card">
+                <div className="icon">{item.icon}</div>
+              </div>
+              <div className="link_text">{item.name}</div>
+            </NavLink>
+          ))}
+          <h2 className="menu_title">EFFECTIF</h2>
+          {menuItemsEffectif.map((item, index) => (
+            <NavLink
+              to={item.path}
+              key={index}
+              className="link"
+              activeClassName="active"
+            >
+              <div className="icon-card">
+                <div className="icon">{item.icon}</div>
+              </div>
+              <div className="link_text">{item.name}</div>
+            </NavLink>
+          ))}
+        </div>
+      </div>
+      <main className={`content ${!isOpen ? "collapsed" : ""}`}>
+        {children}
+      </main>
+      <footer className={`footer ${!isOpen ? "collapsed" : ""}`}>
+        <p>&copy; 2024 ORDC</p>
+      </footer>
+    </div>
   );
 };
 

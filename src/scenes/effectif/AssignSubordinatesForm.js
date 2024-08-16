@@ -39,11 +39,15 @@ const AssignSubordinatesForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    // Affichage des valeurs de manager_id et subalternes avant l'appel à l'API
+    console.log('manager_id', selectedManager);
+    console.log('subalternes', selectedSubordinates);
     try {
       await postDataToAPI('/effectif/agent/assign_subordinates/', {
         manager_id: selectedManager,
         subalternes: selectedSubordinates,
       });
+    
       setSnackbarMessage('Subalternes assignés avec succès');
       setSnackbarSeverity('success');
     } catch (error) {

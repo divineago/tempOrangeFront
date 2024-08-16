@@ -69,7 +69,89 @@ export const trainingParticipation = [
   },
   // Ajoutez plus de données de participation à la formation au besoin
 ];
+// Données pour Bensizwe
+export const Bensizwe = {
+  total: 0,
+  male: 0,
+  female: 0,
+  items: [
+    {
+      id: 1,
+      name: 'John Doe',
+      gender: 'male',
+      direction: 'Direction 1'
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      gender: 'female',
+      direction: 'Direction 2'
+    }
+  ]
+};
 
+// Données pour Itm
+export const Itm = {
+  total: 0,
+  male: 0,
+  female: 0,
+  items: [
+    {
+      id: 1,
+      name: 'Alice Brown',
+      gender: 'female',
+      direction: 'Direction 1'
+    },
+    {
+      id: 2,
+      name: 'Bob Johnson',
+      gender: 'male',
+      direction: 'Direction 3'
+    }
+  ]
+};
+
+// Données pour Orange
+export const Orange = {
+  total: 0,
+  male: 0,
+  female: 0,
+  items: [
+    {
+      id: 1,
+      name: 'Charlie Green',
+      gender: 'male',
+      direction: 'Direction 2'
+    },
+    {
+      id: 2,
+      name: 'Diana White',
+      gender: 'female',
+      direction: 'Direction 4'
+    }
+  ]
+};
+
+// Données pour Orange Money
+export const OrangeMoney = {
+  total: 0,
+  male: 0,
+  female: 0,
+  items: [
+    {
+      id: 1,
+      name: 'Eve Black',
+      gender: 'female',
+      direction: 'Direction 1'
+    },
+    {
+      id: 2,
+      name: 'Frank Blue',
+      gender: 'male',
+      direction: 'Direction 5'
+    }
+  ]
+};
 export const agePyramid = [
   { ageRange: '20-25', male: 40, female: 45 },
   { ageRange: '26-30', male: 60, female: 55 },
