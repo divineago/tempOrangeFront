@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Grid, FormControl, InputLabel, Select, MenuItem, Typography, Box, Button, Card, CardContent, Modal } from '@mui/material';
+import {
+  Grid, FormControl, InputLabel, Select, MenuItem, Typography, Box, Button, Card, CardContent, Modal, IconButton, Snackbar, Alert
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Doughnut } from 'react-chartjs-2';
+import EditIcon from '@mui/icons-material/Edit';
 import 'chart.js/auto';
 import { mockData } from '../../data/mockData';
 import * as XLSX from 'xlsx';
@@ -10,6 +13,9 @@ const TrainingDashboard = () => {
   const [filters, setFilters] = useState({ direction: '' });
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const handleChange = (event) => {
     setFilters({
@@ -18,8 +24,62 @@ const TrainingDashboard = () => {
     });
   };
 
+  const handleCardClick = (data) => {
+    setModalData(data);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
+  const downloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredDirections);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Directions');
+    XLSX.writeFile(workbook, 'training_dashboard.xlsx');
+    setSnackbarMessage('Données exportées avec succès en Excel');
+    setSnackbarSeverity('success');
+    setOpenSnackbar(true);
+  };
+
+  const createDoughnutData = (data) => ({
+    labels: data?.labels || [],
+    datasets: [
+      {
+        data: data?.datasets?.[0]?.data || [],
+        backgroundColor: data?.datasets?.[0]?.backgroundColor || [],
+      },
+    ],
+  });
+
+  const renderWidget = (title, value, color, data) => (
+    <Card
+      sx={{ minWidth: 275, backgroundColor: color, mb: 2, borderRadius: 2, boxShadow: 3, cursor: 'pointer' }}
+      onClick={() => handleCardClick(data)}
+    >
+      <CardContent>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#fff' }}>
+          {title}
+        </Typography>
+        <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#fff' }}>
+          {value}
+        </Typography>
+        <Box display="flex" justifyContent="flex-end">
+          <IconButton onClick={() => handleCardClick(data)} sx={{ color: '#fff' }}>
+            <EditIcon />
+          </IconButton>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+
   const directionsWithId = mockData.directions.map((direction, index) => ({
-    id: index + 1, // Ensure each id is unique
+    id: index + 1,
     ...direction,
   }));
 
@@ -34,46 +94,8 @@ const TrainingDashboard = () => {
     { field: 'trained', headerName: 'Formés', width: 100 },
     { field: 'inPerson', headerName: 'Hors E-Learning', width: 150 },
     { field: 'eLearning', headerName: 'E-Learning', width: 150 },
-    { field: 'title', headerName: 'Titre de la formation', width: 200 }, // Nouveau champ
+    { field: 'title', headerName: 'Titre de la formation', width: 200 },
   ];
-
-  const downloadExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(filteredDirections);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Directions');
-    XLSX.writeFile(workbook, 'training_dashboard.xlsx');
-  };
-
-  const createDoughnutData = (data) => ({
-    labels: data?.labels || [],
-    datasets: [
-      {
-        data: data?.datasets?.[0]?.data || [],
-        backgroundColor: data?.datasets?.[0]?.backgroundColor || [],
-      },
-    ],
-  });
-
-  const handleCardClick = (data) => {
-    setModalData(data);
-    setModalOpen(true);
-  };
-
-  const renderWidget = (title, value, color, data) => (
-    <Card
-      sx={{ minWidth: 275, backgroundColor: color, mb: 2, borderRadius: 2, boxShadow: 3, cursor: 'pointer' }}
-      onClick={() => handleCardClick(data)}
-    >
-      <CardContent>
-        <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#fff' }}>
-          {title}
-        </Typography>
-        <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#fff' }}>
-          {value}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
 
   return (
     <Box p={3}>
@@ -159,7 +181,7 @@ const TrainingDashboard = () => {
 
       <Modal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleCloseModal}
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
       >
@@ -180,9 +202,15 @@ const TrainingDashboard = () => {
           <Typography id="modal-description" sx={{ mt: 2 }}>
             {JSON.stringify(modalData, null, 2)}
           </Typography>
-          <Button onClick={() => setModalOpen(false)} sx={{ mt: 2 }}>Fermer</Button>
+          <Button onClick={handleCloseModal} sx={{ mt: 2 }}>Fermer</Button>
         </Box>
       </Modal>
+
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
