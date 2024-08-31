@@ -1,329 +1,412 @@
-import React, { useEffect, useState } from 'react';
-import { Bar, Doughnut } from 'react-chartjs-2';
-import { fetchDataFromAPI } from "../../api";
-import 'chart.js/auto'; // Ensure that chart.js is registered
-import * as XLSX from 'xlsx';
-import EditIcon from '@mui/icons-material/Edit';
+import React, { useEffect, useState } from "react";
 import {
-  Card, CardContent, Typography, Box, Button, IconButton, TextField, Modal, Snackbar, Alert,
-  FormControl, InputLabel, Select, MenuItem, Grid
-} from '@mui/material';
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  IconButton,
+  Modal,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import { fetchDataFromAPI } from "../../api";
+import * as XLSX from "xlsx";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import TurnoverChart from "./components/TurnoverFilter";
 
 const EffectifDashboard = () => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedGender, setSelectedGender] = useState('all');
-  const [selectedDirection, setSelectedDirection] = useState('all');
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  const [directions, setDirections] = useState([]);
-  const [openModal, setOpenModal] = useState(null);
-
-  const [inputData, setInputData] = useState({
-    Bensizwe: { total: 0, male: 0, female: 0 },
-    Itm: { total: 0, male: 0, female: 0 },
-    Orange: { total: 0, male: 0, female: 0 },
-    OrangeMoney: { total: 0, male: 0, female: 0 },
-    orangeInterns: { total: 0, male: 0, female: 0 },
-    orangeMoneyInterns: { total: 0, male: 0, female: 0 },
-    externals: { total: 0, male: 0, female: 0 }
-  });
+  const [employeurs, setEmployeurs] = useState({});
+  const [statutsContrat, setStatutsContrat] = useState({});
+  const [typesContrat, setTypesContrat] = useState({});
+  const [agents, setAgents] = useState([]);
+  const [grades, setGrades] = useState({});
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedEmployeur, setSelectedEmployeur] = useState(null);
+  const [turnoverData, setTurnoverData] = useState([]);
+  const turnoverDataT = [
+    { month: "April", total_employees: 100, departures: 100, turnover: 20.0 },
+    { month: "October", total_employees: 200, departures: 80, turnover: 30.0 },
+    { month: "September", total_employees: 120, departures: 40, turnover: 40.0 },
+    { month: "February", total_employees: 150, departures: 50, turnover: 50.0 },
+    { month: "November", total_employees: 180, departures: 20, turnover: 30.0 },
+    { month: "December", total_employees: 100, departures: 10, turnover: 60.0 },
+    { month: "August", total_employees: 140, departures: 70, turnover: 60.0 },
+  ];
 
   useEffect(() => {
     fetchEffectifData();
+    fetchStatutContratData();
+    fetchGradesData();
+    fetchTypesContratData();
+    fetchTurnoverData();
   }, []);
 
   const fetchEffectifData = async () => {
     try {
-      const response = await fetchDataFromAPI('/effectif/direction/get_direction/');
-      console.log('Fetched directions:', response.data);
-      if (Array.isArray(response.data)) {
-        setDirections(response.data);
-      } else {
-        console.error('Expected an array but got:', response.data);
-        setDirections([]);
-      }
+      const response = await fetchDataFromAPI(
+        "/effectif/agent/count_by_genre/"
+      );
+      setEmployeurs(response.data);
     } catch (error) {
-      console.error('Error fetching direction data:', error);
-      setDirections([]);
+      console.error("Error fetching employeurs data:", error);
+    }
+  };
+  // Fonction pour récupérer les données des grades
+  const fetchGradesData = async () => {
+    try {
+      const response = await fetchDataFromAPI(
+        "/effectif/agent/count_by_grade/"
+      );
+      setGrades(response.data);
+    } catch (error) {
+      console.error("Error fetching grades data:", error);
+    }
+  };
+  const fetchStatutContratData = async () => {
+    try {
+      const response = await fetchDataFromAPI(
+        "/effectif/agent/count_by_statut_contrat/"
+      );
+      setStatutsContrat(response.data);
+    } catch (error) {
+      console.error("Error fetching statut contrat data:", error);
     }
   };
 
-  const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
-  };
-
-  const handleGenderChange = (event) => {
-    setSelectedGender(event.target.value);
-  };
-
-  const handleDirectionChange = (event) => {
-    setSelectedDirection(event.target.value);
-  };
-
-  const handleInputChange = (category, field, value) => {
-    setInputData((prevState) => ({
-      ...prevState,
-      [category]: {
-        ...prevState[category],
-        [field]: Number(value),
-      },
-    }));
-  };
-
-  const filterDataByDirection = (data) => {
-    if (!data || !data.items || !Array.isArray(data.items)) {
-      console.error('Invalid data structure:', data);
-      return { ...data, items: [] };
+  // Fonction pour récupérer les agents d'un employeur spécifique
+  const fetchAgentsByEmployeur = async (employeur) => {
+    try {
+      const response = await fetchDataFromAPI(
+        `/effectif/agent?employeur=${employeur}`
+      );
+      // Filtrer les agents pour l'employeur sélectionné
+      const filteredAgents = response.data.results.filter(
+        (agent) => agent.employeur.type_employeur === employeur
+      );
+      setAgents(filteredAgents);
+    } catch (error) {
+      console.error("Error fetching agents:", error);
+      setAgents([]); // Assurez-vous que `agents` est un tableau vide en cas d'erreur
     }
-
-    if (selectedDirection === 'all') return data;
-
-    return {
-      ...data,
-      items: data.items.filter(item => item.direction === selectedDirection),
-    };
+  };
+  const fetchTypesContratData = async () => {
+    try {
+      const response = await fetchDataFromAPI(
+        "/effectif/agent/count_by_contrat/"
+      );
+      console.log("Response data:", response.data);
+      setTypesContrat(response.data);
+    } catch (error) {
+      console.error("Error fetching types contrat data:", error);
+      setTypesContrat({});
+    }
   };
 
-  const filteredBensizwe = filterDataByDirection(inputData.Bensizwe);
-  const filteredItm = filterDataByDirection(inputData.Itm);
-  const filteredOrange = filterDataByDirection(inputData.Orange);
-  const filteredOrangeMoney = filterDataByDirection(inputData.OrangeMoney);
+  const fetchTurnoverData = async () => {
+    try {
+      const response = await fetchDataFromAPI(
+        "/effectif/agent/turnover_mensuel/"
+      ); // Mettre à jour l'URL si nécessaire
+      setTurnoverData(response.data);
+    } catch (error) {
+      console.error("Error fetching turnover data:", error);
+    }
+  };
 
-  const handleOpenModal = (category) => {
-    setOpenModal(category);
+  const handleOpenModal = (employeur) => {
+    setSelectedEmployeur(employeur);
+    fetchAgentsByEmployeur(employeur);
+    setOpenModal(true);
   };
 
   const handleCloseModal = () => {
-    setOpenModal(null);
+    setOpenModal(false);
+    setSelectedEmployeur(null);
+    setAgents([]);
+  };
+  const handleExportExcel = () => {
+    const dataToExport = agents.map((agent) => ({
+      Nom: agent.name || "",
+      Prénom: agent.prenom,
+      Email: agent.user ? agent.user.email : "",
+      Fonction: agent.fonction,
+      Direction: agent.direction ? agent.direction.name : "",
+      "Numéro matricule": agent.num_mat || "",
+      "Lieu d'embauche": agent.lieu_embauche || "",
+      Contrat: agent.contrat ? agent.contrat.type_contrat : "",
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Agents");
+    XLSX.writeFile(wb, "Agents_Export.xlsx");
+  };
+  const renderEmployeurCard = (employeur) => {
+    // Calculer le total des agents (hommes + femmes)
+    const hommes = employeurs[employeur]?.homme || 0;
+    const femmes = employeurs[employeur]?.femme || 0;
+    const total = hommes + femmes;
+
+    return (
+      <Grid item xs={12} sm={6} md={4} key={employeur}>
+        <Card
+          sx={{
+            minWidth: 275,
+            mb: 2,
+            borderRadius: 2,
+            boxShadow: 3,
+            backgroundColor: "#FFFFFF",
+            borderLeft: "5px solid #1976D2",
+            position: "relative", // Positionnement relatif pour les éléments absolus internes
+          }}>
+          <CardContent>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ fontWeight: "bold", color: "#1976D2" }}>
+              {employeur}
+            </Typography>
+            <Box display="flex" justifyContent="space-between" mb={1}>
+              <Typography variant="h5" color="textSecondary">
+                Hommes: {hommes}
+              </Typography>
+              <Typography variant="h5" color="textSecondary">
+                Femmes: {femmes}
+              </Typography>
+            </Box>
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{ fontWeight: "bold" }}>
+              Total: {total}
+            </Typography>
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 10,
+                right: 10,
+              }}>
+              <IconButton onClick={() => handleOpenModal(employeur)}>
+                <VisibilityIcon />
+              </IconButton>
+            </Box>
+          </CardContent>
+        </Card>
+      </Grid>
+    );
   };
 
-  const renderWidget = (title, value, color, category) => (
-    <Card sx={{ minWidth: 275, backgroundColor: color, mb: 2, borderRadius: 2, boxShadow: 3 }}>
-      <CardContent>
-        <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#fff' }}>
-          {title}
-        </Typography>
-        <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#fff' }}>
-          {value}
-        </Typography>
-        <Box display="flex" justifyContent="flex-end">
-          <IconButton onClick={() => handleOpenModal(category)} sx={{ color: '#fff' }}>
-            <EditIcon />
-          </IconButton>
-        </Box>
-      </CardContent>
-    </Card>
+  const renderStatutCard = (statut) => (
+    <Grid item xs={12} sm={6} md={4} lg={3} key={statut}>
+      <Card
+        sx={{
+          minWidth: 275,
+          mb: 2,
+          borderRadius: 2,
+          boxShadow: 3,
+          backgroundColor: statut === "expat" ? "#E3F2FD" : "#C8E6C9",
+          borderLeft: "5px solid #388E3C",
+        }}>
+        <CardContent>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ fontWeight: "bold", color: "#388E3C" }}>
+            {statut === "expat" ? "Expats" : "Locaux"}
+          </Typography>
+          <Typography variant="h5" color="textSecondary">
+            Nombre: {statutsContrat[statut] || 0}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Grid>
+  );
+  // Fonction pour afficher la carte des grades
+  const renderGradeCard = (grade) => {
+    let color;
+    switch (grade) {
+      case "CADRE_DE_COLLABORATION":
+        color = "#FFEB3B"; // Jaune
+        break;
+      case "MAITRISE":
+        color = "#8BC34A"; // Vert clair
+        break;
+      case "CLASSIFIE":
+        color = "#FF5722"; // Orange
+        break;
+      case "CADRE_DE_DIRECTION":
+        color = "#2196F3"; // Bleu
+        break;
+      default:
+        color = "#F5F5F5"; // Couleur par défaut
+    }
+    return (
+      <Grid item xs={12} sm={6} md={4} lg={3} key={grade}>
+        <Card
+          sx={{
+            minWidth: 275,
+            mb: 2,
+            borderRadius: 2,
+            boxShadow: 3,
+            backgroundColor: color,
+            borderLeft: "5px solid #000",
+          }}>
+          <CardContent>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ fontWeight: "bold", color: "#000" }}>
+              {grade}
+            </Typography>
+            <Typography variant="h5" color="textSecondary">
+              Nombre: {grades[grade] || 0}
+            </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+    );
+  };
+
+  const renderAgentTable = () => (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Nom</TableCell>
+            <TableCell>Prénom</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Fonction</TableCell>
+            <TableCell>Direction</TableCell>
+            <TableCell>Numéro matricule</TableCell>
+            <TableCell>lieu d'embauche</TableCell>
+            <TableCell>contrat</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {agents.length > 0 ? (
+            agents.map((agent) => (
+              <TableRow key={agent.id}>
+                <TableCell>{agent.name || ""}</TableCell>
+                <TableCell>{agent.prenom}</TableCell>
+                <TableCell>{agent.user ? agent.user.email : ""}</TableCell>
+                <TableCell>{agent.fonction}</TableCell>
+                <TableCell>
+                  {agent.direction ? agent.direction.name : ""}
+                </TableCell>
+                <TableCell>{agent.num_mat || ""}</TableCell>
+                <TableCell>{agent.lieu_embauche || ""}</TableCell>
+                <TableCell>
+                  {agent.contrat ? agent.contrat.type_contrat : ""}
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4}>Aucun agent trouvé</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 
-  const data = [
-    { name: 'Bensizwe', ...inputData.Bensizwe },
-    { name: 'Itm', ...inputData.Itm },
-    { name: 'Orange', ...inputData.Orange },
-    { name: 'Orange Money', ...inputData.OrangeMoney },
-  ];
-
-  const barChartData = {
-    labels: data.map(item => item.name),
-    datasets: [
-      {
-        label: 'Total',
-        backgroundColor: '#4caf50',
-        data: data.map(item => item.total),
-      },
-      {
-        label: 'Hommes',
-        backgroundColor: '#2196f3',
-        data: data.map(item => item.male),
-      },
-      {
-        label: 'Femmes',
-        backgroundColor: '#ff9800',
-        data: data.map(item => item.female),
-      },
-    ],
-  };
-
-  const doughnutChartDataTotal = {
-    labels: data.map(item => item.name),
-    datasets: [
-      {
-        data: data.map(item => item.total),
-        backgroundColor: ['#4caf50', '#2196f3', '#ff9800', '#ff5722'],
-        hoverBackgroundColor: ['#66bb6a', '#42a5f5', '#ffa726', '#ff7043'],
-      },
-    ],
-  };
-
-  const doughnutChartDataGender = {
-    labels: ['Hommes', 'Femmes'],
-    datasets: [
-      {
-        data: [
-          inputData.Bensizwe.male + inputData.Itm.male + inputData.Orange.male + inputData.OrangeMoney.male,
-          inputData.Bensizwe.female + inputData.Itm.female + inputData.Orange.female + inputData.OrangeMoney.female,
-        ],
-        backgroundColor: ['#2196f3', '#ff9800'],
-        hoverBackgroundColor: ['#42a5f5', '#ffa726'],
-      },
-    ],
-  };
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
-
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'EffectifDashboard');
-    XLSX.writeFile(workbook, 'EffectifDashboard.xlsx');
-  };
-
-  const renderModal = (category) => (
-    <Modal open={openModal === category} onClose={handleCloseModal}>
-      <Box sx={{
-        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-        width: 400, bgcolor: 'background.paper', border: '2px solid #000', boxShadow: 24, p: 4
-      }}>
-        <Typography variant="h6" component="h2">
-          {`Modifier ${category}`}
-        </Typography>
-        <TextField
-          label={`Total ${category}`}
-          type="number"
-          value={inputData[category].total}
-          onChange={(e) => handleInputChange(category, 'total', e.target.value)}
-          fullWidth
-          sx={{ mt: 2 }}
-        />
-        <TextField
-          label={`Hommes ${category}`}
-          type="number"
-          value={inputData[category].male}
-          onChange={(e) => handleInputChange(category, 'male', e.target.value)}
-          fullWidth
-          sx={{ mt: 2 }}
-        />
-        <TextField
-          label={`Femmes ${category}`}
-          type="number"
-          value={inputData[category].female}
-          onChange={(e) => handleInputChange(category, 'female', e.target.value)}
-          fullWidth
-          sx={{ mt: 2 }}
-        />
-        <Box mt={2} display="flex" justifyContent="flex-end">
-          <Button onClick={handleCloseModal} variant="contained" color="primary">
-            Fermer
-          </Button>
-        </Box>
-      </Box>
-    </Modal>
+  const renderTypeContratCard = (contrat) => (
+    <Grid item xs={12} sm={6} md={4} lg={3} key={contrat}>
+      <Card
+        sx={{
+          minWidth: 275,
+          mb: 2,
+          borderRadius: 2,
+          boxShadow: 3,
+          backgroundColor: "#FFEBEE",
+          borderLeft: "5px solid #D32F2F",
+        }}>
+        <CardContent>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ fontWeight: "bold", color: "#D32F2F" }}>
+            {contrat}
+          </Typography>
+          <Typography variant="h5" color="textSecondary">
+            Nombre: {typesContrat[contrat] || 0}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Grid>
   );
 
   return (
     <Box p={3}>
       <Typography variant="h4" gutterBottom>
-        Effectif Dashboard
+        Effectif par Employeur
       </Typography>
 
-      {/* Filters */}
-      <Grid container spacing={2} mb={4}>
-        <Grid item xs={4}>
-          <FormControl fullWidth>
-            <InputLabel>Category</InputLabel>
-            <Select value={selectedCategory} onChange={handleCategoryChange}>
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="internal">Internal</MenuItem>
-              <MenuItem value="external">External</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={4}>
-          <FormControl fullWidth>
-            <InputLabel>Gender</InputLabel>
-            <Select value={selectedGender} onChange={handleGenderChange}>
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={4}>
-          <FormControl fullWidth>
-            <InputLabel>Direction</InputLabel>
-            <Select value={selectedDirection} onChange={handleDirectionChange}>
-              <MenuItem value="all">All</MenuItem>
-              {directions.map(direction => (
-                <MenuItem key={direction.id} value={direction.id}>{direction.label}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-      </Grid>
-
-      {/* Widgets */}
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={4}>
-          {renderWidget('Bensizwe', inputData.Bensizwe.total, '#4caf50', 'Bensizwe')}
-          {renderModal('Bensizwe')}
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          {renderWidget('Itm', inputData.Itm.total, '#2196f3', 'Itm')}
-          {renderModal('Itm')}
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          {renderWidget('Orange', inputData.Orange.total, '#ff9800', 'Orange')}
-          {renderModal('Orange')}
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          {renderWidget('Orange Money', inputData.OrangeMoney.total, '#ff5722', 'OrangeMoney')}
-          {renderModal('OrangeMoney')}
-        </Grid>
+        {/* Cartes pour les employeurs */}
+        {Object.keys(employeurs).map((employeur) =>
+          renderEmployeurCard(employeur)
+        )}
       </Grid>
 
-      {/* Charts */}
-      <Grid container spacing={2} mt={4}>
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Effectifs Totals</Typography>
-              <Bar data={barChartData} />
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Répartition des Effectifs</Typography>
-              <Doughnut data={doughnutChartDataTotal} />
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Répartition par Genre</Typography>
-              <Doughnut data={doughnutChartDataGender} />
-            </CardContent>
-          </Card>
-        </Grid>
+      <Grid container spacing={2}>
+        {["expat", "local"].map(renderStatutCard)}
+        {Object.keys(grades).map(renderGradeCard)}
+        {Object.keys(typesContrat).map(renderTypeContratCard)}
       </Grid>
 
-      {/* Export Button */}
-      <Box display="flex" justifyContent="flex-end" mt={4}>
-        <Button variant="contained" color="primary" onClick={exportToExcel}>
-          Exporter en Excel
-        </Button>
+      {/* Section pour le graphique de turnover */}
+      <Box mt={5}>
+        <Typography variant="h5" gutterBottom>
+          Taux de Rotation Mensuel
+        </Typography>
+        <TurnoverChart data={turnoverData} />
       </Box>
-
-      {/* Snackbar */}
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      {openModal && (
+        <Modal open={openModal} onClose={handleCloseModal}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "95%",
+              maxWidth: 1000, //  la largeur maximale pour une meilleure visualisation
+              bgcolor: "background.paper",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+            }}>
+            <Typography variant="h6" component="h2" gutterBottom>
+              {`Détails de la liste des agents pour ${selectedEmployeur}`}
+            </Typography>
+            {renderAgentTable()}
+            <Box mt={3} display="flex" justifyContent="space-between">
+              <Button
+                onClick={handleExportExcel}
+                variant="contained"
+                color="primary">
+                Exporter
+              </Button>
+              <Button
+                onClick={handleCloseModal}
+                variant="contained"
+                color="primary"
+                sx={{ ml: 2 }}>
+                Fermer
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
+      )}
     </Box>
   );
 };

@@ -7,7 +7,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  Typography
 } from '@mui/material';
 import { fetchDataFromAPI, postDataToAPI, updateDataToAPI } from '../../api';
 
@@ -36,11 +37,12 @@ const TrainingForm = ({
   const [streamOptions, setStreamOptions] = useState([]);
   const [modeOptions, setModeOptions] = useState([]);
   const [categorieOptions, setCategorieOptions] = useState([]);
-  const [loading, setLoading] = useState(true); // Indicateur de chargement
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (editMode && initialFormDataProp) {
-      setFormData(initialFormDataProp); // Met à jour les données du formulaire en mode édition
+      setFormData(initialFormDataProp);
     }
   }, [editMode, initialFormDataProp]);
 
@@ -49,8 +51,6 @@ const TrainingForm = ({
       try {
         const response = await fetchDataFromAPI('/formation/formation/get-form-choices/');
         const { stream, mode, categorie } = response.data;
-
-        console.log("API response data:", response.data); // Ajout d'un log pour vérifier la structure des données
 
         const transformChoices = (choices) => {
           return Array.isArray(choices)
@@ -64,10 +64,10 @@ const TrainingForm = ({
         setStreamOptions(transformChoices(stream || []));
         setModeOptions(transformChoices(mode || []));
         setCategorieOptions(transformChoices(categorie || []));
-        setLoading(false); // Données chargées
+        setLoading(false);
       } catch (error) {
         console.error('Erreur lors du chargement des données de formation :', error);
-        setLoading(false); // En cas d'erreur, arrêtez le chargement
+        setLoading(false);
       }
     };
 
@@ -80,24 +80,71 @@ const TrainingForm = ({
       ...prevData,
       [name]: value,
     }));
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: '', // Efface l'erreur lors de la modification du champ
+    }));
+  };
+
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = {};
+
+    // Vérification des champs requis
+    if (!formData.titre) {
+      newErrors.titre = 'Le titre est requis';
+      valid = false;
+    }
+    if (!formData.stream) {
+      newErrors.stream = 'Le stream est requis';
+      valid = false;
+    }
+    if (!formData.mode) {
+      newErrors.mode = 'Le mode est requis';
+      valid = false;
+    }
+    if (!formData.categorie) {
+      newErrors.categorie = 'La catégorie est requise';
+      valid = false;
+    }
+    if (!formData.description) {
+      newErrors.description = 'La description est requise';
+      valid = false;
+    }
+    if (!formData.cible) {
+      newErrors.cible = 'La cible est requise';
+      valid = false;
+    }
+    if (!formData.date_debut) {
+      newErrors.date_debut = 'La date de début est requise';
+      valid = false;
+    }
+    if (!formData.date_fin) {
+      newErrors.date_fin = 'La date de fin est requise';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
   };
 
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       if (editMode) {
-        await updateDataToAPI(`/formation/formation/${formData.id}/`, formData); // Mise à jour avec l'ID
+        await updateDataToAPI(`/formation/formation/${formData.id}/`, formData);
       } else {
-        await postDataToAPI('/formation/formation/creer%20formation/', formData); // Ajout
+        await postDataToAPI('/formation/formation/creer%20formation/', formData);
       }
-      handleCloseDialog(); // Utilise la prop pour fermer la boîte de dialogue
-      setFormData(initialFormData); // Réinitialise le formulaire après soumission
+      handleCloseDialog();
+      setFormData(initialFormData);
     } catch (error) {
       console.error('Erreur lors de la soumission de la formation :', error);
     }
   };
-
-  console.log("openDialog:", openDialog);
-  console.log("editMode:", editMode);
 
   return (
     <>
@@ -109,16 +156,22 @@ const TrainingForm = ({
               label="Titre"
               name="titre"
               value={formData.titre}
-              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
+              onChange={handleFormInputChange}
               variant="outlined"
+              required
+              error={!!errors.titre}
+              helperText={errors.titre}
             />
             <TextField
               select
               label="Stream"
               name="stream"
               value={formData.stream}
-              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
+              onChange={handleFormInputChange}
               variant="outlined"
+              required
+              error={!!errors.stream}
+              helperText={errors.stream}
             >
               {!loading && streamOptions.length > 0 ? (
                 streamOptions.map(option => (
@@ -135,8 +188,11 @@ const TrainingForm = ({
               label="Mode"
               name="mode"
               value={formData.mode}
-              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
+              onChange={handleFormInputChange}
               variant="outlined"
+              required
+              error={!!errors.mode}
+              helperText={errors.mode}
             >
               {!loading && modeOptions.length > 0 ? (
                 modeOptions.map(option => (
@@ -153,8 +209,11 @@ const TrainingForm = ({
               label="Catégorie"
               name="categorie"
               value={formData.categorie}
-              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
+              onChange={handleFormInputChange}
               variant="outlined"
+              required
+              error={!!errors.categorie}
+              helperText={errors.categorie}
             >
               {!loading && categorieOptions.length > 0 ? (
                 categorieOptions.map(option => (
@@ -170,35 +229,46 @@ const TrainingForm = ({
               label="Description"
               name="description"
               value={formData.description}
-              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
+              onChange={handleFormInputChange}
               variant="outlined"
+              required
+              error={!!errors.description}
+              helperText={errors.description}
             />
             <TextField
               label="Cible"
               name="cible"
               value={formData.cible}
-              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
+              onChange={handleFormInputChange}
               variant="outlined"
+              type="number"
+              required
+              error={!!errors.cible}
+              helperText={errors.cible}
             />
             <TextField
               label="Date Début"
               name="date_debut"
               type="date"
               value={formData.date_debut}
-              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
+              onChange={handleFormInputChange}
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               required
+              error={!!errors.date_debut}
+              helperText={errors.date_debut}
             />
             <TextField
               label="Date Fin"
               name="date_fin"
               type="date"
               value={formData.date_fin}
-              onChange={handleFormInputChange} // Utilise la fonction interne pour gérer les changements
+              onChange={handleFormInputChange}
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               required
+              error={!!errors.date_fin}
+              helperText={errors.date_fin}
             />
           </Box>
         </DialogContent>
