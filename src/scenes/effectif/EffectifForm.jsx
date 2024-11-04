@@ -53,7 +53,6 @@ const EffectifForm = ({
   handleCloseDialog,
   editMode,
   onSuccess, // Nouveau prop pour signaler une opération réussie
-
 }) => {
   const [isSuccess, setIsSuccess] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
@@ -61,10 +60,12 @@ const EffectifForm = ({
   const [nationaliteOptions, setNationaliteOptions] = useState([]);
   const [genreOptions, setGenreOptions] = useState([]);
   const [ageOptions, setAgeOptions] = useState([]);
+  const [gradeOptions, setGradeOptions] = useState([]);
   const [statut_contratOptions, setStatut_contratOptions] = useState([]);
   const [directionOptions, setDirectionOptions] = useState([]);
   const [employeurOptions, setEmployeurOptions] = useState([]);
   const [contratOptions, setContratOptions] = useState([]);
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -93,7 +94,7 @@ const EffectifForm = ({
           fetchDataFromAPI("/effectif/agent/get_user/"),
         ]);
 
-        const { age, genre, statut_contrat, nationalite } =
+        const { age, genre, statut_contrat, nationalite, grade } =
           choicesResponse.data;
         const direction = directionResponse.data;
         const employeur = employeurResponse.data;
@@ -119,7 +120,8 @@ const EffectifForm = ({
         };
         setGenreOptions(transformChoices(genre || []));
         setAgeOptions(transformChoices(age || []));
-        setCuidOptions(transformForeignKeyData(cuid || [])); // Mise à jour des options de CUID
+        setGradeOptions(transformChoices(grade || []));
+        setCuidOptions(transformForeignKeyData(cuid || []));
         setStatut_contratOptions(transformChoices(statut_contrat || []));
         setDirectionOptions(transformForeignKeyData(direction || []));
         setEmployeurOptions(transformForeignKeyData(employeur || []));
@@ -144,9 +146,137 @@ const EffectifForm = ({
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
     }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "", // Efface l'erreur lors de la modification du champ
+    }));
+  };
+  const validateForm = () => {
+    let valid = true;
+    let newErrors = {};
+
+    // Vérification des champs requis
+    if (!formData.cuid) {
+      newErrors.cuid = "Le CUID est requis";
+      valid = false;
+    }
+    if (!formData.name) {
+      newErrors.name = "Le nom est requis";
+      valid = false;
+    }
+    if (!formData.email) {
+      newErrors.email = "L'email est requis";
+      valid = false;
+    }
+    if (!formData.phone) {
+      newErrors.phone = "Le numéro de téléphone est requis";
+      valid = false;
+    }
+    if (!formData.prenom) {
+      newErrors.prenom = "Le prénom est requis";
+      valid = false;
+    }
+    if (!formData.postnom) {
+      newErrors.postnom = "Le postnom est requis";
+      valid = false;
+    }
+    if (!formData.direction) {
+      newErrors.direction = "La direction est requise";
+      valid = false;
+    }
+    if (!formData.employeur) {
+      newErrors.employeur = "L'employeur est requis";
+      valid = false;
+    }
+    if (!formData.genre) {
+      newErrors.genre = "Le genre est requis";
+      valid = false;
+    }
+    if (!formData.date_naissance) {
+      newErrors.date_naissance = "La date de naissance est requise";
+      valid = false;
+    }
+    if (!formData.contrat) {
+      newErrors.contrat = "Le contrat est requis";
+      valid = false;
+    }
+    if (!formData.num_mat) {
+      newErrors.num_mat = "Le numéro matricule est requis";
+      valid = false;
+    }
+    if (!formData.age) {
+      newErrors.age = "L'âge est requis";
+      valid = false;
+    }
+    if (!formData.statut_contrat) {
+      newErrors.statut_contrat = "Le statut du contrat est requis";
+      valid = false;
+    }
+    if (!formData.fonction) {
+      newErrors.fonction = "La fonction est requise";
+      valid = false;
+    }
+    if (!formData.anciennete_annee) {
+      newErrors.anciennete_annee = "L'ancienneté en années est requise";
+      valid = false;
+    }
+    if (!formData.anciennete_mois) {
+      newErrors.anciennete_mois = "L'ancienneté en mois est requise";
+      valid = false;
+    }
+    if (!formData.nationalite) {
+      newErrors.nationalite = "La nationalité est requise";
+      valid = false;
+    }
+    if (!formData.lieu_embauche) {
+      newErrors.lieu_embauche = "Le lieu d'embauche est requis";
+      valid = false;
+    }
+    if (!formData.lieu_affectation) {
+      newErrors.lieu_affectation = "Le lieu d'affectation est requis";
+      valid = false;
+    }
+    if (!formData.grade) {
+      newErrors.grade = "Le grade est requis";
+      valid = false;
+    }
+    if (!formData.date_fin_cdd) {
+      newErrors.date_fin_cdd = "La date de fin du CDD est requise";
+      valid = false;
+    }
+    if (!formData.date_embauche) {
+      newErrors.date_embauche = "La date d'embauche est requise";
+      valid = false;
+    }
+    if (!formData.dure_cdd) {
+      newErrors.dure_cdd = "La durée du CDD est requise";
+      valid = false;
+    }
+    if (!formData.periode_essai) {
+      newErrors.periode_essai = "La période d'essai est requise";
+      valid = false;
+    }
+    if (!formData.manager_name) {
+      newErrors.manager_name = "Le nom du manager est requis";
+      valid = false;
+    }
+    if (!formData.date_depart) {
+      newErrors.date_depart = "La date de départ est requise";
+      valid = false;
+    }
+
+    // Définir les erreurs et renvoyer l'état de validité
+    setErrors(newErrors);
+    return valid;
   };
 
   const handleSubmit = async () => {
+    if (!formData.name) {
+      console.log("Le champ name est manquant");
+      return false;
+    }
+    console.log("Validation réussie, soumission en cours...");
+  
     try {
       const submitData = {
         ...formData,
@@ -162,8 +292,7 @@ const EffectifForm = ({
         phone: `${submitData?.phone}`,
       };
       delete submitData.cuid;
-      console.log("**********submit data:", submitData);
-    
+      // console.log("**********submit data:", submitData);
 
       if (editMode) {
         await updateDataToAPI(`/effectif/agent/${formData.id}/`, submitData);
@@ -209,6 +338,8 @@ const EffectifForm = ({
                   value={formData.cuid}
                   onChange={handleInputChange}
                   required
+                  error={!!errors.cuid}
+                  helperText={errors.cuid}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -219,6 +350,8 @@ const EffectifForm = ({
                   value={formData.name}
                   onChange={handleInputChange}
                   required
+                  error={!!errors.name}
+                  helperText={errors.name}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -229,6 +362,8 @@ const EffectifForm = ({
                   value={formData.prenom}
                   onChange={handleInputChange}
                   required
+                  error={!!errors.prenom}
+                  helperText={errors.prenom}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -239,6 +374,8 @@ const EffectifForm = ({
                   value={formData.postnom}
                   onChange={handleInputChange}
                   required
+                  error={!!errors.postnom}
+                  helperText={errors.postnom}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -248,6 +385,8 @@ const EffectifForm = ({
                     name="direction"
                     value={formData.direction || ""}
                     onChange={handleInputChange}
+                    error={!!errors.direction}
+                    helperText={errors.direction}
                     label="Direction">
                     {!loading ? (
                       directionOptions.map((option) => (
@@ -268,6 +407,8 @@ const EffectifForm = ({
                     name="employeur"
                     value={formData.employeur || ""}
                     onChange={handleInputChange}
+                    error={!!errors.employeur}
+                    helperText={errors.employeur}
                     label="Employeur">
                     {!loading ? (
                       employeurOptions.map((option) => (
@@ -288,6 +429,8 @@ const EffectifForm = ({
                     name="genre"
                     value={formData.genre || ""}
                     onChange={handleInputChange}
+                    error={!!errors.genre}
+                    helperText={errors.genre}
                     label="Genre">
                     {!loading ? (
                       genreOptions.map((option) => (
@@ -311,6 +454,8 @@ const EffectifForm = ({
                   type="date"
                   InputLabelProps={{ shrink: true }}
                   required
+                  error={!!errors.date_naissance}
+                  helperText={errors.date_naissance}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -320,6 +465,8 @@ const EffectifForm = ({
                     name="contrat"
                     value={formData.contrat || ""}
                     onChange={handleInputChange}
+                    error={!!errors.contrat}
+                    helperText={errors.contrat}
                     label="Contrat">
                     {!loading ? (
                       contratOptions.map((option) => (
@@ -341,6 +488,8 @@ const EffectifForm = ({
                   value={formData.num_mat}
                   onChange={handleInputChange}
                   required
+                  error={!!errors.num_mat}
+                  helperText={errors.num_mat}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -351,6 +500,8 @@ const EffectifForm = ({
                   value={formData.phone}
                   onChange={handleInputChange}
                   required
+                  error={!!errors.phone}
+                  helperText={errors.phone}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -360,6 +511,8 @@ const EffectifForm = ({
                     name="age"
                     value={formData.age || ""}
                     onChange={handleInputChange}
+                    error={!!errors.age}
+                    helperText={errors.age}
                     label="age">
                     {!loading ? (
                       ageOptions.map((option) => (
@@ -380,6 +533,8 @@ const EffectifForm = ({
                     name="statut_contrat"
                     value={formData.statut_contrat || ""}
                     onChange={handleInputChange}
+                    error={!!errors.statut_contrat}
+                    helperText={errors.statut_contrat}
                     label="Statut du Contrat">
                     {!loading ? (
                       statut_contratOptions.map((option) => (
@@ -401,6 +556,8 @@ const EffectifForm = ({
                   value={formData.fonction}
                   onChange={handleInputChange}
                   required
+                  error={!!errors.fonction}
+                  helperText={errors.fonction}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -412,6 +569,8 @@ const EffectifForm = ({
                   onChange={handleInputChange}
                   type="email"
                   required
+                  error={!!errors.email}
+                  helperText={errors.email}
                 />
               </Grid>
 
@@ -422,6 +581,8 @@ const EffectifForm = ({
                     name="nationalite"
                     value={formData.nationalite || ""}
                     onChange={handleInputChange}
+                    error={!!errors.nationalite}
+                    helperText={errors.nationalite}
                     label="Nationalité">
                     {!loading ? (
                       nationaliteOptions.map((option) => (
@@ -438,22 +599,48 @@ const EffectifForm = ({
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Lieu d'Embauche"
+                  label="Lieu d'embauche"
                   name="lieu_embauche"
                   value={formData.lieu_embauche}
                   onChange={handleInputChange}
                   required
+                  error={!!errors.lieu_embauche}
+                  helperText={errors.lieu_embauche}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Grade"
-                  name="grade"
-                  value={formData.grade}
+                  label="Lieu d'affectation"
+                  name="lieu_affectation"
+                  value={formData.lieu_embauche}
                   onChange={handleInputChange}
                   required
+                  error={!!errors.lieu_affectation}
+                  helperText={errors.lieu_affectation}
                 />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth required>
+                  <InputLabel>Grade</InputLabel>
+                  <Select
+                    name="grade"
+                    value={formData.grade || ""}
+                    onChange={handleInputChange}
+                    error={!!errors.grade}
+                    helperText={errors.grade}
+                    label="Grade">
+                    {!loading ? (
+                      gradeOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem disabled>Loading...</MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -464,6 +651,8 @@ const EffectifForm = ({
                   onChange={handleInputChange}
                   type="date"
                   InputLabelProps={{ shrink: true }}
+                  error={!!errors.date_fin_contrat}
+                  helperText={errors.date_fin_contrat}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -475,6 +664,8 @@ const EffectifForm = ({
                   onChange={handleInputChange}
                   type="date"
                   InputLabelProps={{ shrink: true }}
+                  error={!!errors.date_embauche}
+                  helperText={errors.date_embauche}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -485,6 +676,8 @@ const EffectifForm = ({
                   value={formData.dure_contrat}
                   onChange={handleInputChange}
                   required
+                  error={!!errors.dure_contrat}
+                  helperText={errors.dure_contrat}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>

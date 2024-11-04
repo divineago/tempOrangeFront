@@ -146,10 +146,10 @@ const ContratList = () => {
       width: 200,
       renderCell: (params) => (
         <>
-          <Button variant="outlined" color="primary" size="small" onClick={() => handleEdit(params.row)}>
+          <Button variant="outlined" color="primary" size="small" onClick={() => handleEdit(params.row)} style={{ marginLeft: '18px' }}>
             Modifier
           </Button>
-          <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)}  style={{ marginLeft: '12px' }}>
+          <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)}  style={{ marginLeft: '18px' }}>
             Supprimer
           </Button>
         </>
@@ -178,7 +178,7 @@ const ContratList = () => {
 
   return (
     <Box m="10px">
-      <Header title="Contrat List" subtitle="Liste de toutes les directions" />
+      <Header title="Contrat List" subtitle="Liste des contrats" />
       <Box m="10px 0">
         <ContratForm
           formData={formData}
@@ -188,7 +188,7 @@ const ContratList = () => {
           handleCloseDialog={handleCloseDialog}
           editMode={editMode}
         />
-        <Button variant="contained" color="primary" onClick={handleOpenDialog} style={{ marginLeft: '5px' }}>
+        <Button variant="contained" color="primary" onClick={handleOpenDialog} >
           Ajouter contrat
         </Button>
         <Button variant="contained" color="primary" onClick={handleExportExcel} style={{ marginLeft: '5px' }}>

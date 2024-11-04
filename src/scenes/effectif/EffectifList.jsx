@@ -28,6 +28,7 @@ const initialEffectifList = {
   anciennete_mois:'',
   nationalite: '',
   lieu_embauche: '',
+  lieu_affectation: '',
   grade: '',
   date_fin_cdd: '',
   date_embauche: '',
@@ -59,16 +60,7 @@ const EffectifList = () => {
       [name]: value,
     }));
   };
-//   function RecuperreSubordonnes(idManager) { 
-//     // Parcours de chaque agent 
-//      agents.forEach(agent => {
 
-//                // Filtre pour obtenir les subordonnés de l'agent actuel 
-//               agent.subordonnes = agents.filter(agent => agent.manager === idManager);
-
-//               });
-//     return agents; 
-// }
 const fetchEffectifData = async () => {
   try {
       const response = await fetchDataFromAPI('/effectif/agent/');
@@ -100,6 +92,9 @@ const fetchEffectifData = async () => {
                   anciennete_mois: agent.anciennete_mois || '',
                   nationalite: agent.nationalite || '',
                   lieu_embauche: agent.lieu_embauche || '',
+                  lieu_embauche: agent.lieu_embauche || '',
+                  grade: agent.grade || '',
+                  lieu_affectation: agent.lieu_affectation || '',
                   grade: agent.grade || '',
                   date_fin_cdd: agent.date_fin_cdd || '',
                   date_embauche: agent.date_embauche || '',
@@ -168,6 +163,7 @@ const fetchEffectifData = async () => {
       anciennete_mois:'',
       nationalite: '',
       lieu_embauche: '',
+      lieu_affectation: '',
       grade: '',
       date_fin_cdd: '',
       date_embauche: '',
@@ -247,17 +243,18 @@ const fetchEffectifData = async () => {
     // { field: 'nationalite', headerName: 'Nationalité', width: 150 },
     { field: 'email', headerName: 'email', width: 150 },
     { field: 'direction', headerName: 'Direction', width: 150 },
-    // { field: 'employeur', headerName: 'Employeur', width: 150 },
-    // { field: 'num_mat', headerName: 'Numéro Matricule', width: 150 },
+    { field: 'employeur', headerName: 'Employeur', width: 150 },
+    { field: 'num_mat', headerName: 'Numéro Matricule', width: 150 },
     // { field: 'date_naissance', headerName: 'Date de Naissance', width: 150 },
     // { field: 'contrat', headerName: 'Contrat', width: 150 },  
     // { field: 'statut_contrat', headerName: 'statut_contrat', width: 150 },
-    // { field: 'fonction', headerName: 'Fonction', width: 150 },
+    { field: 'fonction', headerName: 'Fonction', width: 150 },
     // { field: 'anciennete_annee', headerName: 'Ancienneté (années)', width: 150 },
     // { field: 'anciennete_mois', headerName: 'Ancienneté (mois)', width: 150 },
     // { field: 'date_depart', headerName: 'date_depart ', width: 150 },
     // { field: 'lieu_embauche', headerName: 'Lieu d\'embauche', width: 150 },
-    // { field: 'grade', headerName: 'Grade', width: 150 },
+    { field: 'lieu_affectation', headerName: 'Lieu d\'affectation', width: 150 },
+    { field: 'grade', headerName: 'Grade', width: 150 },
     // { 
     //   field: 'date_embauche', 
     //   headerName: 'Date d\'embauche', 
@@ -283,7 +280,7 @@ const fetchEffectifData = async () => {
             color="primary"
             size="small"
             onClick={() => handleEdit(params.row)}
-            style={{ marginRight: '5px' }}
+            style={{ marginRight: '10px' }}
           >
             Modifier
           </Button>
@@ -293,7 +290,7 @@ const fetchEffectifData = async () => {
             color="primary"
             size="small"
             onClick={() => handleOpenDetails(params.row)}
-            style={{ marginRight: '5px' }}
+            style={{ marginRight: '10px' }}
           >
             Voir plus
           </Button>
@@ -336,6 +333,7 @@ const fetchEffectifData = async () => {
       anciennete_mois:'',
       nationalite: '',
       lieu_embauche: '',
+      lieu_affectation: '',
       grade: '',
       date_fin_cdd: '',
       date_embauche: '',

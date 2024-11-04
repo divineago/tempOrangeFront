@@ -27,20 +27,19 @@ const Login = ({ setIsAuthenticated }) => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper elevation={6} sx={{ padding: 2 }}>
+    <Container component="main" maxWidth="md">
+      <Paper elevation={6} sx={{ padding: 4, borderRadius: 2 }}>
         <Box
           sx={{
-            marginTop: 8,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
           }}
         >
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
             Login
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
             <TextField
               margin="normal"
               required
@@ -52,6 +51,7 @@ const Login = ({ setIsAuthenticated }) => {
               autoFocus
               value={credentials.username}
               onChange={handleChange}
+              sx={{ mb: 2 }}
             />
             <TextField
               margin="normal"
@@ -64,8 +64,9 @@ const Login = ({ setIsAuthenticated }) => {
               autoComplete="current-password"
               value={credentials.password}
               onChange={handleChange}
+              sx={{ mb: 3 }}
             />
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+            <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 2 }}>
               Login
             </Button>
           </Box>

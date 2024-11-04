@@ -93,7 +93,7 @@ const AssignSubordinatesForm = () => {
 
           <Grid item xs={12} md={6}>
             <FormControl fullWidth variant="outlined">
-              <InputLabel>Subalternes</InputLabel>
+              <InputLabel>N-1</InputLabel>
               <Select
                 multiple
                 value={selectedSubordinates}

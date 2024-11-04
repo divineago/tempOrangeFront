@@ -42,12 +42,12 @@ export const deleteDataToAPI = async (endpoint) => {
     throw error;
   }
 };
-export const fetchDataFromAPIWithParameters = async (endpoint,date_debut=null,date_fin=null) => {
+export const fetchDataFromAPIWithParameters = async (endpoint, type_employeur = null) => {
   try {
-    const response = await axios.get(`${API_URL}${endpoint}?date_debut=${date_debut}&date_fin=${date_fin}`);
-    return response;
+    const response = await axios.get(`${API_URL}${endpoint}?employeur=${type_employeur}`);
+    return response; 
   } catch (error) {
-    console.error('Erreur lors de la récupération des données de l\'API :', error);//get 
+    console.error('Erreur lors de la récupération des données de l\'API :', error);
     return {}; 
   }
 };

@@ -156,7 +156,7 @@ const EffectifDashboard = () => {
     const total = hommes + femmes;
 
     return (
-      <Grid item xs={12} sm={6} md={4} key={employeur}>
+      <Grid item xs={12} sm={3} md={4} key={employeur}>
         <Card
           sx={{
             minWidth: 275,
@@ -208,18 +208,22 @@ const EffectifDashboard = () => {
     <Grid item xs={12} sm={6} md={4} lg={3} key={statut}>
       <Card
         sx={{
-          minWidth: 275,
+          maxWidth: 750, // Largeur maximale des cartes pour une meilleure dimension
+          height: "100%", // Assure une bonne hauteur
           mb: 2,
-          borderRadius: 2,
-          boxShadow: 3,
-          backgroundColor: statut === "expat" ? "#E3F2FD" : "#C8E6C9",
-          borderLeft: "5px solid #388E3C",
-        }}>
+          p: 2, // Padding interne pour aérer le contenu
+          borderRadius: 4, // Coins arrondis pour un look moderne
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Ombre douce pour l'effet visuel
+          backgroundColor: statut === "expat" ? "#E3F2FD" : "#C8E6C9", // Couleur spécifique en fonction du statut
+         
+        }}
+      >
         <CardContent>
           <Typography
             variant="h6"
             component="div"
-            sx={{ fontWeight: "bold", color: "#388E3C" }}>
+            sx={{ fontWeight: "bold", color: "#388E3C" }} // Texte en gras et en vert
+          >
             {statut === "expat" ? "Expats" : "Locaux"}
           </Typography>
           <Typography variant="h5" color="textSecondary">
@@ -229,6 +233,7 @@ const EffectifDashboard = () => {
       </Card>
     </Grid>
   );
+  
   // Fonction pour afficher la carte des grades
   const renderGradeCard = (grade) => {
     let color;
@@ -248,22 +253,28 @@ const EffectifDashboard = () => {
       default:
         color = "#F5F5F5"; // Couleur par défaut
     }
+  
     return (
       <Grid item xs={12} sm={6} md={4} lg={3} key={grade}>
         <Card
           sx={{
-            minWidth: 275,
-            mb: 2,
-            borderRadius: 2,
-            boxShadow: 3,
-            backgroundColor: color,
-            borderLeft: "5px solid #000",
-          }}>
+            maxWidth: 750, // Largeur maximale des cartes pour une meilleure dimension
+            height: "100%", // Assure une bonne hauteur
+            mt: 3, // Ajoute un margin-top pour l'espace en haut
+            mb: 2, // Ajoute un margin-bottom pour l'espace en bas
+            p: 2, // Padding interne pour aérer le contenu
+            borderRadius: 2, // Coins arrondis pour un look moderne
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Ombre douce pour l'effet visuel
+            backgroundColor: color, // Couleur spécifique en fonction du grade
+            
+          }}
+        >
           <CardContent>
             <Typography
               variant="h6"
               component="div"
-              sx={{ fontWeight: "bold", color: "#000" }}>
+              sx={{ fontWeight: "bold", color: "#000" }} // Texte en gras avec couleur noire
+            >
               {grade}
             </Typography>
             <Typography variant="h5" color="textSecondary">
@@ -274,6 +285,9 @@ const EffectifDashboard = () => {
       </Grid>
     );
   };
+  
+
+
 
   const renderAgentTable = () => (
     <TableContainer component={Paper}>
@@ -322,18 +336,22 @@ const EffectifDashboard = () => {
     <Grid item xs={12} sm={6} md={4} lg={3} key={contrat}>
       <Card
         sx={{
-          minWidth: 275,
-          mb: 2,
-          borderRadius: 2,
-          boxShadow: 3,
-          backgroundColor: "#FFEBEE",
-          borderLeft: "5px solid #D32F2F",
-        }}>
+          maxWidth: 750, // Largeur maximale pour une meilleure dimension
+          height: "100%", // Assure une bonne hauteur
+          mt: 4, // Espacement supérieur
+          mb: 2, // Espacement inférieur
+          borderRadius: 2, // Coins arrondis pour un look moderne
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Ombre douce pour l'effet visuel
+          backgroundColor: "#FFEBEE", // Couleur de fond spécifique pour type de contrat
+
+        }}
+      >
         <CardContent>
           <Typography
             variant="h6"
             component="div"
-            sx={{ fontWeight: "bold", color: "#D32F2F" }}>
+            sx={{ fontWeight: "bold", color: "#D32F2F" }} // Texte en gras et rouge
+          >
             {contrat}
           </Typography>
           <Typography variant="h5" color="textSecondary">
@@ -343,6 +361,7 @@ const EffectifDashboard = () => {
       </Card>
     </Grid>
   );
+  
 
   return (
     <Box p={3}>
@@ -356,10 +375,14 @@ const EffectifDashboard = () => {
           renderEmployeurCard(employeur)
         )}
       </Grid>
-
+      
+      <Grid container spacing={2}>  
+           {["expat", "local"].map(renderStatutCard)}
+      </Grid>
+      <Grid container spacing={2}>  
+      {Object.keys(grades).map(renderGradeCard)}
+      </Grid>  
       <Grid container spacing={2}>
-        {["expat", "local"].map(renderStatutCard)}
-        {Object.keys(grades).map(renderGradeCard)}
         {Object.keys(typesContrat).map(renderTypeContratCard)}
       </Grid>
 
@@ -409,6 +432,7 @@ const EffectifDashboard = () => {
       )}
     </Box>
   );
+  
 };
 
 export default EffectifDashboard;

@@ -9,28 +9,14 @@ import {
   Description as FaFileContract,
 } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
-
+import logoImage from '../utils/assets/HR2.png'; 
 const Sidebar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const toggle = () => setIsOpen(!isOpen);
 
-  const handleResize = () => {
-    setWindowWidth(window.innerWidth);
-    if (window.innerWidth < 960) {
-      setIsOpen(false);
-    } else {
-      setIsOpen(true);
-    }
-  };
+ 
 
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   const menuItemsFormation = [
     {
@@ -97,12 +83,16 @@ const Sidebar = ({ children }) => {
     <div className={`app ${!isOpen ? "collapsed" : ""}`}>
       <div className={`sidebar ${!isOpen ? "collapsed" : ""}`}>
         <div className="top_section">
+          <img
+          src={logoImage}
+          alt="Logo"
+          className="logo-image"
+          style={{ display: isOpen ? "block" : "none" }}
+        />
           <h1 className="logo" style={{ display: isOpen ? "block" : "none" }}>
-            HR Dashboard
+           Orange HR 
           </h1>
-          <div className="bars" onClick={toggle}>
-            <FaBars />
-          </div>
+          
         </div>
 
         <div className="menu_section">

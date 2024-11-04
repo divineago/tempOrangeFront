@@ -56,7 +56,7 @@ const DetailsAgent = ({ open, onClose, agent }) => {
   console.log(`agents sub : ${JSON.stringify(agent)}`);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <StyledDialogTitle>
         <InfoOutlined sx={{ mr: 1 }} /> Détails de l'Agent
       </StyledDialogTitle>
@@ -108,6 +108,9 @@ const DetailsAgent = ({ open, onClose, agent }) => {
           Lieu d'embauche : {agent.lieu_embauche}
         </StyledTypography>
         <StyledTypography variant="body1">
+          Lieu d'affectation : {agent.lieu_affectation}
+        </StyledTypography>
+        <StyledTypography variant="body1">
           Grade : {agent.grade}
         </StyledTypography>
         <StyledTypography variant="body1">
@@ -127,20 +130,20 @@ const DetailsAgent = ({ open, onClose, agent }) => {
         </StyledTypography>
 
         {/* Affichage des subordonnés */}
-        <StyledTypography variant="h6">Subordonnés :</StyledTypography>
+        <StyledTypography variant="h6">N-1 :</StyledTypography>
         {agent.subordonnes && agent.subordonnes.length > 0 ? (
           <ul>
             <div>
               {agent.subordonnes.map((subordonne) => (
                   <a  key={subordonne.id}>
-                   | {subordonne}
+                    <li> {subordonne}</li>
+                   
                   </a>
               ))}
             </div>
-            {/* {agent.subordonnes[0]} */}
           </ul>
         ) : (
-          <StyledTypography variant="body1">Aucun subordonné.</StyledTypography>
+          <StyledTypography variant="body1">Aucun n-1.</StyledTypography>
         )}
       </StyledDialogContent>
       <StyledDialogActions>

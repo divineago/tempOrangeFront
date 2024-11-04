@@ -23,7 +23,8 @@ const DirectionForm = ({
   handleFormSubmit,
   openDialog,
   handleCloseDialog,
-  editMode
+  editMode,
+  onFormSubmitSuccess,  // Ajout de la prop pour notifier le parent du succès
 }) => {
   const [formData, setFormData] = useState(initialFormData);
 
@@ -48,6 +49,7 @@ const DirectionForm = ({
       } else {
         await postDataToAPI('/effectif/direction/creer_direction/', formData); 
       }
+      onFormSubmitSuccess();  // Notifie le parent après soumission réussie
       handleCloseDialog(); 
       setFormData(initialFormData); 
     } catch (error) {
